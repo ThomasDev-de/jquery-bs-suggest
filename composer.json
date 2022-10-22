@@ -1,0 +1,16 @@
+{
+  "name": "webcito/jquery-select-suggest",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "thomas",
+      "email": "t.kirsch@webcito.de"
+    }
+  ],
+  "require": {
+    "components/jquery": "3.6.0",
+    "twbs/bootstrap": "5.2.0"
+  }
+}

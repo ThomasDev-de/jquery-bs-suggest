@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Demo</title>
+    <link href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-dark h-100">
+<div class="container bg-white py-5 h-100">
+    <h1>Demo</h1>
+    <form>
+        <div class="mb-3">
+            <label class="form-label required">Customers</label>
+            <input required type="hidden" name="customer_id" data-bs-toggle="suggest"
+                   data-bs-target="./actions.php">
+        </div>
+    </form>
+</div>
+<script src="../vendor/components/jquery/jquery.min.js"></script>
+<script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.js"></script>
+<script src="../dist/jquery.bsSelectSuggest.js"></script>
+<script>
+    (function ($) {
+            $('[name="customer_id"]').suggest();
+    }(jQuery));
+</script>
+</body>
+</html>
