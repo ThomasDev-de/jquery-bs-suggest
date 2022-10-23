@@ -1,0 +1,33 @@
+[
+  {
+    "id": 1,
+    "text": "Germany"
+  },{
+    "id": 2,
+    "text": "Spain"
+  },{
+    "id": 3,
+    "text": "Italy"
+  },{
+    "id": 4,
+    "text": "Austria"
+  },{
+    "id": 5,
+    "text": "Switzerland"
+  },{
+    "id": 6,
+    "text": "Belgium"
+  },{
+    "id": 7,
+    "text": "Luxembourg"
+  },{
+    "id": 8,
+    "text": "France"
+  },{
+    "id": 9,
+    "text": "Poland"
+  },{
+    "id": 10,
+    "text": "Croatia"
+  }
+]
