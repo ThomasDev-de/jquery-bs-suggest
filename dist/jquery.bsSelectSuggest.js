@@ -6,13 +6,11 @@
             doneTypingInterval = 400,
             xhr = null,
             settings = $.extend(true, {
-                dark: false,
-                style: 'primary',
+                limit: 10,
+                darkMenu: false,
+                btnClass: 'btn btn-outline-secondary',
                 emptyText: 'Bitte wählen..'
             }, options && typeof options === "object" ? options : {});
-
-        // let selected = select.val();
-        // let multiple = select.is('[multiple]');
 
         let wrapper = buildDropdown();
         let list = wrapper.find('.card-body'),
@@ -27,11 +25,11 @@
         }
 
         function getTemplate() {
-            let darkClass = settings.dark ? 'dropdown-menu-dark' : '';
+            let darkClass = settings.darkMenu ? 'dropdown-menu-dark' : '';
 
             return `
             <div class="btn-group w-100 dropdown">
-                  <button type="button" class="d-flex align-items-center justify-content-between  btn btn-${settings.style} dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  <button type="button" class="d-flex align-items-center justify-content-between  ${settings.btnClass} dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="js-selected-text">${settings.emptyText}</span>
                   </button>
                   <div class="dropdown-menu ${darkClass} p-0 mt-1 w-100">
@@ -43,7 +41,7 @@
                          <div class="card-body p-0">
 
                         </div>
-                        <div class="card-footer bg-${settings.style} text-bg-dark py-0 px-1 fw-light fst-italic d-flex align-items-center">
+                        <div class="card-footer bg-dark text-bg-dark py-0 px-1 fw-light fst-italic d-flex align-items-center">
                             <small>Warte auf Eingabe</small>
                         </div>
                     </div>
@@ -93,7 +91,7 @@
                     e.preventDefault();
                     let a = $(e.currentTarget);
                     let data = a.data();
-                    select.trigger('suggest-change', [data.id, data.text, data.data]);
+                    select.trigger('suggest-change', [data.id, data.text]);
 
                     let value = a.attr('href').substring(1);
                     select.val(value);
@@ -130,7 +128,7 @@
                 xhr = null;
             }
 
-            let data = search ? {q: searchBox.val()} : {value: val};
+            let data = search ? {q: searchBox.val()||null, limit: settings.limit} : {value: val};
             xhr = $.get(select.data('bsTarget'), data, function (res) {
                 if (search) {
                     list.empty();
@@ -138,9 +136,10 @@
                         let div = $('<div>', {
                             html: `<a class="dropdown-item" href="#${item.id}">${item.text}</a>`,
                         }).appendTo(list);
-                        div.find('a').data('data', item.data);
-                        div.find('a').data('text', item.text);
-                        div.find('a').data('id', item.id);
+                        div.find('a').data('item', item);
+                        // div.find('a').data('data', item.data);
+                        // div.find('a').data('text', item.text);
+                        // div.find('a').data('id', item.id);
                     });
                     if (res.items.length !== res.total) {
                         setStatus( `<span class="badge bg-danger">Achtung, es werden nur ${res.items.length} von ${res.total} Ergebnissen angezeigt</span>`);
@@ -149,8 +148,8 @@
                     }
 
                 } else {
-                    select.val(res.selectedItem.id);
-                    setDropdownText(res.selectedItem.text);
+                    select.val(res.id);
+                    setDropdownText(res.text);
                 }
             });
         }
@@ -172,8 +171,6 @@
                     break;
             }
         }
-
-        // });
 
         // return the reference for chaining
         return select;
