@@ -31,7 +31,7 @@ $('#exampleInput').each(function(i, input){
 > Please make a separate call for each suggestion box!
 ### Options
 The following options are currently implemented.
-```json
+```js
 {
     "limit": 10, // the maximum number of records
     "darkMenu": false, // show the dropdown in dark style
