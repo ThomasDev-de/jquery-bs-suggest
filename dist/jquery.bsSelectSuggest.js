@@ -9,7 +9,10 @@
                 limit: 10,
                 darkMenu: false,
                 btnClass: 'btn btn-outline-secondary',
-                emptyText: 'Bitte wählen..'
+                emptyText: 'Please choose..',
+                waitingForTypingText: 'Waiting for typing',
+                typingText: 'typing..',
+                loadingText: 'Loading..',
             }, options && typeof options === "object" ? options : {});
 
         let wrapper = buildDropdown();
@@ -35,14 +38,14 @@
                   <div class="dropdown-menu ${darkClass} p-0 mt-1 w-100">
                     <div class="card border-0 m-0 w-100">
                         <div class="card-header d-flex flex-nowrap align-items-center">
-                            <input autocomplete="false" type="search" name="q" class="form-control-sm flex-fill" placeholder="Suchen">
+                            <input autocomplete="false" type="search" name="q" class="form-control-sm flex-fill" placeholder="Search">
                             <button role="button" class=" btn-close ms-1 js-webcito-reset"></button>
                         </div>
                          <div class="card-body p-0">
 
                         </div>
                         <div class="card-footer bg-dark text-bg-dark py-0 px-1 fw-light fst-italic d-flex align-items-center">
-                            <small>Warte auf Eingabe</small>
+                            <small>${settings.waitingForTypingText}</small>
                         </div>
                     </div>
                   </div>
@@ -83,7 +86,7 @@
 
             searchBox.on('keydown', function () {
                 clearTimeout(typingTimer);
-                setStatus( 'tippt ...');
+                setStatus( settings.typingText);
             });
 
             wrapper
@@ -103,7 +106,7 @@
                     searchBox.val(null);
                     list.empty();
                     setDropdownText();
-                    setStatus('Warte auf Eingabe');
+                    setStatus(settings.waitingForTypingText);
                 })
                 .on('hidden.bs.dropdown', '.dropdown', function () {
                     list.empty();
@@ -117,7 +120,7 @@
 
         function doneTyping() {
 
-            setStatus('warte auf Ergebnis');
+            setStatus(settings.loadingText);
             getData()
         }
 
@@ -144,7 +147,7 @@
                     if (res.items.length !== res.total) {
                         setStatus( `<span class="badge bg-danger">Achtung, es werden nur ${res.items.length} von ${res.total} Ergebnissen angezeigt</span>`);
                     } else {
-                        setStatus( 'Ergebnisse: ' + res.items.length);
+                        setStatus( 'Results: ' + res.items.length);
                     }
 
                 } else {
@@ -166,7 +169,7 @@
                     searchBox.val(null);
                     list.empty();
                     setDropdownText();
-                    setStatus('Warte auf Eingabe');
+                    setStatus(settings.waitingForTypingText);
                     getData(false, params);
                     break;
             }

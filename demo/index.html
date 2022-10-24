@@ -11,8 +11,8 @@
     <h1>Demo</h1>
     <form>
         <div class="mb-3">
-            <label class="form-label required">Customers</label>
-            <input required type="hidden" name="customer_id" data-bs-toggle="suggest"
+            <label class="form-label required">Countries</label>
+            <input required type="hidden" name="country_id" data-bs-toggle="suggest"
                    data-bs-target="./actions.php">
         </div>
     </form>
@@ -22,7 +22,7 @@
 <script src="../dist/jquery.bsSelectSuggest.js"></script>
 <script>
     (function ($) {
-            $('[name="customer_id"]').suggest();
+            $('[name="country_id"]').suggest();
     }(jQuery));
 </script>
 </body>

@@ -36,7 +36,10 @@ The following options are currently implemented.
     "limit": 10, // the maximum number of records
     "darkMenu": false, // show the dropdown in dark style
     "btnClass": "btn btn-outline-secondary", // dropdown Button class
-    "emptyText": "Bitte wählen.." // placeholder for no selection 
+    "emptyText": "Please choose..", // placeholder for no selection
+    "waitingForTypingText": "Waiting for typing", // Status
+    "typingText": "typing..", // Status
+    "loadingText": "Loading.." // Status
 }
 ```
 ### Methods
