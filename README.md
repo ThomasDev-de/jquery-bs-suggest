@@ -48,13 +48,13 @@ Currently, there is only one method.
 $('selector').suggest('val', value);
 ```
 ### Events
-Currently, there is only one event
 ```js
 $('selector')
     .on('suggest-change', function(e, id, text){
-        // id: the item id
-        // text: the item text
         console.log(id, text, 'was selected');
+    })
+    .on('suggest-error', function(e, message){
+        console.log('error', message);
     })
 ```
 ### Required response for suggestion
@@ -95,6 +95,9 @@ $('selector').suggest('val', value);
 A complete example can be found in the demo folder.
 ```php
 <?php
+/**
+ * Note: PHP8.0 or higher is required for this script.
+ */
 header('Content-Type: application/json');
 
 try {
@@ -128,7 +131,7 @@ try {
         $q = filter_input(INPUT_GET, 'q');
         $search = empty($q)? false : strtolower($q);
 
-        // If q was not passed or is empty, do not return any results either.
+        // If q was not passed or is empty, do not return any results either (I do this so that when the plugin is initialized, no data is loaded.).
         // Otherwise, search for matches of the search string.
         $data = $search === false ? [] :  array_slice(
             array:array_filter($countries, static function($country) use ($search){
@@ -147,7 +150,7 @@ try {
     exit(json_encode($return, JSON_THROW_ON_ERROR));
 } catch (JsonException $e) {
     http_response_code(500);
-    exit($e->getMessage());
+    /** @noinspection PhpUnhandledExceptionInspection */
+    exit(json_encode(['error' => $e->getMessage()], JSON_THROW_ON_ERROR));
 }
-
 ```

@@ -86,7 +86,7 @@
 
             searchBox.on('keydown', function () {
                 clearTimeout(typingTimer);
-                setStatus( settings.typingText);
+                setStatus(settings.typingText);
             });
 
             wrapper
@@ -131,34 +131,37 @@
                 xhr = null;
             }
 
-            let data = search ? {q: searchBox.val()||null, limit: settings.limit} : {value: val};
+            let data = search ? {q: searchBox.val() || null, limit: settings.limit} : {value: val};
             xhr = $.get(select.data('bsTarget'), data, function (res) {
-                if (search) {
-                    list.empty();
-                    res.items.forEach(item => {
-                        let div = $('<div>', {
-                            html: `<a class="dropdown-item" href="#${item.id}">${item.text}</a>`,
-                        }).appendTo(list);
-                        div.find('a').data('item', item);
-                        // div.find('a').data('data', item.data);
-                        // div.find('a').data('text', item.text);
-                        // div.find('a').data('id', item.id);
-                    });
-                    if (res.items.length !== res.total) {
-                        setStatus( `<span class="badge bg-danger">Achtung, es werden nur ${res.items.length} von ${res.total} Ergebnissen angezeigt</span>`);
-                    } else {
-                        setStatus( 'Results: ' + res.items.length);
-                    }
-
+                if (res.error) {
+                    select.trigger('suggest-error', [res.error]);
                 } else {
-                    select.val(res.id);
-                    setDropdownText(res.text);
+                    if (search) {
+                        list.empty();
+                        res.items.forEach(item => {
+                            let div = $('<div>', {
+                                html: `<a class="dropdown-item" href="#${item.id}">${item.text}</a>`,
+                            }).appendTo(list);
+                            div.find('a').data('item', item);
+                            // div.find('a').data('data', item.data);
+                            // div.find('a').data('text', item.text);
+                            // div.find('a').data('id', item.id);
+                        });
+                        if (res.items.length !== res.total) {
+                            setStatus(`<span class="badge bg-danger">Achtung, es werden nur ${res.items.length} von ${res.total} Ergebnissen angezeigt</span>`);
+                        } else {
+                            setStatus('Results: ' + res.items.length);
+                        }
+
+                    } else {
+                        select.val(res.id);
+                        setDropdownText(res.text);
+                    }
                 }
             });
         }
 
-        function setDropdownText(html)
-        {
+        function setDropdownText(html) {
             wrapper.find('.js-selected-text').html(html || settings.emptyText);
         }
 
