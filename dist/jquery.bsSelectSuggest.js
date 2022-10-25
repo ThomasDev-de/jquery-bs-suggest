@@ -3,12 +3,14 @@
     $.fn.suggest = function (options, params) {
         let select = $(this),
             typingTimer,
-            doneTypingInterval = 400,
             xhr = null,
             settings = $.extend(true, {
                 limit: 10,
+                typingInterval: 400,
                 darkMenu: false,
+                btnWidth: 'fit-content',
                 btnClass: 'btn btn-outline-secondary',
+                searchPlaceholderText: "Search",
                 emptyText: 'Please choose..',
                 waitingForTypingText: 'Waiting for typing',
                 typingText: 'typing..',
@@ -29,22 +31,23 @@
 
         function getTemplate() {
             let darkClass = settings.darkMenu ? 'dropdown-menu-dark' : '';
+            let closeBtnClass = settings.darkMenu ? 'btn-close-white' : '';
 
             return `
-            <div class="btn-group w-100 dropdown">
-                  <button type="button" class="d-flex align-items-center justify-content-between  ${settings.btnClass} dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class=" btn-group dropdown">
+                  <button type="button" class=" d-flex align-items-center justify-content-between  ${settings.btnClass} dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
                     <span class="js-selected-text">${settings.emptyText}</span>
                   </button>
-                  <div class="dropdown-menu ${darkClass} p-0 mt-1 w-100">
-                    <div class="card border-0 m-0 w-100">
-                        <div class="card-header d-flex flex-nowrap align-items-center">
-                            <input autocomplete="false" type="search" name="q" class="form-control-sm flex-fill" placeholder="Search">
-                            <button role="button" class=" btn-close ms-1 js-webcito-reset"></button>
+                  <div class="dropdown-menu ${darkClass} p-0 mt-1">
+                    <div class="card bg-transparent border-0 m-0 w-100">
+                        <div class="card-header d-flex flex-nowrap align-items-center justify-content-between">
+                            <input autocomplete="false" type="search" name="q" class="form-control-sm flex-fill" placeholder="${settings.searchPlaceholderText}">
+                            <button role="button" class=" btn-close ${closeBtnClass} ms-2 js-webcito-reset"></button>
                         </div>
                          <div class="card-body p-0">
 
                         </div>
-                        <div class="card-footer bg-dark text-bg-dark py-0 px-1 fw-light fst-italic d-flex align-items-center">
+                        <div class="card-footer bg-secondary text-bg-secondary p-1 fw-light fst-italic d-flex align-items-center">
                             <small>${settings.waitingForTypingText}</small>
                         </div>
                     </div>
@@ -81,7 +84,7 @@
         function events() {
             searchBox.on('keyup', function () {
                 clearTimeout(typingTimer);
-                typingTimer = setTimeout(doneTyping, doneTypingInterval);
+                typingTimer = setTimeout(doneTyping, settings.typingInterval);
             });
 
             searchBox.on('keydown', function () {
@@ -111,7 +114,7 @@
                 .on('hidden.bs.dropdown', '.dropdown', function () {
                     list.empty();
                     searchBox.val(null);
-                    setStatus('Warte auf Eingabe');
+                    setStatus(settings.waitingForTypingText);
                 })
                 .on('shown.bs.dropdown', '.dropdown', function () {
                     searchBox.focus();
@@ -148,9 +151,9 @@
                             // div.find('a').data('id', item.id);
                         });
                         if (res.items.length !== res.total) {
-                            setStatus(`<span class="badge bg-danger">Achtung, es werden nur ${res.items.length} von ${res.total} Ergebnissen angezeigt</span>`);
+                            setStatus(`showing ${res.items.length} / ${res.total} results`);
                         } else {
-                            setStatus('Results: ' + res.items.length);
+                            setStatus('results: ' + res.items.length);
                         }
 
                     } else {

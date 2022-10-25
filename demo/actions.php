@@ -31,16 +31,16 @@ try {
     else
     {
         // Get parameter q and limit
-        $limit = filter_input(INPUT_GET, 'limit', FILTER_VALIDATE_INT) || 10;
+        $limit = filter_input(INPUT_GET, 'limit', FILTER_VALIDATE_INT);
         $q = filter_input(INPUT_GET, 'q');
         $search = empty($q)? false : strtolower($q);
 
-        // If q was not passed or is empty, do not return any results either (I do this so that when the plugin is initialized, no data is loaded.).
+        // If q was not passed or is empty, do not return any results either.
         // Otherwise, search for matches of the search string.
         $data = $search === false ? [] :  array_slice(
-            array:array_filter($countries, static function($country) use ($search){
+            array:array_values(array_filter($countries, static function($country) use ($search){
                 return str_contains(strtolower($country->text), $search);
-            }),
+            })),
             offset: 0,
             length: $limit
         );

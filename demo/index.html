@@ -9,10 +9,10 @@
 <body class="bg-dark h-100">
 <div class="container bg-white py-5 h-100">
     <h1>Demo</h1>
-    <form>
+    <form  autocomplete="off">
         <div class="mb-3">
-            <label class="form-label required">Countries</label>
-            <input required type="hidden" name="country_id" data-bs-toggle="suggest"
+<!--            <label class="form-label required">Countries</label>-->
+            <input required type="hidden" name="country_id" data-bs-toggle="suggest" autocomplete="false"
                    data-bs-target="./actions.php">
         </div>
     </form>
@@ -22,7 +22,18 @@
 <script src="../dist/jquery.bsSelectSuggest.js"></script>
 <script>
     (function ($) {
-            $('[name="country_id"]').suggest();
+            $('[name="country_id"]').suggest({
+                limit: 100,
+                typingInterval: 400,
+                darkMenu: true,
+                btnWidth: '400px',
+                btnClass: 'btn btn-outline-secondary',
+                searchPlaceholderText: "Search",
+                emptyText: 'Please choose..',
+                waitingForTypingText: 'Waiting for typing',
+                typingText: 'typing..',
+                loadingText: 'Loading..',
+            });
     }(jQuery));
 </script>
 </body>

@@ -34,8 +34,10 @@ The following options are currently implemented.
 ```js
 {
     "limit": 10, // the maximum number of records
+    "typingInterval": 400, // The milliseconds to wait until a request starts
     "darkMenu": false, // show the dropdown in dark style
-    "btnClass": "btn btn-outline-secondary", // dropdown Button class
+    "btnWidth": 'fit-content', // Corresponds to the CSS property width
+    "btnClass": "btn btn-outline-secondary", // dropdown button class
     "emptyText": "Please choose..", // placeholder for no selection
     "waitingForTypingText": "Waiting for typing", // Status
     "typingText": "typing..", // Status
@@ -127,16 +129,16 @@ try {
     else
     {
         // Get parameter q and limit
-        $limit = filter_input(INPUT_GET, 'limit', FILTER_VALIDATE_INT) || 10;
+        $limit = filter_input(INPUT_GET, 'limit', FILTER_VALIDATE_INT);
         $q = filter_input(INPUT_GET, 'q');
         $search = empty($q)? false : strtolower($q);
 
-        // If q was not passed or is empty, do not return any results either (I do this so that when the plugin is initialized, no data is loaded.).
+        // If q was not passed or is empty, do not return any results either.
         // Otherwise, search for matches of the search string.
         $data = $search === false ? [] :  array_slice(
-            array:array_filter($countries, static function($country) use ($search){
+            array:array_values(array_filter($countries, static function($country) use ($search){
                 return str_contains(strtolower($country->text), $search);
-            }),
+            })),
             offset: 0,
             length: $limit
         );
@@ -153,4 +155,5 @@ try {
     /** @noinspection PhpUnhandledExceptionInspection */
     exit(json_encode(['error' => $e->getMessage()], JSON_THROW_ON_ERROR));
 }
+
 ```
