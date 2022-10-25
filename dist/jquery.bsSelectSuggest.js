@@ -41,7 +41,7 @@
                   <div class="dropdown-menu ${darkClass} p-0 mt-1">
                     <div class="card bg-transparent border-0 m-0 w-100">
                         <div class="card-header d-flex flex-nowrap align-items-center justify-content-between">
-                            <input autocomplete="false" type="search" name="q" class="form-control-sm flex-fill" placeholder="${settings.searchPlaceholderText}">
+                            <input autocomplete="false" type="search" class="form-control-sm flex-fill" placeholder="${settings.searchPlaceholderText}">
                             <button role="button" class=" btn-close ${closeBtnClass} ms-2 js-webcito-reset"></button>
                         </div>
                          <div class="card-body p-0">
