@@ -16,7 +16,7 @@ Create a Bootstrap dropdown for server suggestion.
     + [backend example](#backend-example)
 
 ![demo picture](./demo/selectSuggest-Demo.png)
-> This plugin was developed for single selection only for now.
+
 ### Requirements
 - Boostrap >= 5.0
 - jQuery 3.6 -> I can't name the minimum jQuery version, I developed it on jQuery 3.6.
