@@ -135,9 +135,9 @@ try {
     if ($fetchSingleData)
     {
         // Get the record using the value parameter
-        $data = array_filter($countries, static function($country) use ($value){
+        $data = array_values(array_filter($countries, static function($country) use ($value){
             return $country->id === $value;
-        });
+        }));
         $return = $data[0];
     }
     // if no
@@ -150,9 +150,9 @@ try {
 
         // If q was not passed or is empty, do not return any results either.
         // Otherwise, search for matches of the search string.
-        $data = $search === false ? [] :  array_slice(
+        $data = array_slice(
             array:array_values(array_filter($countries, static function($country) use ($search){
-                return str_contains(strtolower($country->text), $search);
+                return $search === false || str_contains(strtolower($country->text), $search);
             })),
             offset: 0,
             length: $limit
@@ -170,5 +170,6 @@ try {
     /** @noinspection PhpUnhandledExceptionInspection */
     exit(json_encode(['error' => $e->getMessage()], JSON_THROW_ON_ERROR));
 }
+
 
 ```
