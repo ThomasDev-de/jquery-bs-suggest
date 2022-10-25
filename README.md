@@ -1,6 +1,8 @@
 # jquery-selectSuggest
-Creates a simple bootstrap dropdown for large datasets from the server.
 
+Create a Bootstrap dropdown for server suggestion.
+
+![demo picture](./demo/selectSuggest-Demo.png)
 > This plugin was developed for single selection only for now.
 ### Requirements
 - Boostrap >= 5.0
