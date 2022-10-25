@@ -2,6 +2,19 @@
 
 Create a Bootstrap dropdown for server suggestion.
 
+### Table of contents
+- [jquery-selectSuggest](#jquery-selectsuggest)
+    + [Requirements](#requirements)
+    + [Installation](#installation)
+    + [Usage](#usage)
+        * [html](#html)
+        * [javascript](#javascript)
+    + [Options](#options)
+    + [Methods](#methods)
+    + [Events](#events)
+    + [Required response for suggestion](#required-response-for-suggestion)
+    + [backend example](#backend-example)
+
 ![demo picture](./demo/selectSuggest-Demo.png)
 > This plugin was developed for single selection only for now.
 ### Requirements
