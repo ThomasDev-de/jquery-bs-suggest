@@ -3,6 +3,8 @@
     const DEFAULTS = {
         limit: 10,
         typingInterval: 400,
+        multiple:false,
+        valueSeparator: ',',
         darkMenu: false,
         btnWidth: 'fit-content',
         btnClass: 'btn btn-outline-secondary',
@@ -146,7 +148,7 @@
                         let item = a.data('item');
                         select.trigger('change', [item.id, item.text]);
 
-                        let value = a.attr('href').substring(1);
+                        let value = a.data('itemId').substring(1);
                         select.val(value);
                         setDropdownText(a.html(), select);
                     })
@@ -192,7 +194,7 @@
                             list.empty();
                             res.items.forEach(item => {
                                 let div = $('<div>', {
-                                    html: `<a class="dropdown-item" href="#${item.id}">${item.text}</a>`,
+                                    html: `<a class="dropdown-item" href="#" data-item-id="${item.id}">${item.text}</a>`,
                                 }).appendTo(list);
                                 div.find('a').data('item', item);
                             });

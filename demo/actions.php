@@ -10,7 +10,7 @@ try {
     $countries = json_decode(file_get_contents('countries.json'), false, 512, JSON_THROW_ON_ERROR);
 
     // Try to find the query parameter value
-    $value = filter_input(INPUT_GET, 'value', FILTER_VALIDATE_INT);
+    $value = filter_input(INPUT_GET, 'value', FILTER_VALIDATE_INT); // FILTER_VALIDATE_INT sample
 
     /** @var null|stdClass|array $return */
     $return = null;
