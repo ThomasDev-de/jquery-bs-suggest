@@ -39,11 +39,8 @@ Place the hidden input field where you want the dropdown to appear.
 ```
 ##### javascript
 ```js
-$('#exampleInput').each(function(i, input){
-    $(input).suggest(options||{});
-});
+$('[data-bs-toggle="suggest"]').suggest(options);
 ```
-> Please make a separate call for each suggestion box!
 ### Options
 The following options are currently implemented.
 ```js
