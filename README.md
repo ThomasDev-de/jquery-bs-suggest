@@ -60,17 +60,20 @@ The following options are currently implemented.
 }
 ```
 ### Methods
-Currently, there is only one method.
 ```js
-$('selector').suggest('val', value);
+$('selector')
+    .suggest('val', value) // set a value
+    .suggest('refresh')  // build the dropdown new
+    .suggest('destroy')  // destroy the dropdown
+    .suggest('updateOptions', newOptions);  // update options
 ```
 ### Events
 ```js
 $('selector')
-    .on('suggest-change', function(e, id, text){
+    .on('change', function(e, id, text){
         console.log(id, text, 'was selected');
     })
-    .on('suggest-error', function(e, message){
+    .on('error', function(e, message){
         console.log('error', message);
     })
 ```

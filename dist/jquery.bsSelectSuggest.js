@@ -24,9 +24,9 @@
 
 
         return `
-            <div class=" btn-group dropdown">
-                  <button type="button" class=" d-flex align-items-center justify-content-between  ${settings.btnClass} dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
-                    <span class="js-selected-text">${settings.emptyText}</span>
+            <div class="dropdown">
+                  <button type="button" class=" d-flex align-items-center justify-content-between ${settings.btnClass} dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
+                    <span class="js-selected-text"></span>
                   </button>
                   <div class="dropdown-menu ${darkClass} p-0 mt-1">
                     <div class="card bg-transparent border-0 m-0 w-100">
@@ -38,16 +38,20 @@
 
                         </div>
                         <div class="card-footer bg-secondary text-bg-secondary p-1 fw-light fst-italic d-flex align-items-center">
-                            <small>${settings.waitingForTypingText}</small>
+                            <small class="suggest-status-text">${settings.waitingForTypingText}</small>
                         </div>
                     </div>
                   </div>
             </div>`;
     }
 
+    function getWrapper(select) {
+        return select.closest('[id^="webcito_suggestion_"]');
+    }
+
     function buildDropdown(select) {
 
-        let w = select.closest('[id^="webcito_suggestion_"]');
+        let w = getWrapper(select);
         if (w.length) {
             return w;
         }
@@ -59,28 +63,52 @@
         select.hide();
         select.appendTo(wrap);
         $(getTemplate(select)).insertBefore(select);
+        setTimeout(function(){
+            if (wrap.find('.js-selected-text').text() === ""){
+                setDropdownText(null, select);
+            }
+        },40);
         return wrap;
 
     }
 
+    function refresh(select) {
+        destroy(select, false);
+        select.suggest(select.data('settings')|| {});
+    }
+
+    function destroy(select, show) {
+        let valBefore = select.val();
+        let wrapper = getWrapper(select);
+        select.insertBefore(wrapper);
+        wrapper.remove();
+        select.val(valBefore);
+        select.data('init', false)
+        if (show)
+            select.show();
+    }
+
+    function setDropdownText(html, select) {
+        let settings = select.data('settings');
+        getWrapper(select).find('.js-selected-text').html(html || settings.emptyText);
+    }
+
     $.fn.suggest = function (options, params) {
-        return $(this).each(function(i, e){
+        return $(this).each(function () {
             const select = $(this),
                 isOptionsSet = typeof options === "object" || typeof options === "undefined",
                 isCallMethod = typeof options === "string";
             let xhr = null;
             let typingTimer;
 
-            // settings = $.extend(true, DEFAULTS, options && typeof options === "object" ? options : {});
-
-            if (isOptionsSet){
-                select.data('settings',  $.extend(true, DEFAULTS, options || {}));
+            if (isOptionsSet) {
+                select.data('settings', $.extend(true, DEFAULTS, options || {}));
             }
 
             const wrapper = buildDropdown(select);
 
             const list = wrapper.find('.card-body'),
-                statusBox = wrapper.find('.card-footer small'),
+                statusBox = wrapper.find('.suggest-status-text'),
                 searchBox = wrapper.find('[type="search"]');
 
             // let method = options && typeof options === "string" ? options : null;
@@ -88,6 +116,9 @@
             if (select.data('init') !== true) {
                 events();
                 select.data('init', true);
+                if (select.val() !== "") {
+                    getData(false, select.val());
+                }
             }
 
             function setStatus(text) {
@@ -112,19 +143,19 @@
                     .on('click', 'a.dropdown-item', function (e) {
                         e.preventDefault();
                         let a = $(e.currentTarget);
-                        let data = a.data();
-                        select.trigger('suggest-change', [data.id, data.text]);
+                        let item = a.data('item');
+                        select.trigger('change', [item.id, item.text]);
 
                         let value = a.attr('href').substring(1);
                         select.val(value);
-                        setDropdownText(a.html());
+                        setDropdownText(a.html(), select);
                     })
                     .on('click', '.js-webcito-reset', function (e) {
                         e.preventDefault();
                         select.val(null);
                         searchBox.val(null);
                         list.empty();
-                        setDropdownText();
+                        setDropdownText(null, select);
                         let settings = select.data('settings');
                         setStatus(settings.waitingForTypingText);
                     })
@@ -155,7 +186,7 @@
                 let data = search ? {q: searchBox.val() || null, limit: settings.limit} : {value: val};
                 xhr = $.get(select.data('bsTarget'), data, function (res) {
                     if (res.error) {
-                        select.trigger('suggest-error', [res.error]);
+                        select.trigger('error', [res.error]);
                     } else {
                         if (search) {
                             list.empty();
@@ -173,28 +204,42 @@
 
                         } else {
                             select.val(res.id);
-                            setDropdownText(res.text);
+                            setDropdownText(res.text, select);
                         }
                     }
                 });
             }
 
-            function setDropdownText(html) {
+
+
+            function reset() {
                 let settings = select.data('settings');
-                wrapper.find('.js-selected-text').html(html || settings.emptyText);
+                select.val(null);
+                searchBox.val(null);
+                list.empty();
+                // setDropdownText();
+                setStatus(settings.waitingForTypingText);
             }
 
+
             if (isCallMethod) {
-                let settings = select.data('settings');
                 switch (options.toLowerCase()) {
                     case 'val':
-                        select.val(null);
-                        searchBox.val(null);
-                        list.empty();
-                        setDropdownText();
-                        setStatus(settings.waitingForTypingText);
+                        reset();
                         getData(false, params);
                         break;
+                    case 'destroy':
+                        destroy(select, true);
+                        break;
+                    case 'refresh':
+                        refresh(select);
+                        break;
+                    case 'updateoptions': {
+                        select.data('settings', $.extend(true, select.data('settings'), params || {}, DEFAULTS));
+                        console.log(select.data('settings'));
+                        refresh(select);
+                        break;
+                    }
                 }
             }
 
