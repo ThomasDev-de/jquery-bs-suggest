@@ -29,9 +29,9 @@ No further CSS needed, the current bootstrap classes are used.
 
 ### Usage
 ##### html
-Place the hidden input field where you want the dropdown to appear.
+Place the input field where you want the dropdown to appear.
 ```html
-<input type="hidden"
+<input type="text"
        id="exampleInput"
        data-bs-toggle="suggest"
        data-bs-target="path/to/actions.php"
