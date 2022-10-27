@@ -3,7 +3,7 @@
     const DEFAULTS = {
         limit: 10,
         typingInterval: 400,
-        multiple:false,
+        multiple: false,
         valueSeparator: ',',
         darkMenu: false,
         btnWidth: 'fit-content',
@@ -27,9 +27,9 @@
 
         return `
             <div class="dropdown">
-                  <button type="button" class=" d-flex align-items-center justify-content-between ${settings.btnClass} dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
+                  <div class="form-control form-control border-dark  d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
                     <span class="js-selected-text"></span>
-                  </button>
+                  </div>
                   <div class="dropdown-menu ${darkClass} p-0 mt-1">
                     <div class="card bg-transparent border-0 m-0 w-100">
                         <div class="card-header d-flex flex-nowrap align-items-center justify-content-between">
@@ -65,18 +65,18 @@
         select.hide();
         select.appendTo(wrap);
         $(getTemplate(select)).insertBefore(select);
-        setTimeout(function(){
-            if (wrap.find('.js-selected-text').text() === ""){
+        setTimeout(function () {
+            if (wrap.find('.js-selected-text').text() === "") {
                 setDropdownText(null, select);
             }
-        },40);
+        }, 40);
         return wrap;
 
     }
 
     function refresh(select) {
         destroy(select, false);
-        select.suggest(select.data('settings')|| {});
+        select.suggest(select.data('settings') || {});
     }
 
     function destroy(select, show) {
@@ -92,7 +92,8 @@
 
     function setDropdownText(html, select) {
         let settings = select.data('settings');
-        getWrapper(select).find('.js-selected-text').html(html || settings.emptyText);
+        getWrapper(select).find('.js-selected-text').html('<span class="px-2 py-1 border border-dark rounded d-inline">' +
+            (html || settings.emptyText) + '</span>');
     }
 
     $.fn.suggest = function (options, params) {
@@ -102,9 +103,12 @@
                 isCallMethod = typeof options === "string";
             let xhr = null;
             let typingTimer;
+            let selected = [];
 
             if (isOptionsSet) {
-                select.data('settings', $.extend(true, DEFAULTS, options || {}));
+                let settings = $.extend(true, DEFAULTS, options || {});
+                select.data('settings', settings);
+                select.data('selected', select.val().split(settings.valueSeparator));
             }
 
             const wrapper = buildDropdown(select);
@@ -213,7 +217,6 @@
             }
 
 
-
             function reset() {
                 let settings = select.data('settings');
                 select.val(null);
@@ -228,6 +231,22 @@
                 switch (options.toLowerCase()) {
                     case 'val':
                         reset();
+                        let value = params;
+                        let isEmpty = !value || value === '';
+                        if (isEmpty) {
+                            value = [];
+                        } else {
+                            let isArray = Array.isArray(value);
+                            if (isArray) {
+                                if (typeof value[0] === 'object') {
+                                    // set values directly
+                                }
+                                else {
+
+                                }
+                            }
+                        }
+
                         getData(false, params);
                         break;
                     case 'destroy':
