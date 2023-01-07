@@ -13,6 +13,7 @@
         waitingForTypingText: 'Waiting for typing',
         typingText: 'typing..',
         loadingText: 'Loading..',
+        queryParams: function(params){}
     };
 
     function generateId() {
@@ -190,7 +191,7 @@
                 }
 
                 let data = search ? {q: searchBox.val() || null, limit: settings.limit} : {value: val};
-                xhr = $.get(select.data('bsTarget'), data, function (res) {
+                xhr = $.get(select.data('bsTarget'), settings.queryParams(data), function (res) {
                     if (res.error) {
                         select.trigger('error', [res.error]);
                     } else {

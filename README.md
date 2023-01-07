@@ -44,7 +44,7 @@ $('[data-bs-toggle="suggest"]').suggest(options);
 ### Options
 The following options are currently implemented.
 ```js
-{
+let options = {
     "limit": 10, // the maximum number of records
     "typingInterval": 400, // The milliseconds to wait until a request starts
     "darkMenu": false, // show the dropdown in dark style
@@ -53,7 +53,8 @@ The following options are currently implemented.
     "emptyText": "Please choose..", // placeholder for no selection
     "waitingForTypingText": "Waiting for typing", // Status
     "typingText": "typing..", // Status
-    "loadingText": "Loading.." // Status
+    "loadingText": "Loading..", // Status
+    "queryParams": function(params){return params} // add params to query
 }
 ```
 ### Methods
