@@ -42,6 +42,7 @@ Place the input field where you want the dropdown to appear.
 $('[data-bs-toggle="suggest"]').suggest(options);
 ```
 ### Options
+
 The following options are currently implemented.
 ```js
 let options = {

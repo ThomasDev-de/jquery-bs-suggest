@@ -16,6 +16,7 @@
         queryParams: function(params){}
     };
 
+
     function generateId() {
         return "webcito_suggestion_" + $('[id^="webcito_suggestion_"]').length;
     }
