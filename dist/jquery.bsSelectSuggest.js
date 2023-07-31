@@ -29,7 +29,7 @@
 
         return `
             <div class="dropdown">
-                  <div class="form-control form-control border-dark  d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
+                  <div class="${settings.btnClass} d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
                     <span class="js-selected-text"></span>
                   </div>
                   <div class="dropdown-menu ${darkClass} p-0 mt-1">
