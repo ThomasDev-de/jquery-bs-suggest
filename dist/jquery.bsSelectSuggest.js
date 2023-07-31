@@ -1,8 +1,6 @@
 /** global $ */
 (function ($) {
     const debug = false;
-    let xhr = null;
-    let typingTimer = null;
     const DEFAULTS = {
         limit: 10,
         typingInterval: 400,
@@ -122,6 +120,7 @@
         const wrapper = getWrapper(select);
         const searchBox = wrapper.find('[type="search"]');
         const settings = select.data('settings');
+        let typingTimer = select.data('typingTimer') || null;
 
         const list = wrapper.find('.card-body');
 
@@ -134,6 +133,7 @@
                 setStatus(select, settings.loadingText);
                 getData(select);
             }, settings.typingInterval);
+            select.data('typingTimer', typingTimer);
         });
 
         searchBox.on('keydown', function () {
@@ -141,6 +141,7 @@
             if (typingTimer !== null) {
                 clearTimeout(typingTimer);
             }
+            select.data('typingTimer', typingTimer);
             setStatus(select, settings.typingText);
         });
 
@@ -180,6 +181,7 @@
         let wrapper = getWrapper(select);
         const searchBox = wrapper.find('[type="search"]');
         const list = wrapper.find('.card-body');
+        let xhr = select.data('xhr') || null;
 
         if (xhr !== null) {
             xhr.abort()
@@ -188,7 +190,7 @@
 
         let data = search ? {q: searchBox.val() || null, limit: settings.limit} : {value: val};
         let query = settings.queryParams(data);
-        xhr = $.get(select.data('bsTarget'), query, function (res) {
+        let newXhr = $.get(select.data('bsTarget'), query, function (res) {
             if (res.error) {
                 select.trigger('error', [res.error]);
             } else {
@@ -212,6 +214,7 @@
                 }
             }
         });
+        select.data('xhr', newXhr);
     }
 
     $.fn.suggest = function (options, params) {
