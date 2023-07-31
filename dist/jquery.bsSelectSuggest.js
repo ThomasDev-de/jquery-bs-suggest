@@ -92,8 +92,8 @@
     }
 
     $.fn.suggest = function (options, params) {
-        return $(this).each(function () {
-            const select = $(this),
+        return $(this).each(function (i,e) {
+            const select = $(e),
                 isOptionsSet = typeof options === "object" || typeof options === "undefined",
                 isCallMethod = typeof options === "string";
             let xhr = null;
@@ -176,7 +176,7 @@
                 getData()
             }
 
-            function getData(search = true, val) {
+            function getData(search = true, val, select) {
                 let settings = select.data('settings');
                 if (xhr !== null) {
                     xhr.abort()
@@ -212,7 +212,7 @@
             }
 
 
-            function reset() {
+            function reset(select) {
                 let settings = select.data('settings');
                 select.val(null);
                 searchBox.val(null);
@@ -225,7 +225,7 @@
             if (isCallMethod) {
                 switch (options.toLowerCase()) {
                     case 'val':
-                        reset();
+                        reset(select);
                         let value = params;
                         let isEmpty = !value || value === '';
                         if (isEmpty) {
@@ -241,7 +241,7 @@
                             }
                         }
 
-                        getData(false, params);
+                        getData(false, params, select);
                         break;
                     case 'destroy':
                         destroy(select, true);
