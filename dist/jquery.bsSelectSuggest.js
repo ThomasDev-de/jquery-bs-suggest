@@ -231,8 +231,8 @@
         const isOptionsSet = typeof options === "object" || typeof options === "undefined";
         const isCallMethod = typeof options === "string";
 
-        if (!select.data('init-suggest')) {
-            select.data('init-suggest', true);
+        if (select.data('initSuggest') !== true) {
+            select.data('initSuggest', true);
 
             if (isOptionsSet) {
                 const settings = $.extend(true, DEFAULTS, options || {});
@@ -240,10 +240,8 @@
                 select.data('selected', select.val().split(settings.valueSeparator));
             }
 
-            setTimeout(function () {
-                buildDropdown(select);
-                events(select);
-            }, 1)
+            buildDropdown(select);
+            events(select);
 
 
             if (select.val() !== "") {
