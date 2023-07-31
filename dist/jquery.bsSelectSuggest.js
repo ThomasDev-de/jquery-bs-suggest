@@ -214,7 +214,6 @@
         });
     }
 
-
     $.fn.suggest = function (options, params) {
 
         if (!$(this).length === 0) {
@@ -289,6 +288,6 @@
         }
 
         // return the reference for chaining
-        return select;
+        return $(this);
     };
 }(jQuery));
