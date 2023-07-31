@@ -130,8 +130,8 @@
 
         // let method = options && typeof options === "string" ? options : null;
 
-        if (select.data('init') !== true) {
-            events();
+        if (! select.data('init')) {
+            events(select);
             select.data('init', true);
             if (select.val() !== "") {
                 getData(false, select.val());
@@ -142,7 +142,10 @@
             statusBox.html(text);
         }
 
-        function events() {
+        function events(select) {
+            const wrapper = getWrapper(select),
+                statusBox = wrapper.find('.suggest-status-text'),
+                searchBox = wrapper.find('[type="search"]');
 
             searchBox.on('keyup', function () {
                 let settings = select.data('settings');
