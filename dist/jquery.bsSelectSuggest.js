@@ -94,7 +94,7 @@
 
     function setDropdownText(html, select) {
         let settings = select.data('settings');
-        getWrapper(select).find('.js-selected-text').html('<span class="px-2 py-1 border border-dark rounded d-inline">' +
+        getWrapper(select).find('.js-selected-text').html('<span class="px-2 py-1 d-inline">' +
             (html || settings.emptyText) + '</span>');
     }
 
