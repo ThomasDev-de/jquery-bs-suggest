@@ -18,9 +18,11 @@
             return params;
         }
     };
+
     function generateId() {
         return "webcito_suggestion_" + $('[id^="webcito_suggestion_"]').length;
     }
+
     function getTemplate(select) {
         let settings = select.data('settings');
         let darkClass = settings.darkMenu ? 'dropdown-menu-dark' : '';
@@ -46,9 +48,11 @@
                   </div>
             </div>`;
     }
+
     function getWrapper(select) {
         return select.closest('[id^="webcito_suggestion_"]');
     }
+
     function buildDropdown(select) {
 
         let w = getWrapper(select);
@@ -71,10 +75,12 @@
         return wrap;
 
     }
+
     function refresh(select) {
         destroy(select, false);
         select.suggest(select.data('settings') || {});
     }
+
     function destroy(select, show) {
         let valBefore = select.val();
         let wrapper = getWrapper(select);
@@ -85,6 +91,7 @@
         if (show)
             select.show();
     }
+
     function setDropdownText(html, select) {
         let settings = select.data('settings');
         getWrapper(select).find('.js-selected-text').html('<span class="px-2 py-1 d-inline">' +
@@ -92,176 +99,185 @@
     }
 
     $.fn.suggest = function (options, params) {
-        return $(this).each(function (i,e) {
-            const select = $(e),
-                isOptionsSet = typeof options === "object" || typeof options === "undefined",
-                isCallMethod = typeof options === "string";
-            let xhr = null;
-            let typingTimer;
 
-            if (isOptionsSet) {
-                let settings = $.extend(true, DEFAULTS, options || {});
-                select.data('settings', settings);
-                select.data('selected', select.val().split(settings.valueSeparator));
+        if (!$(this).length === 0) {
+            return $(this);
+        }
+
+        if ($(this).length > 1) {
+            return $(this).each(function () {
+                return $(this).suggest(options, params);
+            })
+        }
+
+        const select = $(this),
+            isOptionsSet = typeof options === "object" || typeof options === "undefined",
+            isCallMethod = typeof options === "string";
+        let xhr = null;
+        let typingTimer;
+
+        if (isOptionsSet) {
+            let settings = $.extend(true, DEFAULTS, options || {});
+            select.data('settings', settings);
+            select.data('selected', select.val().split(settings.valueSeparator));
+        }
+
+        const wrapper = buildDropdown(select);
+
+        const list = wrapper.find('.card-body'),
+            statusBox = wrapper.find('.suggest-status-text'),
+            searchBox = wrapper.find('[type="search"]');
+
+        // let method = options && typeof options === "string" ? options : null;
+
+        if (select.data('init') !== true) {
+            events();
+            select.data('init', true);
+            if (select.val() !== "") {
+                getData(false, select.val());
             }
+        }
 
-            const wrapper = buildDropdown(select);
+        function setStatus(text) {
+            statusBox.html(text);
+        }
 
-            const list = wrapper.find('.card-body'),
-                statusBox = wrapper.find('.suggest-status-text'),
-                searchBox = wrapper.find('[type="search"]');
+        function events() {
 
-            // let method = options && typeof options === "string" ? options : null;
-
-            if (select.data('init') !== true) {
-                events();
-                select.data('init', true);
-                if (select.val() !== "") {
-                    getData(false, select.val());
-                }
-            }
-
-            function setStatus(text) {
-                statusBox.html(text);
-            }
-
-            function events() {
-
-                searchBox.on('keyup', function () {
-                    let settings = select.data('settings');
-                    clearTimeout(typingTimer);
-                    typingTimer = setTimeout(doneTyping, settings.typingInterval);
-                });
-
-                searchBox.on('keydown', function () {
-                    let settings = select.data('settings');
-                    clearTimeout(typingTimer);
-                    setStatus(settings.typingText);
-                });
-
-                wrapper
-                    .on('click', 'a.dropdown-item', function (e) {
-                        e.preventDefault();
-                        let a = $(e.currentTarget);
-                        let item = a.data('item');
-                        select.trigger('change', [item.id, item.text]);
-
-                        let value = item.id;
-                        select.val(value);
-                        setDropdownText(a.html(), select);
-                    })
-                    .on('click', '.js-webcito-reset', function (e) {
-                        e.preventDefault();
-                        select.val(null);
-                        searchBox.val(null);
-                        list.empty();
-                        setDropdownText(null, select);
-                        let settings = select.data('settings');
-                        setStatus(settings.waitingForTypingText);
-                    })
-                    .on('hidden.bs.dropdown', '.dropdown', function () {
-                        list.empty();
-                        searchBox.val(null);
-                        let settings = select.data('settings');
-                        setStatus(settings.waitingForTypingText);
-                    })
-                    .on('shown.bs.dropdown', '.dropdown', function () {
-                        searchBox.focus();
-                    });
-            }
-
-            function doneTyping() {
+            searchBox.on('keyup', function () {
                 let settings = select.data('settings');
-                setStatus(settings.loadingText);
-                getData()
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(doneTyping, settings.typingInterval);
+            });
+
+            searchBox.on('keydown', function () {
+                let settings = select.data('settings');
+                clearTimeout(typingTimer);
+                setStatus(settings.typingText);
+            });
+
+            wrapper
+                .on('click', 'a.dropdown-item', function (e) {
+                    e.preventDefault();
+                    let a = $(e.currentTarget);
+                    let item = a.data('item');
+                    select.trigger('change', [item.id, item.text]);
+
+                    let value = item.id;
+                    select.val(value);
+                    setDropdownText(a.html(), select);
+                })
+                .on('click', '.js-webcito-reset', function (e) {
+                    e.preventDefault();
+                    select.val(null);
+                    searchBox.val(null);
+                    list.empty();
+                    setDropdownText(null, select);
+                    let settings = select.data('settings');
+                    setStatus(settings.waitingForTypingText);
+                })
+                .on('hidden.bs.dropdown', '.dropdown', function () {
+                    list.empty();
+                    searchBox.val(null);
+                    let settings = select.data('settings');
+                    setStatus(settings.waitingForTypingText);
+                })
+                .on('shown.bs.dropdown', '.dropdown', function () {
+                    searchBox.focus();
+                });
+        }
+
+        function doneTyping() {
+            let settings = select.data('settings');
+            setStatus(settings.loadingText);
+            getData()
+        }
+
+        function getData(search = true, val, select) {
+            let settings = select.data('settings');
+            if (xhr !== null) {
+                xhr.abort()
+                xhr = null;
             }
 
-            function getData(search = true, val, select) {
-                let settings = select.data('settings');
-                if (xhr !== null) {
-                    xhr.abort()
-                    xhr = null;
-                }
+            let data = search ? {q: searchBox.val() || null, limit: settings.limit} : {value: val};
+            let query = settings.queryParams(data);
+            xhr = $.get(select.data('bsTarget'), query, function (res) {
+                if (res.error) {
+                    select.trigger('error', [res.error]);
+                } else {
+                    if (search) {
+                        list.empty();
+                        res.items.forEach(item => {
+                            let div = $('<div>', {
+                                html: `<a class="dropdown-item" href="#">${item.text}</a>`,
+                            }).appendTo(list);
+                            div.find('a').data('item', item);
+                        });
+                        if (res.items.length !== res.total) {
+                            setStatus(`showing ${res.items.length} / ${res.total} results`);
+                        } else {
+                            setStatus('results: ' + res.items.length);
+                        }
 
-                let data = search ? {q: searchBox.val() || null, limit: settings.limit} : {value: val};
-                let query = settings.queryParams(data);
-                xhr = $.get(select.data('bsTarget'), query, function (res) {
-                    if (res.error) {
-                        select.trigger('error', [res.error]);
                     } else {
-                        if (search) {
-                            list.empty();
-                            res.items.forEach(item => {
-                                let div = $('<div>', {
-                                    html: `<a class="dropdown-item" href="#">${item.text}</a>`,
-                                }).appendTo(list);
-                                div.find('a').data('item', item);
-                            });
-                            if (res.items.length !== res.total) {
-                                setStatus(`showing ${res.items.length} / ${res.total} results`);
-                            } else {
-                                setStatus('results: ' + res.items.length);
-                            }
-
-                        } else {
-                            select.val(res.id);
-                            setDropdownText(res.text, select);
-                        }
-                    }
-                });
-            }
-
-
-            function reset(select) {
-                let settings = select.data('settings');
-                select.val(null);
-                searchBox.val(null);
-                list.empty();
-                // setDropdownText();
-                setStatus(settings.waitingForTypingText);
-            }
-
-
-            if (isCallMethod) {
-                switch (options.toLowerCase()) {
-                    case 'val':
-                        reset(select);
-                        let value = params;
-                        let isEmpty = !value || value === '';
-                        if (isEmpty) {
-                            value = [];
-                        } else {
-                            let isArray = Array.isArray(value);
-                            if (isArray) {
-                                if (typeof value[0] === 'object') {
-                                    // set values directly
-                                } else {
-
-                                }
-                            }
-                        }
-
-                        getData(false, params, select);
-                        break;
-                    case 'destroy':
-                        destroy(select, true);
-                        break;
-                    case 'refresh':
-                        refresh(select);
-                        break;
-                    case 'updateoptions': {
-                        select.data('settings', $.extend(true, select.data('settings'), params || {}, DEFAULTS));
-                        if (debug) {
-                            console.log(select.data('settings'));
-                        }
-                        refresh(select);
-                        break;
+                        select.val(res.id);
+                        setDropdownText(res.text, select);
                     }
                 }
-            }
+            });
+        }
 
-            // return the reference for chaining
-            return select;
-        });
+
+        function reset(select) {
+            let settings = select.data('settings');
+            select.val(null);
+            searchBox.val(null);
+            list.empty();
+            // setDropdownText();
+            setStatus(settings.waitingForTypingText);
+        }
+
+
+        if (isCallMethod) {
+            switch (options.toLowerCase()) {
+                case 'val':
+                    reset(select);
+                    let value = params;
+                    let isEmpty = !value || value === '';
+                    if (isEmpty) {
+                        value = [];
+                    } else {
+                        let isArray = Array.isArray(value);
+                        if (isArray) {
+                            if (typeof value[0] === 'object') {
+                                // set values directly
+                            } else {
+
+                            }
+                        }
+                    }
+
+                    getData(false, params, select);
+                    break;
+                case 'destroy':
+                    destroy(select, true);
+                    break;
+                case 'refresh':
+                    refresh(select);
+                    break;
+                case 'updateoptions': {
+                    select.data('settings', $.extend(true, select.data('settings'), params || {}, DEFAULTS));
+                    if (debug) {
+                        console.log(select.data('settings'));
+                    }
+                    refresh(select);
+                    break;
+                }
+            }
+        }
+
+        // return the reference for chaining
+        return select;
     };
 }(jQuery));
