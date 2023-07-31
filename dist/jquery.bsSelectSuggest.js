@@ -69,11 +69,11 @@
         select.hide();
         select.appendTo(wrap);
         $(getTemplate(select)).insertBefore(select);
-        setTimeout(function () {
+        // setTimeout(function () {
             if (wrap.find('.js-selected-text').text() === "") {
                 setDropdownText(null, select);
             }
-        }, 40);
+        // }, 40);
         return wrap;
 
     }
