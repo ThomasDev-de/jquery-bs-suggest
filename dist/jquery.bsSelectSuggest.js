@@ -177,7 +177,6 @@
 
     function getData(select, search = true, val) {
         let settings = select.data('settings');
-        console.log(settings);
         let wrapper = getWrapper(select);
         const searchBox = wrapper.find('[type="search"]');
         const list = wrapper.find('.card-body');
@@ -228,36 +227,35 @@
             })
         }
 
-        const select = $(this),
-            isOptionsSet = typeof options === "object" || typeof options === "undefined",
-            isCallMethod = typeof options === "string";
-
-
+        const select = $(this);
+        const isOptionsSet = typeof options === "object" || typeof options === "undefined";
+        const isCallMethod = typeof options === "string";
 
         if (!select.data('init-suggest')) {
+            select.data('init-suggest', true);
 
             if (isOptionsSet) {
-                let settings = $.extend(true, DEFAULTS, options || {});
+                const settings = $.extend(true, DEFAULTS, options || {});
                 select.data('settings', settings);
                 select.data('selected', select.val().split(settings.valueSeparator));
             }
-            setTimeout(function(){
+
+            setTimeout(function () {
                 buildDropdown(select);
                 events(select);
-            },1)
-
+            }, 1)
 
 
             if (select.val() !== "") {
-                getData(select,false, select.val());
+                getData(select, false, select.val());
             }
-            select.data('init-suggest', true);
         }
 
 
         if (isCallMethod) {
             switch (options.toLowerCase()) {
                 case 'val':
+                    console.log(select.data())
                     reset(select);
                     let value = params;
                     let isEmpty = !value || value === '';
@@ -274,7 +272,7 @@
                         }
                     }
 
-                    getData(select,false, params);
+                    getData(select, false, params);
                     break;
                 case 'destroy':
                     destroy(select, true);
