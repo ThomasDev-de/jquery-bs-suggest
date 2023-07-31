@@ -1,3 +1,5 @@
+// noinspection DuplicatedCode
+
 /** global $ */
 (function ($) {
     const debug = false;
@@ -219,20 +221,21 @@
 
     $.fn.suggest = function (options, params) {
 
-        if (!$(this).length === 0) {
-            return $(this);
+        if ($(this).length === 0) {
+            return $(this); // cancel
         }
 
         if ($(this).length > 1) {
             return $(this).each(function () {
-                return $(this).suggest(options, params);
+                return $(this).suggest(options, params); // return an instance of your own in each case
             })
         }
 
-        const select = $(this);
+        const select = $(this); // The single instance
         const isOptionsSet = typeof options === "object" || typeof options === "undefined";
         const isCallMethod = typeof options === "string";
 
+        // init
         if (select.data('initSuggest') !== true) {
             select.data('initSuggest', true);
 
@@ -245,32 +248,16 @@
             buildDropdown(select);
             events(select);
 
-
             if (select.val() !== "") {
                 getData(select, false, select.val());
             }
         }
 
-
+        // call methods
         if (isCallMethod) {
             switch (options.toLowerCase()) {
                 case 'val':
                     reset(select);
-                    // let value = params;
-                    // let isEmpty = !value || value === '';
-                    // if (isEmpty) {
-                    //     value = [];
-                    // } else {
-                    //     let isArray = Array.isArray(value);
-                    //     if (isArray) {
-                    //         if (typeof value[0] === 'object') {
-                    //             // set values directly
-                    //         } else {
-                    //
-                    //         }
-                    //     }
-                    // }
-
                     getData(select, false, params);
                     break;
                 case 'destroy':
