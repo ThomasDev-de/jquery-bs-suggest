@@ -22,7 +22,7 @@
     };
 
     function generateId() {
-        return "webcito_suggestion_" + $('[id^="webcito_suggestion_"]').length;
+        return "webcito_suggestion_" + getGUID();
     }
 
     function getTemplate(select) {
@@ -71,7 +71,7 @@
         $(getTemplate(select)).insertBefore(select);
         // setTimeout(function () {
             if (wrap.find('.js-selected-text').text() === "") {
-                setDropdownText(null, select);
+                setDropdownText(select,null );
             }
         // }, 40);
         return wrap;
@@ -79,8 +79,9 @@
     }
 
     function refresh(select) {
+        const settings = select.data('settings');
         destroy(select, false);
-        select.suggest(select.data('settings') || {});
+        select.suggest(settings);
     }
 
     function destroy(select, show) {
@@ -89,15 +90,25 @@
         select.insertBefore(wrapper);
         wrapper.remove();
         select.val(valBefore);
-        select.data('init', false)
+        select.removeClass('js-suggest');
+        select.removeData('settings');
+        select.removeData('selected');
+        select.removeData('initSuggest');
         if (show)
             select.show();
     }
 
-    function setDropdownText(html, select) {
+    function setDropdownText(select, html) {
         let settings = select.data('settings');
+        // alert(select.prop('name'));
         getWrapper(select).find('.js-selected-text').html('<span class="px-2 py-1 d-inline">' +
             (html || settings.emptyText) + '</span>');
+    }
+
+    function getGUID() {
+        return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+        );
     }
 
     function reset(select) {
@@ -118,10 +129,15 @@
         statusBox.html(text);
     }
 
+    function getSettings(select){
+        return select.data('settings') || {};
+    }
+
     function events(select) {
         const wrapper = getWrapper(select);
+
         const searchBox = wrapper.find('[type="search"]');
-        const settings = select.data('settings');
+        const settings = getSettings(select);
         let typingTimer = select.data('typingTimer') || null;
 
         const list = wrapper.find('.card-body');
@@ -139,7 +155,7 @@
         });
 
         searchBox.on('keydown', function () {
-            let settings = select.data('settings');
+            let settings = getSettings(select);
             if (typingTimer !== null) {
                 clearTimeout(typingTimer);
             }
@@ -156,21 +172,22 @@
 
                 let value = item.id;
                 select.val(value);
-                setDropdownText(a.html(), select);
+                setDropdownText(select, a.html());
             })
             .on('click', '.js-webcito-reset', function (e) {
                 e.preventDefault();
+                // reset(select);
                 select.val(null);
                 searchBox.val(null);
                 list.empty();
-                setDropdownText(null, select);
+                setDropdownText(select, null);
                 let settings = select.data('settings');
                 setStatus(select, settings.waitingForTypingText);
             })
             .on('hidden.bs.dropdown', '.dropdown', function () {
                 list.empty();
                 searchBox.val(null);
-                let settings = select.data('settings');
+                let settings = getSettings(select);
                 setStatus(select, settings.waitingForTypingText);
             })
             .on('shown.bs.dropdown', '.dropdown', function () {
@@ -179,7 +196,7 @@
     }
 
     function getData(select, search = true, val) {
-        let settings = select.data('settings');
+        let settings = getSettings(select);
         let wrapper = getWrapper(select);
         const searchBox = wrapper.find('[type="search"]');
         const list = wrapper.find('.card-body');
@@ -212,7 +229,7 @@
 
                 } else {
                     select.val(res.id);
-                    setDropdownText(res.text, select);
+                    setDropdownText(select, res.text);
                 }
             }
         });
@@ -221,7 +238,7 @@
 
     $.fn.suggest = function (options, params) {
 
-        if ($(this).length === 0) {
+        if (! $(this).length) {
             return $(this); // cancel
         }
 
@@ -238,8 +255,9 @@
         // init
         if (select.data('initSuggest') !== true) {
             select.data('initSuggest', true);
+            select.addClass('js-suggest');
 
-            if (isOptionsSet) {
+            if (isOptionsSet || ! select.data('settings')) {
                 const settings = $.extend(true, DEFAULTS, options || {});
                 select.data('settings', settings);
                 select.data('selected', select.val().split(settings.valueSeparator));
@@ -267,10 +285,7 @@
                     refresh(select);
                     break;
                 case 'updateoptions': {
-                    select.data('settings', $.extend(true, select.data('settings'), params || {}, DEFAULTS));
-                    if (debug) {
-                        console.log(select.data('settings'));
-                    }
+                    select.data('settings', $.extend(true, getSettings(select), params || {}, DEFAULTS));
                     refresh(select);
                     break;
                 }
@@ -278,6 +293,6 @@
         }
 
         // return the reference for chaining
-        return $(this);
+        return select;
     };
 }(jQuery));

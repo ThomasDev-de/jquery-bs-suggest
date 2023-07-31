@@ -9,27 +9,40 @@
 <body class="bg-dark h-100">
 <div class="container bg-white py-5 h-100">
     <h1 class="border-bottom pb-2">jQuery-bs-suggest</h1>
-
     <form autocomplete="off">
         <div class="d-flex">
+            <div class="d-flex flex-column">
+                <div class="p-3">
+                    <label class="form-label" for="input_select_countries">Which European country would you like to
+                        travel to?</label>
+                    <input id="input_select_countries" class="form-control" type="text" name="country_id"
+                           data-bs-toggle="suggest" autocomplete="false"
+                           data-bs-target="./actions.php">
+                </div>
+                <div class="p-3">
+                    <h5>Playground</h5>
+                    <div class="form-floating mb-3">
+                        <select class="form-select border-dark" id="selectCountries">
+
+                        </select>
+                        <label for="selectCountries">method val</label>
+                    </div>
+                    <button type="button" class="btn btn-outline-dark" id="btn_method_destroy">destroy</button>
+                    <button type="button" class="btn btn-outline-dark" id="btn_method_init">init</button>
+                    <button type="button" class="btn btn-outline-dark" id="btn_method_refresh">refresh</button>
+                    <button type="button" class="btn btn-outline-dark" id="btn_method_updateOptions">updateOptions
+                    </button>
+                </div>
+            </div>
+
             <div class="p-3">
-                <label class="form-label" for="input_select_countries">Which European country would you like to travel to?</label>
-                <input id="input_select_countries" class="form-control" type="text" name="country_id" data-bs-toggle="suggest" autocomplete="false"
+                <label class="form-label" for="input_select_countries_2">Which European country would you like to travel
+                    to?</label>
+                <input id="input_select_countries_2" class="form-control" type="text" name="country_id_2"
+                       data-bs-toggle="suggest" autocomplete="false"
                        data-bs-target="./actions.php">
             </div>
-            <div class="p-3">
-                <h5>Playground</h5>
-                <div class="form-floating mb-3">
-                    <select class="form-select border-dark" id="selectCountries">
 
-                    </select>
-                    <label for="selectCountries">method val</label>
-                </div>
-                <button type="button" class="btn btn-outline-dark" id="btn_method_destroy">destroy</button>
-                <button type="button" class="btn btn-outline-dark" id="btn_method_init">init</button>
-                <button type="button" class="btn btn-outline-dark" id="btn_method_refresh">refresh</button>
-                <button type="button" class="btn btn-outline-dark" id="btn_method_updateOptions">updateOptions</button>
-            </div>
         </div>
         <div class="p-3">
             <button type="submit" class="btn btn-success">submit</button>
@@ -44,7 +57,8 @@
         $.fn.pageDemo = function () {
             let body = $(this),
                 suggestions = {
-                    countries: '#input_select_countries'
+                    countries: '#input_select_countries',
+                    countries2: '#input_select_countries_2',
                 },
                 selects = {
                     countries: '#selectCountries'
@@ -71,34 +85,47 @@
 
             function events() {
                 body
-                    .on('change', suggestions.countries, function(e, id){
-                           $(selects.countries).val(id)
+                    .on('change', suggestions.countries, function (e, id) {
+                        $(selects.countries).val(id)
                     })
                     .on('submit', 'form', function (e) {
                         e.preventDefault();
                         alert($('form').serialize());
                     })
-                    .on('click', buttons.destroy, function(){
+                    .on('click', buttons.destroy, function () {
+                        alert($(suggestions.countries).length);
                         $(suggestions.countries).suggest('destroy');
                     })
-                    .on('click', buttons.update, function(){
+                    .on('click', buttons.update, function () {
                         $(suggestions.countries).suggest('updateOptions', {
                             btnClass: 'btn btn-danger btn-lg',
-                            darkMenu:false
+                            darkMenu: false
                         });
                     })
-                    .on('click', buttons.refresh, function(){
+                    .on('click', buttons.refresh, function () {
                         $(suggestions.countries).suggest('refresh');
                     })
-                    .on('click', buttons.init, function(){
-                        initSuggestions();
+                    .on('click', buttons.init, function () {
+                        $(suggestions.countries).suggest({
+                            limit: 20,
+                            width: '100%',
+                            typingInterval: 400,
+                            darkMenu: true,
+                            btnWidth: '400px',
+                            btnClass: 'btn btn-outline-dark rounded-0',
+                            searchPlaceholderText: "Search by country",
+                            emptyText: 'Please choose a country',
+                            waitingForTypingText: 'Waiting for typing',
+                            typingText: 'typing..',
+                            loadingText: 'Loading..',
+                        });
                     })
                     .on('change', selects.countries, function (e) {
                         $(suggestions.countries).suggest('val', $(this).val());
                     })
             }
 
-            function initSuggestions(){
+            function initSuggestions() {
                 $(suggestions.countries).suggest({
                     limit: 20,
                     width: '100%',
@@ -112,6 +139,20 @@
                     typingText: 'typing..',
                     loadingText: 'Loading..',
                 });
+
+                $(suggestions.countries2).suggest({
+                    limit: 10,
+                    width: '100%',
+                    typingInterval: 400,
+                    darkMenu: true,
+                    btnWidth: '400px',
+                    btnClass: 'btn btn-outline-dark rounded-0',
+                    searchPlaceholderText: "Search by country 2",
+                    emptyText: 'Please choose a country 2',
+                    waitingForTypingText: 'Waiting for typing 2',
+                    typingText: 'typing.. 2',
+                    loadingText: 'Loading.. 2',
+                });
             }
 
             function init() {
@@ -124,8 +165,6 @@
             return init();
         }
         $('body').pageDemo();
-
-
 
 
     }(jQuery));
