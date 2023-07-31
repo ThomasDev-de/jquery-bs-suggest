@@ -122,6 +122,7 @@
         const wrapper = getWrapper(select);
         const searchBox = wrapper.find('[type="search"]');
         const settings = select.data('settings');
+        console.log(settings);
         const list = wrapper.find('.card-body');
 
         searchBox.on('keyup', function () {
