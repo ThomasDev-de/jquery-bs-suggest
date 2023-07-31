@@ -1,5 +1,6 @@
 /** global $ */
 (function ($) {
+    const debug = false;
     const DEFAULTS = {
         limit: 10,
         typingInterval: 400,
@@ -13,20 +14,17 @@
         waitingForTypingText: 'Waiting for typing',
         typingText: 'typing..',
         loadingText: 'Loading..',
-        queryParams: function(params){}
+        queryParams: function (params) {
+            return params;
+        }
     };
-
-
     function generateId() {
         return "webcito_suggestion_" + $('[id^="webcito_suggestion_"]').length;
     }
-
     function getTemplate(select) {
         let settings = select.data('settings');
         let darkClass = settings.darkMenu ? 'dropdown-menu-dark' : '';
         let closeBtnClass = settings.darkMenu ? 'btn-close-white' : '';
-
-
         return `
             <div class="dropdown">
                   <div class="${settings.btnClass} d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
@@ -48,11 +46,9 @@
                   </div>
             </div>`;
     }
-
     function getWrapper(select) {
         return select.closest('[id^="webcito_suggestion_"]');
     }
-
     function buildDropdown(select) {
 
         let w = getWrapper(select);
@@ -75,12 +71,10 @@
         return wrap;
 
     }
-
     function refresh(select) {
         destroy(select, false);
         select.suggest(select.data('settings') || {});
     }
-
     function destroy(select, show) {
         let valBefore = select.val();
         let wrapper = getWrapper(select);
@@ -91,7 +85,6 @@
         if (show)
             select.show();
     }
-
     function setDropdownText(html, select) {
         let settings = select.data('settings');
         getWrapper(select).find('.js-selected-text').html('<span class="px-2 py-1 d-inline">' +
@@ -105,7 +98,6 @@
                 isCallMethod = typeof options === "string";
             let xhr = null;
             let typingTimer;
-            let selected = [];
 
             if (isOptionsSet) {
                 let settings = $.extend(true, DEFAULTS, options || {});
@@ -192,7 +184,8 @@
                 }
 
                 let data = search ? {q: searchBox.val() || null, limit: settings.limit} : {value: val};
-                xhr = $.get(select.data('bsTarget'), data, function (res) {
+                let query = settings.queryParams(data);
+                xhr = $.get(select.data('bsTarget'), query, function (res) {
                     if (res.error) {
                         select.trigger('error', [res.error]);
                     } else {
@@ -242,8 +235,7 @@
                             if (isArray) {
                                 if (typeof value[0] === 'object') {
                                     // set values directly
-                                }
-                                else {
+                                } else {
 
                                 }
                             }
@@ -259,7 +251,9 @@
                         break;
                     case 'updateoptions': {
                         select.data('settings', $.extend(true, select.data('settings'), params || {}, DEFAULTS));
-                        console.log(select.data('settings'));
+                        if (debug) {
+                            console.log(select.data('settings'));
+                        }
                         refresh(select);
                         break;
                     }

@@ -52,6 +52,7 @@ let options = {
     "btnWidth": 'fit-content', // Corresponds to the CSS property width
     "btnClass": "btn btn-outline-secondary", // dropdown button class
     "emptyText": "Please choose..", // placeholder for no selection
+    "searchPlaceholderText": "Search", // placeholder for search input
     "waitingForTypingText": "Waiting for typing", // Status
     "typingText": "typing..", // Status
     "loadingText": "Loading..", // Status
