@@ -253,22 +253,21 @@
         if (isCallMethod) {
             switch (options.toLowerCase()) {
                 case 'val':
-                    console.log(select.data())
                     reset(select);
-                    let value = params;
-                    let isEmpty = !value || value === '';
-                    if (isEmpty) {
-                        value = [];
-                    } else {
-                        let isArray = Array.isArray(value);
-                        if (isArray) {
-                            if (typeof value[0] === 'object') {
-                                // set values directly
-                            } else {
-
-                            }
-                        }
-                    }
+                    // let value = params;
+                    // let isEmpty = !value || value === '';
+                    // if (isEmpty) {
+                    //     value = [];
+                    // } else {
+                    //     let isArray = Array.isArray(value);
+                    //     if (isArray) {
+                    //         if (typeof value[0] === 'object') {
+                    //             // set values directly
+                    //         } else {
+                    //
+                    //         }
+                    //     }
+                    // }
 
                     getData(select, false, params);
                     break;
