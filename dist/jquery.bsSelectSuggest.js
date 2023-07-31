@@ -232,13 +232,16 @@
             isOptionsSet = typeof options === "object" || typeof options === "undefined",
             isCallMethod = typeof options === "string";
 
-        if (isOptionsSet) {
-            let settings = $.extend(true, DEFAULTS, options || {});
-            select.data('settings', settings);
-            select.data('selected', select.val().split(settings.valueSeparator));
-        }
+
 
         if (!select.data('init')) {
+
+            if (isOptionsSet) {
+                let settings = $.extend(true, DEFAULTS, options || {});
+                select.data('settings', settings);
+                select.data('selected', select.val().split(settings.valueSeparator));
+            }
+
             buildDropdown(select);
             events(select);
             select.data('init', true);
