@@ -234,28 +234,25 @@
 
 
 
-        if (!select.data('init')) {
+        if (!select.data('init-suggest')) {
 
             if (isOptionsSet) {
                 let settings = $.extend(true, DEFAULTS, options || {});
                 select.data('settings', settings);
                 select.data('selected', select.val().split(settings.valueSeparator));
             }
+            setTimeout(function(){
+                buildDropdown(select);
+                events(select);
+            },1)
 
-            buildDropdown(select);
-            events(select);
-            select.data('init', true);
+
+
             if (select.val() !== "") {
                 getData(select,false, select.val());
             }
+            select.data('init-suggest', true);
         }
-
-
-
-
-
-
-
 
 
         if (isCallMethod) {
