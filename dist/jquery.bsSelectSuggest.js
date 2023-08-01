@@ -202,6 +202,16 @@
                     console.log('shown.bs.dropdown', '.dropdown');
                 }
                 searchBox.focus();
+            })
+            .on('show.bs.dropdown', '.dropdown', function () {
+                if (debug) {
+                    console.log('shown.bs.dropdown', '.dropdown');
+                }
+                let settings = getSettings(select);
+                if (settings.loadDataOnShow){
+                    getData(select)
+                }
+
             });
     }
 
@@ -259,7 +269,8 @@
         }
 
         const DEFAULTS = {
-            limit: 10,
+            limit: 5,
+            loadDataOnShow: true,
             typingInterval: 400,
             multiple: false,
             valueSeparator: ',',

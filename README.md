@@ -23,7 +23,7 @@ Create a Bootstrap dropdown for server suggestion.
 ### Installation
 Simply include the following script at the end of the body tag.
 ```html
-<script src="jquery.bsSelectSuggest.js"></script>
+<script src="/dist/jquery.bsSelectSuggest.js"></script>
 ```
 No further CSS needed, the current bootstrap classes are used.
 
@@ -47,6 +47,7 @@ The following options are currently implemented.
 ```js
 let options = {
     "limit": 10, // the maximum number of records
+    "loadDataOnShow": true, // Shows the first entries based on limit
     "typingInterval": 400, // The milliseconds to wait until a request starts
     "darkMenu": false, // show the dropdown in dark style
     "btnWidth": 'fit-content', // Corresponds to the CSS property width
@@ -100,7 +101,7 @@ An item consists of the attributes `id` and `text`.
 ```
 When the method `val` is called, only the parameter `value` is sent to the server   
 and only **one item object** is expected (no array).
-```js
+```
 // call method val
 $('selector').suggest('val', value);
 
@@ -170,7 +171,6 @@ try {
     exit(json_encode($return, JSON_THROW_ON_ERROR));
 } catch (JsonException $e) {
     http_response_code(500);
-    /** @noinspection PhpUnhandledExceptionInspection */
     exit(json_encode(['error' => $e->getMessage()], JSON_THROW_ON_ERROR));
 }
 

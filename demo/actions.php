@@ -35,15 +35,29 @@ try {
         $q = filter_input(INPUT_GET, 'q');
         $search = empty($q)? false : strtolower($q);
 
-        // If q was not passed or is empty, do not return any results either.
-        // Otherwise, search for matches of the search string.
-        $data = array_slice(
-            array:array_values(array_filter($countries, static function($country) use ($search){
-                return $search === false || str_contains(strtolower($country->text), $search);
-            })),
-            offset: 0,
-            length: $limit
-        );
+		if (false === $search){
+			$min = min($limit, count($countries));
+			for($i = 0; $i < $min; $i++){
+				$c = $countries[$i];
+				$data[] = [
+					'id' => $c->id,
+					'text' => $c->text,
+				];
+			}
+		}
+		else {
+			// If q was not passed or is empty, do not return any results either.
+			// Otherwise, search for matches of the search string.
+			$data = array_slice(
+				array:array_values(array_filter($countries, static function($country) use ($search){
+					return str_contains(strtolower($country->text), $search);
+				})),
+				offset: 0,
+				length: $limit
+			);
+		}
+
+
 
         // Put the result in the response
         $return['items'] = $data;
