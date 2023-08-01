@@ -120,7 +120,7 @@
                             loadingText: 'Loading..',
                         });
                     })
-                    .on('change', selects.countries, function (e) {
+                    .on('change', selects.countries, function () {
                         $(suggestions.countries).suggest('val', $(this).val());
                     })
             }
