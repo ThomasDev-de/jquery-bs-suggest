@@ -38,7 +38,7 @@
             <div class="p-3">
                 <label class="form-label" for="input_select_countries_2">Which European country would you like to travel
                     to?</label>
-                <input id="input_select_countries_2" class="form-control" type="text" name="country_id_2"
+                <input id="input_select_countries_2" class="form-control" type="text" name="country_id_2" value="2"
                        data-bs-toggle="suggest" autocomplete="false"
                        data-bs-target="./actions.php">
             </div>
@@ -93,7 +93,7 @@
                         alert($('form').serialize());
                     })
                     .on('click', buttons.destroy, function () {
-                        alert($(suggestions.countries).length);
+                        // alert($(suggestions.countries).length);
                         $(suggestions.countries).suggest('destroy');
                     })
                     .on('click', buttons.update, function () {
