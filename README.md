@@ -101,7 +101,7 @@ An item consists of the attributes `id` and `text`.
 ```
 When the method `val` is called, only the parameter `value` is sent to the server   
 and only **one item object** is expected (no array).
-```
+```json
 // call method val
 $('selector').suggest('val', value);
 
