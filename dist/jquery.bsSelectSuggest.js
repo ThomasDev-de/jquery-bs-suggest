@@ -173,6 +173,7 @@
                 select.val(value);
                 setDropdownText(select, a.html());
                 select.trigger('change', [item.id, item.text]);
+                select.trigger('change.bs.suggest', [item.id, item.text]);
             })
             .on('click', '.js-webcito-reset', function (e) {
                 e.preventDefault();
