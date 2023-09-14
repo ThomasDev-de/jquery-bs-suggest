@@ -168,12 +168,12 @@
                     console.log('click', 'a.dropdown-item');
                 }
                 let a = $(e.currentTarget);
-                let item = a.data('item');
-                select.trigger('change', [item.id, item.text]);
 
+                let item = a.data('item');
                 let value = item.id;
                 select.val(value);
                 setDropdownText(select, a.html());
+                select.trigger('change', [item.id, item.text]);
             })
             .on('click', '.js-webcito-reset', function (e) {
                 e.preventDefault();
