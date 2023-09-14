@@ -168,7 +168,6 @@
                     console.log('click', 'a.dropdown-item');
                 }
                 let a = $(e.currentTarget);
-
                 let item = a.data('item');
                 let value = item.id;
                 select.val(value);
