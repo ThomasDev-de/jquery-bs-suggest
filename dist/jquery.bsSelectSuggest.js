@@ -187,7 +187,7 @@
                 setDropdownText(select, null);
                 let settings = select.data('settings');
                 setStatus(select, settings.waitingForTypingText);
-                select.trigger('change.bs.suggest', [null, null]);
+                select.trigger('change.bs.suggest');
             })
             .on('hidden.bs.dropdown', '.dropdown', function () {
                 if (debug) {
