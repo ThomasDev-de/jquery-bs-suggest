@@ -94,7 +94,7 @@
         if (debug) {
             console.log('setDropdownText', html, wrapper, settings);
         }
-        wrapper.find('.js-selected-text').html('<span class="px-2 py-1 d-inline">' + (html || settings.emptyText) + '</span>');
+        wrapper.find('.js-selected-text').html('<span class="d-inline text-start">' + (html || settings.emptyText) + '</span>');
     }
 
     function getGUID() {
