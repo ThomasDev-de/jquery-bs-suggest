@@ -215,7 +215,7 @@
             });
     }
 
-    function getData(select, search = true, val) {
+    function getData(select, search = true, val, trigger = false) {
         let settings = getSettings(select);
         let wrapper = getWrapper(select);
         const searchBox = wrapper.find('[type="search"]');
@@ -249,6 +249,7 @@
                 } else {
                     select.val(res.id);
                     setDropdownText(select, res.text);
+                    if (trigger)
                     select.trigger('change.bs.suggest', [res.id, res.text]);
                 }
             }
@@ -256,7 +257,7 @@
         select.data('xhr', newXhr);
     }
 
-    $.fn.suggest = function (options, params) {
+    $.fn.suggest = function (options, params, params2) {
 
         if (!$(this).length) {
             return $(this); // cancel
@@ -323,7 +324,7 @@
                         console.log('method', 'val', params, select);
                     }
                     reset(select);
-                    getData(select, false, params);
+                    getData(select, false, params, params2);
                     break;
                 case 'destroy':
                     if (debug) {
