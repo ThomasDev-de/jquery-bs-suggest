@@ -250,7 +250,7 @@
                     select.val(res.id);
                     setDropdownText(select, res.text);
                     if (trigger)
-                    select.trigger('change.bs.suggest', [res.id, res.text]);
+                        select.trigger('change.bs.suggest', [res.id, res.text]);
                 }
             }
         });
@@ -324,7 +324,7 @@
                         console.log('method', 'val', params, select);
                     }
                     reset(select);
-                    getData(select, false, params, params2);
+                    getData(select, false, params, params2??false);
                     break;
                 case 'destroy':
                     if (debug) {
