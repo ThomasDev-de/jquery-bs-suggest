@@ -246,10 +246,10 @@
                     } else {
                         setStatus(select, 'results: ' + res.items.length);
                     }
-
                 } else {
                     select.val(res.id);
                     setDropdownText(select, res.text);
+                    select.trigger('change.bs.suggest', [res.id, res.text]);
                 }
             }
         });
