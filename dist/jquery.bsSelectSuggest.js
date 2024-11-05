@@ -20,7 +20,9 @@
                     <div class="card bg-transparent border-0 m-0 w-100">
                         <div class="card-header d-flex flex-nowrap align-items-center justify-content-between">
                             <input autocomplete="false" type="search" class="form-control-sm flex-fill" placeholder="${settings.searchPlaceholderText}">
-                            <button role="button" class=" btn-close ms-2 js-webcito-reset"></button>
+                            <button role="button" class="ms-2 js-webcito-reset">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
                         </div>
                          <div class="card-body p-0">
 
@@ -234,17 +236,21 @@
                 select.trigger('error', [res.error]);
             } else {
                 if (search) {
+                    const items = res.items || [];
+                    if(!items.length){
+                        console.log('suggest: no items');
+                    }
                     list.empty();
-                    res.items.forEach(item => {
+                    items.forEach(item => {
                         let div = $('<div>', {
                             html: `<a class="dropdown-item" href="#">${item.text}</a>`,
                         }).appendTo(list);
                         div.find('a').data('item', item);
                     });
-                    if (res.items.length !== res.total) {
-                        setStatus(select, `showing ${res.items.length} / ${res.total} results`);
+                    if (items.length !== res.total) {
+                        setStatus(select, `showing ${items.length} / ${res.total} results`);
                     } else {
-                        setStatus(select, 'results: ' + res.items.length);
+                        setStatus(select, 'results: ' + items.length);
                     }
                 } else {
                     select.val(res.id);
