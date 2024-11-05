@@ -243,7 +243,7 @@
                     list.empty();
                     items.forEach(item => {
                         let div = $('<div>', {
-                            html: `<a class="dropdown-item" href="#">${item.text}</a>`,
+                            html: `<a class="dropdown-item px-1" href="#">${item.text}</a>`,
                         }).appendTo(list);
                         div.find('a').data('item', item);
                     });
