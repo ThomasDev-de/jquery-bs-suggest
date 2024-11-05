@@ -13,7 +13,7 @@
         let settings = select.data('settings');
         const template = `
             <div class="dropdown">
-                  <div class="${settings.btnClass} d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
+                  <div class="${settings.btnClass} d-flex align-items-center" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
                         <span class="js-selected-text">${settings.emptyText}</span>
                   </div>
                   <div class="dropdown-menu p-0 mt-1">
@@ -299,7 +299,7 @@
             select.addClass('js-suggest');
 
             if (isOptionsSet || !select.data('settings')) {
-                const settings = $.extend(true, DEFAULTS, options || {});
+                const settings = $.extend({}, DEFAULTS, options || {});
                 select.data('settings', settings);
                 select.data('selected', select.val().split(settings.valueSeparator));
                 if (debug) {
@@ -343,7 +343,7 @@
                         console.log('method', 'updateoptions', params, select);
                     }
                     const oldSettings = getSettings(select);
-                    select.data('settings', $.extend(true, DEFAULTS, oldSettings, params || {}));
+                    select.data('settings', $.extend({}, DEFAULTS, oldSettings, params || {}));
                     refresh(select);
                     break;
                 }
