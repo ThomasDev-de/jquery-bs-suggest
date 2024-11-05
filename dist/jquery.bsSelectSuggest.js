@@ -17,17 +17,17 @@
                         <span class="js-selected-text">${settings.emptyText}</span>
                   </div>
                   <div class="dropdown-menu p-0 mt-1">
-                    <div class="card bg-transparent border-0 m-0 w-100">
-                        <div class="card-header d-flex flex-nowrap align-items-center justify-content-between">
+                    <div class="w-100">
+                        <div class="p-2 d-flex flex-nowrap align-items-center justify-content-between border-bottom">
                             <input autocomplete="false" type="search" class="form-control form-control-sm flex-fill" placeholder="${settings.searchPlaceholderText}">
                             <button role="button" class="btn btn-light ms-2 js-webcito-reset">
                                 <i class="bi bi-x-lg"></i>
                             </button>
                         </div>
-                         <div class="card-body p-0">
+                         <div class="p-2 js-suggest-results">
 
                         </div>
-                        <div class="card-footer bg-secondary text-bg-secondary p-1 fw-light fst-italic d-flex align-items-center">
+                        <div class="p-2 p-1 fw-light fst-italic d-flex align-items-center">
                             <small class="suggest-status-text">${settings.waitingForTypingText}</small>
                         </div>
                     </div>
@@ -108,7 +108,7 @@
         const settings = select.data('settings');
         const wrapper = getWrapper(select);
         const searchBox = wrapper.find('[type="search"]');
-        const list = wrapper.find('.card-body');
+        const list = wrapper.find('.js-suggest-results');
 
         select.val(null);
         searchBox.val(null);
@@ -133,7 +133,7 @@
         const settings = getSettings(select);
         let typingTimer = select.data('typingTimer') || null;
 
-        const list = wrapper.find('.card-body');
+        const list = wrapper.find('.js-suggest-results');
 
         searchBox.on('keyup', function () {
             if (debug) {
@@ -221,7 +221,7 @@
         let settings = getSettings(select);
         let wrapper = getWrapper(select);
         const searchBox = wrapper.find('[type="search"]');
-        const list = wrapper.find('.card-body');
+        const list = wrapper.find('.js-suggest-results');
         let xhr = select.data('xhr') || null;
 
         if (xhr !== null) {
