@@ -20,7 +20,7 @@
                     <div class="card bg-transparent border-0 m-0 w-100">
                         <div class="card-header d-flex flex-nowrap align-items-center justify-content-between">
                             <input autocomplete="false" type="search" class="form-control-sm flex-fill" placeholder="${settings.searchPlaceholderText}">
-                            <button role="button" class="ms-2 js-webcito-reset">
+                            <button role="button" class="btn btn-light ms-2 js-webcito-reset">
                                 <i class="bi bi-x-lg"></i>
                             </button>
                         </div>
