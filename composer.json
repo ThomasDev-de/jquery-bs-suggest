@@ -1,6 +1,6 @@
 {
   "name": "webcito/jquery-select-suggest",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "description",
   "minimum-stability": "stable",
   "license": "proprietary",
@@ -13,5 +13,9 @@
   "require": {
     "components/jquery": "^3",
     "twbs/bootstrap": ">=4.6"
+  }
+  ,
+  "require-dev": {
+    "roave/security-advisories": "dev-latest"
   }
 }
