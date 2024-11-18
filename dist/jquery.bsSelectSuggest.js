@@ -1,4 +1,4 @@
-// noinspection DuplicatedCode
+// noinspection DuplicatedCode,JSUnresolvedReference
 
 /** global $ */
 (function ($) {
@@ -8,45 +8,42 @@
         return "webcito_suggestion_" + getGUID();
     }
 
-    function getTemplate(select) {
-
-        let settings = select.data('settings');
-        const template = `
-            <div class="dropdown">
-                  <div class="${settings.btnClass} d-flex align-items-center" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
-                        <span class="js-selected-text">${settings.emptyText}</span>
-                  </div>
-                  <div class="dropdown-menu p-0 mt-1" style="min-width: 250px">
-                    <div class="w-100">
-                        <div class="p-2 d-flex flex-nowrap align-items-center justify-content-between border-bottom">
-                            <input autocomplete="false" type="search" class="form-control form-control-sm flex-fill" placeholder="${settings.searchPlaceholderText}">
-                            <button role="button" class="btn btn-light bg-transparent ms-2 js-webcito-reset">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
-                        </div>
-                         <div class="p-2 js-suggest-results">
-
-                        </div>
-                        <div class="p-2 p-1 fw-light fst-italic d-flex align-items-center">
-                            <small class="suggest-status-text">${settings.waitingForTypingText}</small>
-                        </div>
-                    </div>
-                  </div>
-            </div>`;
-
+    /**
+     * Generates and returns an HTML template string for a customizable dropdown component.
+     *
+     * @param {Object} $input - A jQuery object containing configuration settings for the template.
+     * @return {string} The generated HTML template string based on the provided settings.
+     */
+    function getTemplate($input) {
+        let settings = $input.data('settings');
+        const template = `<div class="dropdown"><div class="${settings.btnClass} d-flex align-items-center" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}"><span class="js-selected-text">${settings.emptyText}</span></div><div class="dropdown-menu p-0 mt-1" style="min-width: 250px"><div class="w-100"><div class="p-2 d-flex flex-nowrap align-items-center justify-content-between border-bottom"><input autocomplete="false" type="search" class="form-control form-control-sm flex-fill" placeholder="${settings.searchPlaceholderText}"><button role="button" class="btn btn-light bg-transparent ms-2 js-webcito-reset"><i class="bi bi-x-lg"></i></button></div><div class="p-2 js-suggest-results"></div><div class="p-2 p-1 fw-light fst-italic d-flex align-items-center"><small class="suggest-status-text">${settings.waitingForTypingText}</small></div></div></div></div>`;
         if (debug) {
             console.log(template);
         }
         return template;
     }
 
-    function getWrapper(select) {
-        return select.closest('[id^="webcito_suggestion_"]');
+    /**
+     * Finds the closest ancestor element of the provided select element
+     * that has an ID starting with "webcito_suggestion_".
+     *
+     * @param {object} $input - The select element for which to find the closest matching ancestor.
+     * @returns {object|null} - The closest ancestor element with an ID starting with "webcito_suggestion_",
+     * or null if no such element is found.
+     */
+    function getWrapper($input) {
+        return $input.closest('[id^="webcito_suggestion_"]');
     }
 
-    function buildDropdown(select) {
+    /**
+     * Builds a custom dropdown by wrapping the provided select element.
+     *
+     * @param {object} $input - The jQuery object representing the select element to be wrapped.
+     * @return {jQuery} - The jQuery object representing the newly created dropdown wrapper.
+     */
+    function buildDropdown($input) {
 
-        let w = getWrapper(select);
+        let w = getWrapper($input);
         if (w.length === 1) {
             return w;
         }
@@ -54,84 +51,159 @@
         const id = generateId();
         const wrap = $('<div>', {
             id: id
-        }).insertAfter(select);
-        select.hide();
-        select.appendTo(wrap);
-        const template = getTemplate(select);
+        }).insertAfter($input);
+        $input.hide();
+        $input.appendTo(wrap);
+        const template = getTemplate($input);
         $(template).prependTo(wrap);
         // setTimeout(function () {
         if (wrap.find('.js-selected-text').text() === "") {
-            setDropdownText(select, null);
+            setDropdownText($input, null);
         }
         // }, 40);
         return wrap;
 
     }
 
-    function refresh(select) {
-        const settings = select.data('settings');
-        destroy(select, false);
-        select.suggest(settings);
+    /**
+     * Refreshes the given selectable element by reapplying its settings.
+     *
+     * @param {Object} $input - The selectable element to be refreshed, which should contain a 'settings' data property.
+     * @return {void}
+     */
+    function refresh($input) {
+        const settings = $input.data('settings');
+        destroy($input, false);
+        $input.suggest(settings);
     }
 
-    function destroy(select, show) {
-        let valBefore = select.val();
-        let wrapper = getWrapper(select);
-        select.insertBefore(wrapper);
+    /**
+     * Destroys the suggested feature on the given select element, restoring its original state.
+     *
+     * @param {object} $input - The jQuery object representing the select element to destroy the suggested feature on.
+     * @param {boolean} show - A boolean value indicating whether to show the select element after destruction.
+     * @return {void} - This function does not return any value.
+     */
+    function destroy($input, show) {
+        let valBefore = $input.val();
+        let wrapper = getWrapper($input);
+        $input.insertBefore(wrapper);
         wrapper.remove();
-        select.val(valBefore);
-        select.removeClass('js-suggest');
-        select.removeData('settings');
-        select.removeData('selected');
-        select.removeData('initSuggest');
-        if (show)
-            select.show();
+        $input.val(valBefore);
+        $input.removeClass('js-suggest');
+        $input.removeData('settings');
+        $input.removeData('selected');
+        $input.removeData('initSuggest');
+        if (show) {
+            $input.show();
+        }
     }
 
-    function setDropdownText(select, html) {
+    /**
+     * Updates the text of a dropdown element.
+     *
+     * @param {object} $input - jQuery object representing the input element.
+     * @param {string|null} html - The HTML content to set as the dropdown text.
+     * @return {void}
+     */
+    function setDropdownText($input, html = null) {
 
-        const wrapper = getWrapper(select);
-        const settings = select.data('settings');
+        const wrapper = getWrapper($input);
+        const settings = $input.data('settings');
         if (debug) {
             console.log('setDropdownText', html, wrapper, settings);
         }
+
         wrapper.find('.js-selected-text').html('<span class="d-inline text-start">' + (html || settings.emptyText) + '</span>');
     }
 
+    /**
+     * Generates a globally unique identifier (GUID) string.
+     *
+     * @return {string} A random GUID string.
+     */
     function getGUID() {
         return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
         );
     }
 
-    function reset(select) {
-        const settings = select.data('settings');
-        const wrapper = getWrapper(select);
+    /**
+     * Resets the selected element's state by clearing its value, search box content, and suggestion list.
+     *
+     * @param {object} $input - The jQuery object representing the select element to be reset.
+     * @return {void}
+     */
+    function reset($input) {
+        const settings = $input.data('settings');
+        const wrapper = getWrapper($input);
         const searchBox = wrapper.find('[type="search"]');
         const list = wrapper.find('.js-suggest-results');
 
-        select.val(null);
+        $input.val(null);
         searchBox.val(null);
         list.empty();
-        setStatus(select, settings.waitingForTypingText);
+        setStatus($input, settings.waitingForTypingText);
     }
 
-    function setStatus(select, text) {
-        const wrapper = getWrapper(select);
+    /**
+     * Updates the status text of a given select element.
+     *
+     * @param {object} $input - The select element whose status needs to be updated.
+     * @param {string} text - The text to be set as the status.
+     * @return {void}
+     */
+    function setStatus($input, text) {
+        const wrapper = getWrapper($input);
         const statusBox = wrapper.find('.suggest-status-text');
         statusBox.html(text);
     }
 
-    function getSettings(select) {
-        return select.data('settings') || {};
+    /**
+     * Retrieves the settings associated with a given selection.
+     *
+     * @param {object} $input - The selected element from which to retrieve the settings.
+     * @return {object} The settings object, or an empty object if no settings are found.
+     */
+    function getSettings($input) {
+        return $input.data('settings') || {};
     }
 
-    function events(select) {
-        const wrapper = getWrapper(select);
+    /**
+     *
+     * Triggers the specified event on the given input element.
+     *
+     * @param {object} $input - The select element to trigger the event on.
+     * @param {string} eventName - The name of the event to trigger.
+     * @param {array} addParams - Additional trigger parameters.
+     */
+    function trigger($input, eventName, addParams = []) {
+        let params = [];
+        if (eventName !== 'any.bs.select') {
+            trigger($input, 'any.bs.select');
+            if (addParams.length) {
+                addParams.forEach(p => {
+                    params.push(p);
+                });
+            }
+            $input.trigger(eventName, params);
+        } else {
+            $input.trigger(eventName);
+        }
+    }
+
+    /**
+     * Attaches event listeners for a dropdown suggestion component.
+     *
+     * @param {object} $input - The jQuery object representing the input.
+     * @return {void} This function does not return a value.
+     */
+    function events($input) {
+        const wrapper = getWrapper($input);
 
         const searchBox = wrapper.find('[type="search"]');
-        const settings = getSettings(select);
-        let typingTimer = select.data('typingTimer') || null;
+        const settings = getSettings($input);
+        let typingTimer = $input.data('typingTimer') || null;
 
         const list = wrapper.find('.js-suggest-results');
 
@@ -144,22 +216,24 @@
             }
 
             typingTimer = setTimeout(function () {
-                setStatus(select, settings.loadingText);
-                getData(select);
+                setStatus($input, settings.loadingText);
+                getData($input).then(() => {
+
+                });
             }, settings.typingInterval);
-            select.data('typingTimer', typingTimer);
+            $input.data('typingTimer', typingTimer);
         });
 
         searchBox.on('keydown', function () {
             if (debug) {
                 console.log('keydown');
             }
-            let settings = getSettings(select);
+            let settings = getSettings($input);
             if (typingTimer !== null) {
                 clearTimeout(typingTimer);
             }
-            select.data('typingTimer', typingTimer);
-            setStatus(select, settings.typingText);
+            $input.data('typingTimer', typingTimer);
+            setStatus($input, settings.typingText);
         });
 
         wrapper
@@ -171,10 +245,9 @@
                 let a = $(e.currentTarget);
                 let item = a.data('item');
                 let value = item.id;
-                select.val(value);
-                setDropdownText(select, a.html());
-                select.trigger('change', [item.id, item.text]);
-                select.trigger('change.bs.suggest', [item.id, item.text]);
+                $input.val(value);
+                setDropdownText($input, a.html());
+                trigger($input, 'change.bs.suggest', [item.id, item.text]);
             })
             .on('click', '.js-webcito-reset', function (e) {
                 e.preventDefault();
@@ -182,13 +255,13 @@
                     console.log('click', '.js-webcito-reset');
                 }
                 // reset(select);
-                select.val(null);
+                $input.val(null);
                 searchBox.val(null);
                 list.empty();
-                setDropdownText(select, null);
-                let settings = select.data('settings');
-                setStatus(select, settings.waitingForTypingText);
-                select.trigger('change.bs.suggest');
+                setDropdownText($input, null);
+                let settings = $input.data('settings');
+                setStatus($input, settings.waitingForTypingText);
+                trigger($input, 'change.bs.suggest', [null, null]);
             })
             .on('hidden.bs.dropdown', '.dropdown', function () {
                 if (debug) {
@@ -196,8 +269,8 @@
                 }
                 list.empty();
                 searchBox.val(null);
-                let settings = getSettings(select);
-                setStatus(select, settings.waitingForTypingText);
+                let settings = getSettings($input);
+                setStatus($input, settings.waitingForTypingText);
             })
             .on('shown.bs.dropdown', '.dropdown', function () {
                 if (debug) {
@@ -209,58 +282,98 @@
                 if (debug) {
                     console.log('shown.bs.dropdown', '.dropdown');
                 }
-                let settings = getSettings(select);
-                if (settings.loadDataOnShow){
-                    getData(select)
+                let settings = getSettings($input);
+                if (settings.loadDataOnShow) {
+                    getData($input).then(() => {
+                    });
                 }
-
             });
     }
 
-    function getData(select, search = true, val, trigger = false) {
-        let settings = getSettings(select);
-        let wrapper = getWrapper(select);
+    /**
+     * Checks whether the provided value is considered empty.
+     *
+     * @param {any} value - The value to be checked for emptiness.
+     * @return {boolean} - Returns true if the value is null, undefined, an empty array, or an empty string
+     * (including strings with only spaces).
+     * Returns false otherwise.
+     */
+    function isValueEmpty(value) {
+        if (value === null || value === undefined) {
+            return true; // Null or undefined
+        }
+        if (Array.isArray(value)) {
+            return value.length === 0; // Empty array
+        }
+        if (typeof value === 'string') {
+            return value.trim().length === 0; // Empty string (including only spaces)
+        }
+        return false; // All other values are considered non-empty (including numbers)
+    }
+
+    /**
+     * Fetches data based on the provided input parameters and updates the UI accordingly.
+     *
+     * @param {object} $input - The jQuery object representing the input element.
+     * @param {boolean} [searchModus=true] - Determines whether to perform a search based on the input value.
+     * @param {string|undefined|null} val - The value to be used for the non-search mode request.
+     * @param {boolean} [triggerChange=false] - Determines whether to trigger a change event after updating the input value.
+     * @return {Promise<void>} A promise that resolves when the data fetching and UI update are complete.
+     */
+    async function getData($input, searchModus = true, val = null, triggerChange = false) {
+        const settings = getSettings($input);
+        const wrapper = getWrapper($input);
         const searchBox = wrapper.find('[type="search"]');
         const list = wrapper.find('.js-suggest-results');
-        let xhr = select.data('xhr') || null;
 
-        if (xhr !== null) {
-            xhr.abort()
+        // Abbrechen des bestehenden XMLHttpRequest, falls vorhanden.
+        let xhr = $input.data('xhr') || null;
+        if (xhr && xhr.abort) {
+            xhr.abort();
             xhr = null;
         }
 
-        let data = search ? {q: searchBox.val() || null, limit: settings.limit} : {value: val};
-        let query = settings.queryParams(data);
-        let newXhr = $.get(select.data('bsTarget'), query, function (res) {
-            if (res.error) {
-                select.trigger('error', [res.error]);
+        const searchValue = isValueEmpty(searchBox.val()) ? null : searchBox.val().trim();
+
+        const data = searchModus ? {q: searchValue, limit: settings.limit} : {value: val};
+        const query = settings.queryParams(data);
+
+        try {
+            xhr = $.get($input.data('bsTarget'), query);
+            $input.data('xhr', xhr);
+
+            const response = await xhr;
+
+            if (response.error) {
+                trigger($input, 'error.bs.suggest', [response.error]);
+                return;
+            }
+
+            if (searchModus) {
+                const items = response.items || [];
+                if (!items.length) {
+                    console.log('suggest: no items');
+                }
+                list.empty();
+                items.forEach(item => {
+                    const div = $('<div>', {
+                        html: `<a class="dropdown-item px-1" href="#">${item.text}</a>`,
+                    }).appendTo(list);
+                    div.find('a').data('item', item);
+                });
+                setStatus($input, items.length !== response.total ? `showing ${items.length} / ${response.total} results` : `results: ${items.length}`);
             } else {
-                if (search) {
-                    const items = res.items || [];
-                    if(!items.length){
-                        console.log('suggest: no items');
-                    }
-                    list.empty();
-                    items.forEach(item => {
-                        let div = $('<div>', {
-                            html: `<a class="dropdown-item px-1" href="#">${item.text}</a>`,
-                        }).appendTo(list);
-                        div.find('a').data('item', item);
-                    });
-                    if (items.length !== res.total) {
-                        setStatus(select, `showing ${items.length} / ${res.total} results`);
-                    } else {
-                        setStatus(select, 'results: ' + items.length);
-                    }
-                } else {
-                    select.val(res.id);
-                    setDropdownText(select, res.text);
-                    if (trigger)
-                        select.trigger('change.bs.suggest', [res.id, res.text]);
+                $input.val(response.id);
+                setDropdownText($input, response.text);
+                if (triggerChange) {
+                    trigger($input, 'change.bs.suggest', [response.id, response.text]);
                 }
             }
-        });
-        select.data('xhr', newXhr);
+        } catch (error) {
+            trigger($input, 'error.bs.suggest', [error.message]);
+        } finally {
+            $input.data('xhr', null);  // Reset the xhr data
+        }
     }
 
     $.fn.suggest = function (options, params, params2) {
@@ -272,7 +385,7 @@
         if ($(this).length > 1) {
             return $(this).each(function () {
                 return $(this).suggest(options, params); // return an instance of your own in each case
-            })
+            });
         }
 
         const DEFAULTS = {
@@ -318,7 +431,8 @@
             events(select);
 
             if (select.val() !== "") {
-                getData(select, false, select.val());
+                getData(select, false, select.val()).then(() => {
+                });
             }
         }
 
@@ -330,7 +444,8 @@
                         console.log('method', 'val', params, select);
                     }
                     reset(select);
-                    getData(select, false, params, params2??false);
+                    getData(select, false, params, params2 ?? false).then(() => {
+                    });
                     break;
                 case 'destroy':
                     if (debug) {
