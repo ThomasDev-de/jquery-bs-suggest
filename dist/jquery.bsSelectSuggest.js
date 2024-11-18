@@ -178,17 +178,26 @@
      * @param {array} addParams - Additional trigger parameters.
      */
     function trigger($input, eventName, addParams = []) {
-        let params = [];
+        let params = addParams;
+
         if (eventName !== 'any.bs.select') {
-            trigger($input, 'any.bs.select');
-            if (addParams.length) {
-                addParams.forEach(p => {
-                    params.push(p);
-                });
+            // Temporär das Event unterdrücken, um Rekursion zu verhindern
+            if (!$input.data('suppressEvent')) {
+                $input.data('suppressEvent', true);
+
+                // `any.bs.select` Event auslösen
+                $input.trigger('any.bs.select');
+
+                // Das spezifische Ereignis auslösen
+                $input.trigger(eventName, params);
+
+                // Unterdrückung für das nächste Event rückgängig machen
+                setTimeout(() => {
+                    $input.removeData('suppressEvent');
+                }, 0);
             }
-            $input.trigger(eventName, params);
         } else {
-            $input.trigger(eventName);
+            $input.trigger(eventName, params);
         }
     }
 
@@ -245,9 +254,17 @@
                 let a = $(e.currentTarget);
                 let item = a.data('item');
                 let value = item.id;
-                $input.val(value);
-                setDropdownText($input, a.html());
-                trigger($input, 'change.bs.suggest', [item.id, item.text]);
+                // Setzen des Wertes und des Textes
+                if ($input.val() !== value) {
+                    $input.val(value);
+                    setDropdownText($input, a.html());
+
+                    trigger($input, 'change.bs.suggest', [item.id, item.text]);
+                } else {
+                    if (debug) {
+                        console.log("Wert hat sich nicht geändert, Event nicht ausgelöst.");
+                    }
+                }
             })
             .on('click', '.js-webcito-reset', function (e) {
                 e.preventDefault();
