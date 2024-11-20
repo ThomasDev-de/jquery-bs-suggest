@@ -441,7 +441,7 @@
 
         if ($(this).length > 1) {
             return $(this).each(function () {
-                return $(this).suggest(options, params); // return an instance of your own in each case
+                return $(this).suggest(options, params, params2); // return an instance of your own in each case
             });
         }
 
@@ -495,7 +495,7 @@
 
         // call methods
         if (isCallMethod) {
-            switch (options.toLowerCase()) {
+            switch (options) {
                 case 'val':
                     if (debug) {
                         console.log('method', 'val', params, $input);
@@ -516,7 +516,14 @@
                     }
                     refresh($input);
                     break;
-                case 'updateoptions': {
+                case 'setDisabled':
+                    if (debug) {
+                        console.log('method', 'setDisabled', params, $input);
+                    }
+                    setDisabled($input, params);
+                    refresh($input);
+                    break;
+                case 'updateoptions':
                     if (debug) {
                         console.log('method', 'updateoptions', params, $input);
                     }
@@ -524,12 +531,8 @@
                     $input.data('settings', $.extend({}, DEFAULTS, oldSettings, params || {}));
                     refresh($input);
                     break;
-                }
-                case 'setDisabled': {
-                        setDisabled($input, params);
-                        break;
-                    }
-                }
+
+            }
         }
 
         // return the reference for chaining

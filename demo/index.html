@@ -30,8 +30,8 @@
                     <button type="button" class="btn btn-outline-dark" id="btn_method_destroy">destroy</button>
                     <button type="button" class="btn btn-outline-dark" id="btn_method_init">init</button>
                     <button type="button" class="btn btn-outline-dark" id="btn_method_refresh">refresh</button>
-                    <button type="button" class="btn btn-outline-dark" id="btn_method_updateOptions">updateOptions
-                    </button>
+                    <button type="button" class="btn btn-outline-dark" id="btn_method_updateOptions">updateOptions</button>
+                    <button type="button" class="btn btn-outline-dark" id="btn_method_setDisabled">setDisabled</button>
                 </div>
             </div>
 
@@ -68,6 +68,7 @@
                     init: '#btn_method_init',
                     refresh: '#btn_method_refresh',
                     update: '#btn_method_updateOptions',
+                    setDisabled: '#btn_method_setDisabled'
                 }
 
             function getCountries() {
@@ -95,6 +96,10 @@
                     .on('click', buttons.destroy, function () {
                         // alert($(suggestions.countries).length);
                         $(suggestions.countries).suggest('destroy');
+                    })
+                    .on('click', buttons.setDisabled, function () {
+                        // alert($(suggestions.countries).length);
+                        $(suggestions.countries).suggest('setDisabled', true);
                     })
                     .on('click', buttons.update, function () {
                         $(suggestions.countries).suggest('updateOptions', {
