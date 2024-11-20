@@ -201,8 +201,10 @@
         const btn = dropDown.find('[data-bs-toggle="dropdown"],[data-toggle="dropdown"]');
         if (status) {
             btn.addClass('disabled');
+            $input.prop('disabled', true);
         } else {
             btn.removeClass('disabled');
+            $input.prop('disabled', false);
         }
         trigger($input, 'toggleDisabled.bs.suggest', [status]);
     }
@@ -525,6 +527,7 @@
                 }
                 case 'setDisabled': {
                         setDisabled($input, params);
+                        break;
                     }
                 }
         }
