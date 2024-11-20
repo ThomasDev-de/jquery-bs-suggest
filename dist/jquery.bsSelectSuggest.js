@@ -190,6 +190,24 @@
     }
 
     /**
+     * Sets the disabled status of a dropdown menu.
+     *
+     * @param {jQuery} $input - The jQuery object representing the dropdown selector.
+     * @param {boolean} status - A boolean indicating whether to disable (true) or enable (false) the dropdown.
+     * @return {void} This function does not return a value.
+     */
+    function setDisabled($input, status) {
+        const dropDown = getWrapper($input);
+        const btn = dropDown.find('[data-bs-toggle="dropdown"],[data-toggle="dropdown"]');
+        if (status) {
+            btn.addClass('disabled');
+        } else {
+            btn.removeClass('disabled');
+        }
+        trigger($input, 'toggleDisabled.bs.suggest', [status]);
+    }
+
+    /**
      *
      * Triggers the specified event on the given input element.
      *
@@ -505,7 +523,10 @@
                     refresh($input);
                     break;
                 }
-            }
+                case 'setDisabled': {
+                        setDisabled($input, params);
+                    }
+                }
         }
 
         // return the reference for chaining

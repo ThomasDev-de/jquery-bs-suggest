@@ -66,7 +66,8 @@ $('selector')
     .suggest('val', value) // set a value
     .suggest('refresh')  // build the dropdown new
     .suggest('destroy')  // destroy the dropdown
-    .suggest('updateOptions', newOptions);  // update options
+    .suggest('updateOptions', newOptions)  // update options
+    .suggest('setDisabled', true|false);  // toggle disable class
 ```
 ### Events
 ```js
