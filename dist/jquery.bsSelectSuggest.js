@@ -59,7 +59,7 @@
      * Builds a custom dropdown by wrapping the provided select element.
      *
      * @param {object} $input - The jQuery object representing the select element to be wrapped.
-     * @return {jQuery} - The jQuery object representing the newly created dropdown wrapper.
+     * @return {object} - The jQuery object representing the newly created dropdown wrapper.
      */
     function buildDropdown($input) {
 
@@ -192,7 +192,7 @@
     /**
      * Sets the disabled status of a dropdown menu.
      *
-     * @param {jQuery} $input - The jQuery object representing the dropdown selector.
+     * @param {object} $input - The jQuery object representing the dropdown selector.
      * @param {boolean} status - A boolean indicating whether to disable (true) or enable (false) the dropdown.
      * @return {void} This function does not return a value.
      */
@@ -241,6 +241,23 @@
         }
     }
 
+    function clear($input) {
+        const settings = getSettings($input);
+        const wrapper = getWrapper($input);
+        const searchBox = wrapper.find('[type="search"]');
+        const list = wrapper.find('.js-suggest-results');
+
+        if (debug) {
+            console.log('function', 'cleart');
+        }
+        const valueBefore =$input.val();
+        $input.val(null);
+        searchBox.val(null);
+        list.empty();
+        setDropdownText($input, null);
+        setStatus($input, settings.waitingForTypingText);
+        trigger($input, 'change.bs.suggest', [valueBefore, null]);
+    }
     /**
      * Attaches event listeners for a dropdown suggestion component.
      *
@@ -311,14 +328,7 @@
                 if (debug) {
                     console.log('click', '.js-webcito-reset');
                 }
-                // reset(select);
-                $input.val(null);
-                searchBox.val(null);
-                list.empty();
-                setDropdownText($input, null);
-                let settings = $input.data('settings');
-                setStatus($input, settings.waitingForTypingText);
-                trigger($input, 'change.bs.suggest', [null, null]);
+               clear($input);
             })
             .on('hidden.bs.dropdown', '.dropdown', function () {
                 if (debug) {
@@ -523,15 +533,32 @@
                     setDisabled($input, params);
                     refresh($input);
                     break;
-                case 'updateoptions':
+                case 'updateOptions': {
                     if (debug) {
-                        console.log('method', 'updateoptions', params, $input);
+                        console.log('method', 'updateOptions', params, $input);
                     }
                     const oldSettings = getSettings($input);
                     $input.data('settings', $.extend({}, DEFAULTS, oldSettings, params || {}));
                     refresh($input);
+                }
                     break;
-
+                case 'setBtnClass': {
+                    if (debug) {
+                        console.log('method', 'setBtnClass', params, $input);
+                    }
+                    const oldSettings = getSettings($input);
+                    oldSettings.btnClass = params;
+                    $input.data('settings', oldSettings);
+                    refresh($input);
+                }
+                    break;
+                case 'clear': {
+                    if (debug) {
+                        console.log('method', 'clear', params, $input);
+                    }
+                    clear($input);
+                }
+                    break;
             }
         }
 

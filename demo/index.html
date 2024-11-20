@@ -32,6 +32,7 @@
                     <button type="button" class="btn btn-outline-dark" id="btn_method_refresh">refresh</button>
                     <button type="button" class="btn btn-outline-dark" id="btn_method_updateOptions">updateOptions</button>
                     <button type="button" class="btn btn-outline-dark" id="btn_method_setDisabled">setDisabled</button>
+                    <button type="button" class="btn btn-outline-dark" id="btn_method_setBtnClass">setBtnClass</button>
                 </div>
             </div>
 
@@ -55,6 +56,7 @@
 <script>
     (function ($) {
         $.fn.pageDemo = function () {
+            let disabled = false;
             let body = $(this),
                 suggestions = {
                     countries: '#input_select_countries',
@@ -68,7 +70,8 @@
                     init: '#btn_method_init',
                     refresh: '#btn_method_refresh',
                     update: '#btn_method_updateOptions',
-                    setDisabled: '#btn_method_setDisabled'
+                    setDisabled: '#btn_method_setDisabled',
+                    setBtnClass: '#btn_method_setBtnClass',
                 }
 
             function getCountries() {
@@ -99,7 +102,12 @@
                     })
                     .on('click', buttons.setDisabled, function () {
                         // alert($(suggestions.countries).length);
-                        $(suggestions.countries).suggest('setDisabled', true);
+                        $(suggestions.countries).suggest('setDisabled', !disabled);
+                        disabled = !disabled;
+                    })
+                    .on('click', buttons.setBtnClass, function () {
+                        // alert($(suggestions.countries).length);
+                        $(suggestions.countries).suggest('setBtnClass', 'btn btn-primary btn-sm rounded-0');
                     })
                     .on('click', buttons.update, function () {
                         $(suggestions.countries).suggest('updateOptions', {
