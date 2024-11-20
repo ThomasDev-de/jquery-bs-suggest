@@ -15,8 +15,28 @@
      * @return {string} The generated HTML template string based on the provided settings.
      */
     function getTemplate($input) {
+        const disabledClass = $input.prop('disabled') ? 'disabled' : '';
         let settings = $input.data('settings');
-        const template = `<div class="dropdown"><div class="${settings.btnClass} d-flex align-items-center" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}"><span class="js-selected-text">${settings.emptyText}</span></div><div class="dropdown-menu p-0 mt-1" style="min-width: 250px"><div class="w-100"><div class="p-2 d-flex flex-nowrap align-items-center justify-content-between border-bottom"><input autocomplete="false" type="search" class="form-control form-control-sm flex-fill" placeholder="${settings.searchPlaceholderText}"><button role="button" class="btn btn-light bg-transparent ms-2 js-webcito-reset"><i class="bi bi-x-lg"></i></button></div><div class="p-2 js-suggest-results"></div><div class="p-2 p-1 fw-light fst-italic d-flex align-items-center"><small class="suggest-status-text">${settings.waitingForTypingText}</small></div></div></div></div>`;
+        const template = `
+<div class="dropdown">
+    <button class="${settings.btnClass} ${disabledClass} d-flex align-items-center" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
+        <span class="js-selected-text">${settings.emptyText}</span>
+    </button>
+    <div class="dropdown-menu p-0 mt-1" style="min-width: 250px">
+        <div class="w-100">
+            <div class="p-2 d-flex flex-nowrap align-items-center justify-content-between border-bottom">
+                <input autocomplete="false" type="search" class="form-control form-control-sm flex-fill" placeholder="${settings.searchPlaceholderText}">
+                <button role="button" class="btn btn-light bg-transparent ms-2 js-webcito-reset">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="p-2 js-suggest-results"></div>
+            <div class="p-2 p-1 fw-light fst-italic d-flex align-items-center">
+                <small class="suggest-status-text">${settings.waitingForTypingText}</small>
+            </div>
+        </div>
+    </div>
+</div>`;
         if (debug) {
             console.log(template);
         }
@@ -424,31 +444,31 @@
             }
         };
 
-        const select = $(this); // The single instance
+        const $input = $(this); // The single instance
         const isOptionsSet = typeof options === "object" || typeof options === "undefined";
         const isCallMethod = typeof options === "string";
 
         // init
-        if (select.data('initSuggest') !== true) {
+        if ($input.data('initSuggest') !== true) {
 
-            select.data('initSuggest', true);
-            select.addClass('js-suggest');
+            $input.data('initSuggest', true);
+            $input.addClass('js-suggest');
 
-            if (isOptionsSet || !select.data('settings')) {
+            if (isOptionsSet || !$input.data('settings')) {
                 const settings = $.extend({}, DEFAULTS, options || {});
-                select.data('settings', settings);
-                select.data('selected', select.val().split(settings.valueSeparator));
+                $input.data('settings', settings);
+                $input.data('selected', $input.val().split(settings.valueSeparator));
                 if (debug) {
-                    console.log('init', select, settings);
+                    console.log('init', $input, settings);
                 }
             }
 
-            buildDropdown(select);
+            buildDropdown($input);
 
-            events(select);
+            events($input);
 
-            if (select.val() !== "") {
-                getData(select, false, select.val()).then(() => {
+            if ($input.val() !== "") {
+                getData($input, false, $input.val()).then(() => {
                 });
             }
         }
@@ -458,37 +478,37 @@
             switch (options.toLowerCase()) {
                 case 'val':
                     if (debug) {
-                        console.log('method', 'val', params, select);
+                        console.log('method', 'val', params, $input);
                     }
-                    reset(select);
-                    getData(select, false, params, params2 ?? false).then(() => {
+                    reset($input);
+                    getData($input, false, params, params2 ?? false).then(() => {
                     });
                     break;
                 case 'destroy':
                     if (debug) {
-                        console.log('method', 'destroy', select);
+                        console.log('method', 'destroy', $input);
                     }
-                    destroy(select, true);
+                    destroy($input, true);
                     break;
                 case 'refresh':
                     if (debug) {
-                        console.log('method', 'refresh', select);
+                        console.log('method', 'refresh', $input);
                     }
-                    refresh(select);
+                    refresh($input);
                     break;
                 case 'updateoptions': {
                     if (debug) {
-                        console.log('method', 'updateoptions', params, select);
+                        console.log('method', 'updateoptions', params, $input);
                     }
-                    const oldSettings = getSettings(select);
-                    select.data('settings', $.extend({}, DEFAULTS, oldSettings, params || {}));
-                    refresh(select);
+                    const oldSettings = getSettings($input);
+                    $input.data('settings', $.extend({}, DEFAULTS, oldSettings, params || {}));
+                    refresh($input);
                     break;
                 }
             }
         }
 
         // return the reference for chaining
-        return select;
+        return $input;
     };
 }(jQuery));
