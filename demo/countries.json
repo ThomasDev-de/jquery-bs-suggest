@@ -1,5 +1,5 @@
 [
-  {"id": 1, "text": "Germany", "group": "Europe"},
+  {"id": 1, "text": "Germany", "group": "Europe", "subtext":  "Best Germany ever"},
   {"id": 2, "text": "Spain", "group": "Europe"},
   {"id": 3, "text": "Italy", "group": "Europe"},
   {"id": 4, "text": "Austria", "group": "Europe"},

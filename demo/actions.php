@@ -43,6 +43,7 @@ try {
                 $d = [
                     'id' => $c->id,
                     'text' => $c->text,
+                    'subtext' => $c->subtext ?? null,
                 ];
                 if (!empty($c->group)){
                     $d['group'] = $c->group;

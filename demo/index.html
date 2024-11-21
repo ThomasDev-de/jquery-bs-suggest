@@ -111,27 +111,14 @@
                     })
                     .on('click', buttons.update, function () {
                         $(suggestions.countries).suggest('updateOptions', {
-                            btnClass: 'btn btn-danger btn-lg',
-                            darkMenu: false
+                            btnClass: 'btn btn-danger btn-lg'
                         });
                     })
                     .on('click', buttons.refresh, function () {
                         $(suggestions.countries).suggest('refresh');
                     })
                     .on('click', buttons.init, function () {
-                        $(suggestions.countries).suggest({
-                            limit: 25,
-                            width: '100%',
-                            typingInterval: 400,
-                            darkMenu: true,
-                            btnWidth: '400px',
-                            btnClass: 'btn btn-outline-dark',
-                            searchPlaceholderText: "Search by country",
-                            emptyText: 'Please choose a country',
-                            waitingForTypingText: 'Waiting for typing',
-                            typingText: 'typing..',
-                            loadingText: 'Loading..',
-                        });
+                        initSuggestions();
                     })
                     .on('change', selects.countries, function () {
                         $(suggestions.countries).suggest('val', $(this).val());
@@ -146,27 +133,13 @@
                     typingInterval: 400,
                     darkMenu: true,
                     btnWidth: '400px',
-                    btnClass: 'btn btn-outline-dark',
+                    btnClass: 'btn btn-light border',
                     searchPlaceholderText: "Search by country",
                     emptyText: 'Please choose a country',
                     waitingForTypingText: 'Waiting for typing',
                     typingText: 'typing..',
                     loadingText: 'Loading..',
                 });
-
-                // $(suggestions.countries2).suggest({
-                //     limit: 25,
-                //     width: '100%',
-                //     typingInterval: 400,
-                //     darkMenu: true,
-                //     btnWidth: '400px',
-                //     btnClass: 'btn btn-outline-dark',
-                //     searchPlaceholderText: "Search by country 2",
-                //     emptyText: 'Please choose a country 2',
-                //     waitingForTypingText: 'Waiting for typing 2',
-                //     typingText: 'typing.. 2',
-                //     loadingText: 'Loading.. 2',
-                // });
             }
 
             function init() {
