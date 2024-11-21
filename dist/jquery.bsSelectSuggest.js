@@ -471,7 +471,7 @@
      */
     function getItemHtml($input, item, asDropdownItem = false) {
         const settings = getSettings($input);
-        let html = '';
+        let html;
         if (typeof settings.formatItem === 'function') {
             html = settings.formatItem(item);
         } else {
