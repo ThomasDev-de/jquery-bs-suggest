@@ -19,7 +19,7 @@
         return `
 <div class="dropdown">
     <button class="${settings.btnClass} ${disabledClass} d-flex align-items-center" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
-        <span class="js-selected-text">${settings.emptyText}</span>
+        <div class="js-selected-text">${settings.emptyText}</div>
     </button>
     <div class="dropdown-menu p-0 mt-1" style="min-width: 250px">
         <div class="w-100">
@@ -29,7 +29,7 @@
                     <i class="bi bi-x-lg"></i>
                 </button>
             </div>
-            <div class="p-2 js-suggest-results" style="max-height: 400px; overflow-y: auto;"></div>
+            <div class="js-suggest-results" style="max-height: 400px; overflow-y: auto;"></div>
             <div class="p-2 p-1 fw-light fst-italic d-flex align-items-center">
                 <small class="suggest-status-text">${settings.waitingForTypingText}</small>
             </div>
@@ -67,9 +67,8 @@
         const wrap = $('<div>', {
             id: id
         }).insertAfter($input);
-        const inputTypeBefore = $input.attr('type');
-        $input.attr('type', 'hidden');
-        $input.data('typeBefore', inputTypeBefore);
+
+
         $input.appendTo(wrap);
         const template = getTemplate($input);
         $(template).prependTo(wrap);
@@ -101,37 +100,51 @@
      */
     function destroy($input, show) {
         let valBefore = $input.val();
-        let wrapper = getWrapper($input);
         const inputTypeBefore = $input.data('typeBefore');
+        let wrapper = getWrapper($input);
+
+        $input.val(valBefore);
         $input.insertBefore(wrapper);
         wrapper.remove();
-        $input.val(valBefore);
+
         $input.removeClass('js-suggest');
         $input.removeData('settings');
         $input.removeData('selected');
         $input.removeData('initSuggest');
+
         if (show) {
             $input.attr('type', inputTypeBefore);
         }
-        $input.removeData('typeBefore');
     }
 
     /**
      * Updates the text of a dropdown element.
      *
      * @param {object} $input - jQuery object representing the input element.
-     * @param {string|null} html - The HTML content to set as the dropdown text.
+     * @param {object|null} item - The HTML content to set as the dropdown text.
      * @return {void}
      */
-    function setDropdownText($input, html = null) {
+    function setDropdownText($input, item = null) {
 
         const wrapper = getWrapper($input);
         const settings = $input.data('settings');
         if (settings.debug) {
-            console.log('setDropdownText', html, wrapper, settings);
+            console.log('setDropdownText', item, wrapper, settings);
         }
 
-        wrapper.find('.js-selected-text').html('<span class="d-inline text-start">' + (html || settings.emptyText) + '</span>');
+        let html = '';
+        if (item !== null) {
+            if (typeof settings.formatItem === 'function') {
+                html = settings.formatItem(item);
+            } else {
+                html = formatItem(item);
+            }
+        }
+        const formatted = item === null ?
+            '<div class="d-flex flex-column align-items-start">' + settings.emptyText + '</div>'
+            : '<div class="d-flex flex-column align-items-start">' + html + '</div>';
+
+        wrapper.find('.js-selected-text').html(formatted);
     }
 
     /**
@@ -247,7 +260,7 @@
         if (settings.debug) {
             console.log('function', 'clear');
         }
-        const valueBefore =$input.val();
+        const valueBefore = $input.val();
         $input.val(null);
         searchBox.val(null);
         list.empty();
@@ -255,6 +268,7 @@
         setStatus($input, settings.waitingForTypingText);
         trigger($input, 'change.bs.suggest', [valueBefore, null]);
     }
+
     /**
      * Attaches event listeners for a dropdown suggestion component.
      *
@@ -299,7 +313,7 @@
         });
 
         wrapper
-            .on('click', 'a.dropdown-item', function (e) {
+            .on('click', '.dropdown-item', function (e) {
                 e.preventDefault();
                 if (settings.debug) {
                     console.log('click', 'a.dropdown-item');
@@ -310,7 +324,7 @@
                 // Setzen des Wertes und des Textes
                 if ($input.val() !== value) {
                     $input.val(value);
-                    setDropdownText($input, a.html());
+                    setDropdownText($input, item);
 
                     trigger($input, 'change.bs.suggest', [item.id, item.text]);
                 } else {
@@ -324,7 +338,7 @@
                 if (settings.debug) {
                     console.log('click', '.js-webcito-reset');
                 }
-               clear($input);
+                clear($input);
             })
             .on('hidden.bs.dropdown', '.dropdown', function () {
                 if (settings.debug) {
@@ -410,10 +424,7 @@
 
                     // Add items in the group
                     groupedItems[group].forEach(item => {
-                        const div = $('<div>', {
-                            html: `<a class="dropdown-item px-1" href="#">${item.text}</a>`,
-                        }).appendTo(list);
-                        div.find('a').data('item', item);
+                        createTemplateItem($input, item, list);
                     });
                 });
 
@@ -428,14 +439,50 @@
                 }
 
                 groupedItems._no_group.forEach(item => {
-                    const div = $('<div>', {
-                        html: `<a class="dropdown-item px-1" href="#">${item.text}</a>`,
-                    }).appendTo(list);
-                    div.find('a').data('item', item);
+                    createTemplateItem($input, item, list);
                 });
             }
         }
         setStatus($input, countItems !== total ? `showing ${countItems} / ${total} results` : `results: ${countItems}`);
+    }
+
+    /**
+     * Creates a template item and appends it to the specified list.
+     *
+     * @param {Object} $input - A jQuery object representing the input element.
+     * @param {Object} item - The item object to be used for creating the template.
+     * @param {Object} list - A jQuery object representing the list element to which the template item will be appended.
+     * @return {void}
+     */
+    function createTemplateItem($input, item, list) {
+        const div = $('<div>', {
+            html: getItemHtml($input, item, true)
+        }).appendTo(list);
+
+        div.find('.dropdown-item').data('item', item);
+    }
+
+    /**
+     * Generates the HTML for a given item based on the provided settings and flags.
+     *
+     * @param {Object} $input - The input object used to get the settings.
+     * @param {Object} item - The item to be formatted into HTML.
+     * @param {boolean} [asDropdownItem=false] - Flag to determine if the item should be styled as a dropdown item.
+     * @return {string} The generated HTML string for the given item.
+     */
+    function getItemHtml($input, item, asDropdownItem = false) {
+        const settings = getSettings($input);
+        let html = '';
+        if (typeof settings.formatItem === 'function') {
+            html = settings.formatItem(item);
+        } else {
+            html = formatItem(item);
+        }
+        const commonClasses = 'd-flex flex-column align-items-start';
+        if (asDropdownItem) {
+            return `<a class="dropdown-item px-2 ${commonClasses}" href="#">${html}</a>`;
+        }
+        return `<div class="${commonClasses}">${html}</div>`;
     }
 
     /**
@@ -480,7 +527,7 @@
                 buildItems($input, items, response.total);
             } else {
                 $input.val(response.id);
-                setDropdownText($input, response.text);
+                setDropdownText($input, response);
                 if (triggerChange) {
                     trigger($input, 'change.bs.suggest', [response.id, response.text]);
                 }
@@ -490,6 +537,15 @@
         } finally {
             $input.data('xhr', null);  // Reset the xhr data
         }
+    }
+
+    function formatItem(item) {
+        console.log('format-item default');
+        let subtext = '';
+        if (item.hasOwnProperty('subtext') && !isValueEmpty(item.subtext)) {
+            subtext = '<small class="text-muted">' + item.subtext + '</small>';
+        }
+        return `<div>${item.text}</div>${subtext}`;
     }
 
     $.fn.suggest = function (options, params, params2) {
@@ -511,7 +567,6 @@
             typingInterval: 400,
             multiple: false,
             valueSeparator: ',',
-            darkMenu: false,
             btnWidth: 'fit-content',
             btnClass: 'btn btn-outline-secondary',
             searchPlaceholderText: "Search",
@@ -521,7 +576,8 @@
             loadingText: 'Loading..',
             queryParams: function (params) {
                 return params;
-            }
+            },
+            formatItem: null
         };
 
         const $input = $(this); // The single instance
@@ -532,13 +588,21 @@
         if (!$input.data('initSuggest')) {
 
             $input.data('initSuggest', true);
+
+            if ($input.attr('type') !== 'hidden') {
+                const inputTypeBefore = $input.attr('type');
+                $input.attr('type', 'hidden');
+                $input.data('typeBefore', inputTypeBefore);
+            }
+
+
             $input.addClass('js-suggest');
 
-            if (isOptionsObject || ! $input.data('settings')) {
+            if (isOptionsObject || !$input.data('settings')) {
                 let o = {};
                 if (isOptionsObject) {
                     o = options;
-                }else if($input.data('settings')){
+                } else if ($input.data('settings')) {
                     o = $input.data('settings');
                 }
 
@@ -555,8 +619,9 @@
 
             events($input);
 
-            if ($input.val() !== "") {
-                getData($input, false, $input.val()).then(() => {
+            const value = isValueEmpty($input.val()) ? null : $input.val().trim();
+            if (value !== null) {
+                getData($input, false, value).then(() => {
                 });
             }
         }
