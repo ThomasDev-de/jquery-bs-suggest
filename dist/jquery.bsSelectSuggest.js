@@ -419,10 +419,13 @@
 
             // Add ungrouped items under "Ungrouped" header
             if (groupedItems._no_group) {
-                $('<div>', {
-                    class: 'dropdown-header',
-                    text: 'Ungrouped'
-                }).appendTo(list);
+                const hasOtherGroups = Object.keys(groupedItems).length > 1;
+
+                if (hasOtherGroups) {
+                    $('<hr>', {
+                        class: 'dropdown-divider',
+                    }).appendTo(list);
+                }
 
                 groupedItems._no_group.forEach(item => {
                     const div = $('<div>', {
