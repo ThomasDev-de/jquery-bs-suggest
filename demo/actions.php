@@ -30,6 +30,7 @@ try {
     // if no
     else
     {
+        $data = [];
         // Get parameter q and limit
         $limit = filter_input(INPUT_GET, 'limit', FILTER_VALIDATE_INT);
         $q = filter_input(INPUT_GET, 'q');
@@ -39,10 +40,15 @@ try {
 			$min = min($limit, count($countries));
 			for($i = 0; $i < $min; $i++){
 				$c = $countries[$i];
-				$data[] = [
-					'id' => $c->id,
-					'text' => $c->text,
-				];
+                $d = [
+                    'id' => $c->id,
+                    'text' => $c->text,
+                ];
+                if (!empty($c->group)){
+                    $d['group'] = $c->group;
+                }
+
+				$data[] = $d;
 			}
 		}
 		else {

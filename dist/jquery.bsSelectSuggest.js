@@ -2,7 +2,6 @@
 
 /** global $ */
 (function ($) {
-    const debug = false;
 
     function generateId() {
         return "webcito_suggestion_" + getGUID();
@@ -17,7 +16,7 @@
     function getTemplate($input) {
         const disabledClass = $input.prop('disabled') ? 'disabled' : '';
         let settings = $input.data('settings');
-        const template = `
+        return `
 <div class="dropdown">
     <button class="${settings.btnClass} ${disabledClass} d-flex align-items-center" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
         <span class="js-selected-text">${settings.emptyText}</span>
@@ -30,17 +29,13 @@
                     <i class="bi bi-x-lg"></i>
                 </button>
             </div>
-            <div class="p-2 js-suggest-results"></div>
+            <div class="p-2 js-suggest-results" style="max-height: 400px; overflow-y: auto;"></div>
             <div class="p-2 p-1 fw-light fst-italic d-flex align-items-center">
                 <small class="suggest-status-text">${settings.waitingForTypingText}</small>
             </div>
         </div>
     </div>
 </div>`;
-        if (debug) {
-            console.log(template);
-        }
-        return template;
     }
 
     /**
@@ -72,15 +67,15 @@
         const wrap = $('<div>', {
             id: id
         }).insertAfter($input);
-        $input.hide();
+        const inputTypeBefore = $input.attr('type');
+        $input.attr('type', 'hidden');
+        $input.data('typeBefore', inputTypeBefore);
         $input.appendTo(wrap);
         const template = getTemplate($input);
         $(template).prependTo(wrap);
-        // setTimeout(function () {
         if (wrap.find('.js-selected-text').text() === "") {
             setDropdownText($input, null);
         }
-        // }, 40);
         return wrap;
 
     }
@@ -107,6 +102,7 @@
     function destroy($input, show) {
         let valBefore = $input.val();
         let wrapper = getWrapper($input);
+        const inputTypeBefore = $input.data('typeBefore');
         $input.insertBefore(wrapper);
         wrapper.remove();
         $input.val(valBefore);
@@ -115,8 +111,9 @@
         $input.removeData('selected');
         $input.removeData('initSuggest');
         if (show) {
-            $input.show();
+            $input.attr('type', inputTypeBefore);
         }
+        $input.removeData('typeBefore');
     }
 
     /**
@@ -130,7 +127,7 @@
 
         const wrapper = getWrapper($input);
         const settings = $input.data('settings');
-        if (debug) {
+        if (settings.debug) {
             console.log('setDropdownText', html, wrapper, settings);
         }
 
@@ -247,8 +244,8 @@
         const searchBox = wrapper.find('[type="search"]');
         const list = wrapper.find('.js-suggest-results');
 
-        if (debug) {
-            console.log('function', 'cleart');
+        if (settings.debug) {
+            console.log('function', 'clear');
         }
         const valueBefore =$input.val();
         $input.val(null);
@@ -274,7 +271,7 @@
         const list = wrapper.find('.js-suggest-results');
 
         searchBox.on('keyup', function () {
-            if (debug) {
+            if (settings.debug) {
                 console.log('keyup');
             }
             if (typingTimer !== null) {
@@ -291,10 +288,9 @@
         });
 
         searchBox.on('keydown', function () {
-            if (debug) {
+            if (settings.debug) {
                 console.log('keydown');
             }
-            let settings = getSettings($input);
             if (typingTimer !== null) {
                 clearTimeout(typingTimer);
             }
@@ -305,7 +301,7 @@
         wrapper
             .on('click', 'a.dropdown-item', function (e) {
                 e.preventDefault();
-                if (debug) {
+                if (settings.debug) {
                     console.log('click', 'a.dropdown-item');
                 }
                 let a = $(e.currentTarget);
@@ -318,40 +314,39 @@
 
                     trigger($input, 'change.bs.suggest', [item.id, item.text]);
                 } else {
-                    if (debug) {
+                    if (settings.debug) {
                         console.log("Wert hat sich nicht geändert, Event nicht ausgelöst.");
                     }
                 }
             })
             .on('click', '.js-webcito-reset', function (e) {
                 e.preventDefault();
-                if (debug) {
+                if (settings.debug) {
                     console.log('click', '.js-webcito-reset');
                 }
                clear($input);
             })
             .on('hidden.bs.dropdown', '.dropdown', function () {
-                if (debug) {
+                if (settings.debug) {
                     console.log('hidden.bs.dropdown', '.dropdown');
                 }
                 list.empty();
                 searchBox.val(null);
-                let settings = getSettings($input);
                 setStatus($input, settings.waitingForTypingText);
             })
             .on('shown.bs.dropdown', '.dropdown', function () {
-                if (debug) {
+                if (settings.debug) {
                     console.log('shown.bs.dropdown', '.dropdown');
                 }
                 searchBox.focus();
             })
             .on('show.bs.dropdown', '.dropdown', function () {
-                if (debug) {
+                if (settings.debug) {
                     console.log('shown.bs.dropdown', '.dropdown');
                 }
-                let settings = getSettings($input);
+
                 if (settings.loadDataOnShow) {
-                    getData($input).then(() => {
+                    getData($input, true).then(() => {
                     });
                 }
             });
@@ -379,6 +374,68 @@
     }
 
     /**
+     * Builds and groups items for the suggestion dropdown.
+     *
+     * @param {object} $input - The jQuery object representing the input element.
+     * @param {Array} items - Array of items to be displayed, each having `id`, `text`, and optionally `group`.
+     * @param {number} total - Total number of items found.
+     */
+    function buildItems($input, items, total) {
+        const wrapper = getWrapper($input);
+        const list = wrapper.find('.js-suggest-results').empty();
+        const countItems = items.length;
+
+        if (!countItems) {
+            console.log('suggest: no items found');
+
+        } else {
+
+            // Group items by `group`
+            const groupedItems = items.reduce((acc, item) => {
+                const group = item.group ?? '_no_group';
+                acc[group] = acc[group] || [];
+                acc[group].push(item);
+                return acc;
+            }, {});
+
+            // Iterate over grouped items and build the list
+            Object.keys(groupedItems)
+                .filter(group => group !== '_no_group')
+                .forEach(group => {
+                    // Add group header
+                    $('<div>', {
+                        class: 'dropdown-header ps-0 py-1 pl-0 border-top border-bottom text-right text-end',
+                        text: group
+                    }).appendTo(list);
+
+                    // Add items in the group
+                    groupedItems[group].forEach(item => {
+                        const div = $('<div>', {
+                            html: `<a class="dropdown-item px-1" href="#">${item.text}</a>`,
+                        }).appendTo(list);
+                        div.find('a').data('item', item);
+                    });
+                });
+
+            // Add ungrouped items under "Ungrouped" header
+            if (groupedItems._no_group) {
+                $('<div>', {
+                    class: 'dropdown-header',
+                    text: 'Ungrouped'
+                }).appendTo(list);
+
+                groupedItems._no_group.forEach(item => {
+                    const div = $('<div>', {
+                        html: `<a class="dropdown-item px-1" href="#">${item.text}</a>`,
+                    }).appendTo(list);
+                    div.find('a').data('item', item);
+                });
+            }
+        }
+        setStatus($input, countItems !== total ? `showing ${countItems} / ${total} results` : `results: ${countItems}`);
+    }
+
+    /**
      * Fetches data based on the provided input parameters and updates the UI accordingly.
      *
      * @param {object} $input - The jQuery object representing the input element.
@@ -391,7 +448,6 @@
         const settings = getSettings($input);
         const wrapper = getWrapper($input);
         const searchBox = wrapper.find('[type="search"]');
-        const list = wrapper.find('.js-suggest-results');
 
         // Abbrechen des bestehenden XMLHttpRequest, falls vorhanden.
         let xhr = $input.data('xhr') || null;
@@ -418,17 +474,7 @@
 
             if (searchModus) {
                 const items = response.items || [];
-                if (!items.length) {
-                    console.log('suggest: no items');
-                }
-                list.empty();
-                items.forEach(item => {
-                    const div = $('<div>', {
-                        html: `<a class="dropdown-item px-1" href="#">${item.text}</a>`,
-                    }).appendTo(list);
-                    div.find('a').data('item', item);
-                });
-                setStatus($input, items.length !== response.total ? `showing ${items.length} / ${response.total} results` : `results: ${items.length}`);
+                buildItems($input, items, response.total);
             } else {
                 $input.val(response.id);
                 setDropdownText($input, response.text);
@@ -456,7 +502,8 @@
         }
 
         const DEFAULTS = {
-            limit: 5,
+            debug: false,
+            limit: 20,
             loadDataOnShow: true,
             typingInterval: 400,
             multiple: false,
@@ -475,21 +522,29 @@
         };
 
         const $input = $(this); // The single instance
-        const isOptionsSet = typeof options === "object" || typeof options === "undefined";
+        const isOptionsObject = typeof options === "object";
         const isCallMethod = typeof options === "string";
 
         // init
-        if ($input.data('initSuggest') !== true) {
+        if (!$input.data('initSuggest')) {
 
             $input.data('initSuggest', true);
             $input.addClass('js-suggest');
 
-            if (isOptionsSet || !$input.data('settings')) {
-                const settings = $.extend({}, DEFAULTS, options || {});
+            if (isOptionsObject || ! $input.data('settings')) {
+                let o = {};
+                if (isOptionsObject) {
+                    o = options;
+                }else if($input.data('settings')){
+                    o = $input.data('settings');
+                }
+
+                const settings = $.extend({}, DEFAULTS, o);
+
                 $input.data('settings', settings);
                 $input.data('selected', $input.val().split(settings.valueSeparator));
-                if (debug) {
-                    console.log('init', $input, settings);
+                if (settings.debug) {
+                    console.log('init', settings);
                 }
             }
 
@@ -506,54 +561,63 @@
         // call methods
         if (isCallMethod) {
             switch (options) {
-                case 'val':
-                    if (debug) {
+                case 'val': {
+                    const settings = getSettings($input);
+                    if (settings.debug) {
                         console.log('method', 'val', params, $input);
                     }
                     reset($input);
                     getData($input, false, params, params2 ?? false).then(() => {
                     });
+                }
                     break;
-                case 'destroy':
-                    if (debug) {
+                case 'destroy': {
+                    const settings = getSettings($input);
+                    if (settings.debug) {
                         console.log('method', 'destroy', $input);
                     }
                     destroy($input, true);
+                }
                     break;
-                case 'refresh':
-                    if (debug) {
+                case 'refresh': {
+                    const settings = getSettings($input);
+                    if (settings.debug) {
                         console.log('method', 'refresh', $input);
                     }
                     refresh($input);
+                }
                     break;
-                case 'setDisabled':
-                    if (debug) {
+                case 'setDisabled': {
+                    const settings = getSettings($input);
+                    if (settings.debug) {
                         console.log('method', 'setDisabled', params, $input);
                     }
                     setDisabled($input, params);
                     refresh($input);
+                }
                     break;
                 case 'updateOptions': {
-                    if (debug) {
+                    const settings = getSettings($input);
+                    if (settings.debug) {
                         console.log('method', 'updateOptions', params, $input);
                     }
-                    const oldSettings = getSettings($input);
-                    $input.data('settings', $.extend({}, DEFAULTS, oldSettings, params || {}));
+                    $input.data('settings', $.extend({}, DEFAULTS, settings, params || {}));
                     refresh($input);
                 }
                     break;
                 case 'setBtnClass': {
-                    if (debug) {
+                    const settings = getSettings($input);
+                    if (settings.debug) {
                         console.log('method', 'setBtnClass', params, $input);
                     }
-                    const oldSettings = getSettings($input);
-                    oldSettings.btnClass = params;
-                    $input.data('settings', oldSettings);
+                    settings.btnClass = params;
+                    $input.data('settings', settings);
                     refresh($input);
                 }
                     break;
                 case 'clear': {
-                    if (debug) {
+                    const settings = getSettings($input);
+                    if (settings.debug) {
                         console.log('method', 'clear', params, $input);
                     }
                     clear($input);

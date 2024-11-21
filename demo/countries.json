@@ -1,33 +1,62 @@
 [
-  {
-    "id": 1,
-    "text": "Germany"
-  },{
-    "id": 2,
-    "text": "Spain"
-  },{
-    "id": 3,
-    "text": "Italy"
-  },{
-    "id": 4,
-    "text": "Austria"
-  },{
-    "id": 5,
-    "text": "Switzerland"
-  },{
-    "id": 6,
-    "text": "Belgium"
-  },{
-    "id": 7,
-    "text": "Luxembourg"
-  },{
-    "id": 8,
-    "text": "France"
-  },{
-    "id": 9,
-    "text": "Poland"
-  },{
-    "id": 10,
-    "text": "Croatia"
-  }
+  {"id": 1, "text": "Germany", "group": "Europe"},
+  {"id": 2, "text": "Spain", "group": "Europe"},
+  {"id": 3, "text": "Italy", "group": "Europe"},
+  {"id": 4, "text": "Austria", "group": "Europe"},
+  {"id": 5, "text": "Switzerland", "group": "Europe"},
+  {"id": 6, "text": "Belgium", "group": "Europe"},
+  {"id": 7, "text": "Luxembourg", "group": "Europe"},
+  {"id": 8, "text": "France", "group": "Europe"},
+  {"id": 9, "text": "Poland", "group": "Europe"},
+  {"id": 10, "text": "Croatia", "group": "Europe"},
+  {"id": 11, "text": "Portugal", "group": "Europe"},
+  {"id": 12, "text": "United Kingdom", "group": "Europe"},
+  {"id": 13, "text": "Norway", "group": "Europe"},
+  {"id": 14, "text": "Sweden", "group": "Europe"},
+  {"id": 15, "text": "Finland", "group": "Europe"},
+  {"id": 16, "text": "Denmark", "group": "Europe"},
+  {"id": 17, "text": "Netherlands", "group": "Europe"},
+  {"id": 18, "text": "Greece", "group": "Europe"},
+  {"id": 19, "text": "Russia", "group": "Europe"},
+  {"id": 20, "text": "Ukraine", "group": "Europe"},
+  {"id": 21, "text": "Romania", "group": "Europe"},
+  {"id": 22, "text": "Hungary", "group": "Europe"},
+  {"id": 23, "text": "Belarus", "group": "Europe"},
+  {"id": 24, "text": "Bulgaria", "group": "Europe"},
+  {"id": 25, "text": "Serbia", "group": "Europe"},
+  {"id": 26, "text": "Kazakhstan", "group": "Asia"},
+  {"id": 27, "text": "Australia", "group": "Oceania"},
+  {"id": 28, "text": "New Zealand", "group": "Oceania"},
+  {"id": 29, "text": "Brazil", "group": "South America"},
+  {"id": 30, "text": "Argentina", "group": "South America"},
+  {"id": 31, "text": "Chile", "group": "South America"},
+  {"id": 32, "text": "Colombia", "group": "South America"},
+  {"id": 33, "text": "Peru", "group": "South America"},
+  {"id": 34, "text": "Venezuela", "group": "South America"},
+  {"id": 35, "text": "United States", "group": "North America"},
+  {"id": 36, "text": "Canada", "group": "North America"},
+  {"id": 37, "text": "Mexico", "group": "North America"},
+  {"id": 38, "text": "Cuba", "group": "North America"},
+  {"id": 39, "text": "Jamaica", "group": "North America"},
+  {"id": 40, "text": "Haiti", "group": "North America"},
+  {"id": 41, "text": "Nigeria", "group": "Africa"},
+  {"id": 42, "text": "South Africa", "group": "Africa"},
+  {"id": 43, "text": "Egypt", "group": "Africa"},
+  {"id": 44, "text": "Kenya", "group": "Africa"},
+  {"id": 45, "text": "Morocco", "group": "Africa"},
+  {"id": 46, "text": "Algeria", "group": "Africa"},
+  {"id": 47, "text": "China", "group": "Asia"},
+  {"id": 48, "text": "India", "group": "Asia"},
+  {"id": 49, "text": "Japan", "group": "Asia"},
+  {"id": 50, "text": "South Korea", "group": "Asia"},
+  {"id": 51, "text": "Indonesia", "group": "Asia"},
+  {"id": 52, "text": "Malaysia", "group": "Asia"},
+  {"id": 53, "text": "Thailand", "group": "Asia"},
+  {"id": 54, "text": "Vietnam", "group": "Asia"},
+  {"id": 55, "text": "Philippines", "group": "Asia"},
+  {"id": 56, "text": "Turkey", "group": "Asia"},
+  {"id": 57, "text": "Saudi Arabia", "group": "Asia"},
+  {"id": 58, "text": "Iran", "group": "Asia"},
+  {"id": 59, "text": "Israel", "group": "Asia"},
+  {"id": 60, "text": "Singapore", "group": "Asia"}
 ]

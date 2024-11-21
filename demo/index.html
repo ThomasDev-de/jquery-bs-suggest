@@ -36,13 +36,13 @@
                 </div>
             </div>
 
-            <div class="p-3">
-                <label class="form-label" for="input_select_countries_2">Which European country would you like to travel
-                    to?</label>
-                <input id="input_select_countries_2" class="form-control" type="text" name="country_id_2" value="2"
-                       data-bs-toggle="suggest" autocomplete="false"
-                       data-bs-target="./actions.php">
-            </div>
+<!--            <div class="p-3">-->
+<!--                <label class="form-label" for="input_select_countries_2">Which European country would you like to travel-->
+<!--                    to?</label>-->
+<!--                <input id="input_select_countries_2" class="form-control" type="text" name="country_id_2" value="2"-->
+<!--                       data-bs-toggle="suggest" autocomplete="false"-->
+<!--                       data-bs-target="./actions.php">-->
+<!--            </div>-->
 
         </div>
         <div class="p-3">
@@ -60,7 +60,7 @@
             let body = $(this),
                 suggestions = {
                     countries: '#input_select_countries',
-                    countries2: '#input_select_countries_2',
+                    // countries2: '#input_select_countries_2',
                 },
                 selects = {
                     countries: '#selectCountries'
@@ -120,7 +120,7 @@
                     })
                     .on('click', buttons.init, function () {
                         $(suggestions.countries).suggest({
-                            limit: 5,
+                            limit: 25,
                             width: '100%',
                             typingInterval: 400,
                             darkMenu: true,
@@ -140,7 +140,8 @@
 
             function initSuggestions() {
                 $(suggestions.countries).suggest({
-                    limit: 5,
+                    debug:true,
+                    limit: 25,
                     width: '100%',
                     typingInterval: 400,
                     darkMenu: true,
@@ -153,19 +154,19 @@
                     loadingText: 'Loading..',
                 });
 
-                $(suggestions.countries2).suggest({
-                    limit: 5,
-                    width: '100%',
-                    typingInterval: 400,
-                    darkMenu: true,
-                    btnWidth: '400px',
-                    btnClass: 'btn btn-outline-dark',
-                    searchPlaceholderText: "Search by country 2",
-                    emptyText: 'Please choose a country 2',
-                    waitingForTypingText: 'Waiting for typing 2',
-                    typingText: 'typing.. 2',
-                    loadingText: 'Loading.. 2',
-                });
+                // $(suggestions.countries2).suggest({
+                //     limit: 25,
+                //     width: '100%',
+                //     typingInterval: 400,
+                //     darkMenu: true,
+                //     btnWidth: '400px',
+                //     btnClass: 'btn btn-outline-dark',
+                //     searchPlaceholderText: "Search by country 2",
+                //     emptyText: 'Please choose a country 2',
+                //     waitingForTypingText: 'Waiting for typing 2',
+                //     typingText: 'typing.. 2',
+                //     loadingText: 'Loading.. 2',
+                // });
             }
 
             function init() {
