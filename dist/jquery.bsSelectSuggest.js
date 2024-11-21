@@ -68,7 +68,6 @@
             id: id
         }).insertAfter($input);
 
-
         $input.appendTo(wrap);
         const template = getTemplate($input);
         $(template).prependTo(wrap);
@@ -133,14 +132,14 @@
         }
 
         let html = '';
-        if (item !== null) {
+        if (!isValueEmpty(item)) {
             if (typeof settings.formatItem === 'function') {
                 html = settings.formatItem(item);
             } else {
                 html = formatItem(item);
             }
         }
-        const formatted = item === null ?
+        const formatted = isValueEmpty(item) ?
             '<div class="d-flex flex-column align-items-start">' + settings.emptyText + '</div>'
             : '<div class="d-flex flex-column align-items-start">' + html + '</div>';
 
