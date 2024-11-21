@@ -498,6 +498,12 @@
         const wrapper = getWrapper($input);
         const searchBox = wrapper.find('[type="search"]');
 
+        if(! searchModus && val === null) {
+            wrapper.find('.js-suggest-results').empty();
+            setDropdownText($input, null);
+            return;
+        }
+
         // Abbrechen des bestehenden XMLHttpRequest, falls vorhanden.
         let xhr = $input.data('xhr') || null;
         if (xhr && xhr.abort) {
