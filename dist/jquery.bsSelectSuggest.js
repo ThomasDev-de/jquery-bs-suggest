@@ -19,7 +19,7 @@
         return `
 <div class="dropdown">
     <button class="${settings.btnClass} ${disabledClass} d-flex align-items-center" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width:${settings.btnWidth}">
-        <div class="js-selected-text">${settings.emptyText}</div>
+        <div class="js-selected-text overflow-hidden">${settings.emptyText}</div>
     </button>
     <div class="dropdown-menu p-0 mt-1" style="min-width: 250px">
         <div class="w-100">
