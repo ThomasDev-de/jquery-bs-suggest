@@ -9,21 +9,24 @@ try {
     /** @var stdClass[] $countries */
     $countries = json_decode(file_get_contents('countries.json'), false, 512, JSON_THROW_ON_ERROR);
 
-    // Try to find the query parameter value
-    $value = filter_input(INPUT_GET, 'value', FILTER_VALIDATE_INT); // FILTER_VALIDATE_INT sample
+    // Try to find the query parameter value (supports both value and value[])
+    $value = filter_input(INPUT_GET, 'value'); // may be string or null
+    $valueArray = filter_input(INPUT_GET, 'value', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY); // multiple mode
 
     /** @var null|stdClass|array $return */
     $return = null;
 
-    // Was the value parameter found?
-    $fetchSingleData = ! empty($value);
+    // Determine mode: single object by scalar value, or items array by value[]
+    $hasArray = is_array($valueArray) && count($valueArray) > 0;
+    $fetchSingleData = !$hasArray && isset($value) && $value !== '';
 
     // if yes
     if ($fetchSingleData)
     {
-        // Get the record using the value parameter
-        $data = array_values(array_filter($countries, static function($country) use ($value){
-            return $country->id === $value;
+        // Get the record using the (scalar) value parameter
+        $intVal = (int) $value;
+        $data = array_values(array_filter($countries, static function($country) use ($intVal){
+            return $country->id === $intVal;
         }));
         $c = $data[0] ?? null;
         if ($c !== null) {
@@ -56,6 +59,42 @@ try {
         $limit = filter_input(INPUT_GET, 'limit', FILTER_VALIDATE_INT);
         $q = filter_input(INPUT_GET, 'q');
         $search = empty($q)? false : strtolower($q);
+
+        // If value[] (multiple mode) was passed, resolve by ids and return items directly
+        if ($hasArray) {
+            $ids = array_map('intval', $valueArray);
+            $resolved = array_values(array_filter($countries, static function($country) use ($ids){
+                return in_array($country->id, $ids, true);
+            }));
+
+            // map to output items (prefer pre-defined formatted, else generate)
+            $items = array_map(static function($c){
+                $formatted = property_exists($c, 'formatted') && !empty($c->formatted)
+                    ? $c->formatted
+                    : (function($c){
+                        $sub = $c->subtext ?? null;
+                        return '<div class="w-100 rounded-2 px-2 py-1">'
+                            . '<div class="fw-semibold">' . htmlspecialchars($c->text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</div>'
+                            . (!empty($sub) ? '<div class="small opacity-75 mt-1">' . htmlspecialchars($sub, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</div>' : '')
+                            . '</div>';
+                    })($c);
+                $d = [
+                    'id' => $c->id,
+                    'text' => $c->text,
+                    'subtext' => $c->subtext ?? null,
+                    'formatted' => $formatted,
+                ];
+                if (!empty($c->group)){
+                    $d['group'] = $c->group;
+                }
+                return $d;
+            }, $resolved);
+
+            $return['items'] = $items;
+            $return['total'] = count($countries);
+            http_response_code(200);
+            exit(json_encode($return, JSON_THROW_ON_ERROR));
+        }
 
 		if (false === $search){
 			$min = min($limit, count($countries));

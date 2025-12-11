@@ -105,8 +105,34 @@
      */
     function refresh($input) {
         const settings = $input.data('settings');
+        // Preserve current selection explicitly before rebuilding
+        const wasMultiple = !!(settings && settings.multiple);
+        const preservedIds = wasMultiple ? ((($input.data('selected')) || []).map(String)) : null;
+        const preservedSingle = !wasMultiple ? $input.val() : null;
+
         destroy($input, false);
+        // Re-init with previous settings
         $input.suggest(settings);
+
+        // Restore selection without triggering change
+        try {
+            if (wasMultiple) {
+                if (preservedIds && preservedIds.length) {
+                    getData($input, false, preservedIds, false).then(() => {});
+                } else {
+                    // ensure clean UI
+                    setDropdownText($input, null);
+                }
+            } else {
+                if (!isValueEmpty(preservedSingle)) {
+                    getData($input, false, String(preservedSingle), false).then(() => {});
+                } else {
+                    setDropdownText($input, null);
+                }
+            }
+        } catch (e) {
+            // no-op; best-effort restore
+        }
     }
 
     /**
@@ -195,12 +221,15 @@
                 // Use a non-button control to avoid nested button -> dropdown toggle conflicts
                 // Position the remove icon INSIDE the item (top-right corner) to avoid clipping by the button border
                 // and keep it readable. We also add tiny margins to detach it from edges.
-                const removeBtnClass = 'js-suggest-remove position-absolute top-0 end-0 translate-middle-y mt-1 me-1 bg-light border rounded-circle d-inline-flex align-items-center justify-content-center text-secondary shadow-sm';
+                // Keep the remove icon fully visible inside each item: place it at the inner top-right
+                // corner (no translate) and give it a slight z-index. Also increase right padding on
+                // the content so the icon doesn’t overlap text.
+                const removeBtnClass = 'js-suggest-remove position-absolute top-0 end-0 mt-1 me-1 bg-light border rounded-circle d-inline-flex align-items-center justify-content-center text-secondary shadow-sm z-1';
                 // Use Bootstrap Icons by request (bi-x)
                 const removeIcon = '<i class="bi bi-x"></i>';
                 return `
 <div class="${itemWrapperClass}" data-id="${idStr}">
-  <div class="suggest-selected-content pe-3">${inner}</div>
+  <div class="suggest-selected-content pe-4">${inner}</div>
   <span role="button" tabindex="0" class="${removeBtnClass}" data-id="${idStr}" aria-label="Remove" style="width:1.25rem;height:1.25rem">${removeIcon}</span>
 </div>`;
             }).join('');

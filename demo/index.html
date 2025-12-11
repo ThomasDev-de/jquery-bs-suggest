@@ -12,41 +12,53 @@
 <div class="container bg-white py-5 h-100">
     <h1 class="border-bottom pb-2">$.fn.suggest</h1>
     <form autocomplete="off">
-        <div class="d-flex">
-            <div class="d-flex flex-column">
+        <div class="row">
+            <!-- LEFT: Single select playground -->
+            <div class="col-md-6 border-end">
                 <div class="p-3">
-                    <label class="form-label" for="input_select_countries">Which European country would you like to
-                        travel to?</label>
-                    <input id="input_select_countries" class="form-control" type="text" name="country_id"
+                    <h4 class="mb-3">Single</h4>
+                    <label class="form-label" for="input_select_countries_single">Which European country would you like to travel to?</label>
+                    <input id="input_select_countries_single" class="form-control" type="text" name="country_id_single"
                            data-bs-toggle="suggest" autocomplete="false"
                            data-bs-target="./actions.php">
                 </div>
                 <div class="p-3">
                     <h5>Playground</h5>
-                    <div class="form-floating mb-3">
-                        <select class="form-select border-dark" id="selectCountries">
-
+                    <div class="mb-3">
+                        <label class="form-label" for="selectCountrySingle">Playground: set via method val (single)</label>
+                        <select class="form-select border-dark" id="selectCountrySingle">
                         </select>
-                        <label for="selectCountries">method val</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Multiple select playground -->
+            <div class="col-md-6">
+                <div class="p-3">
+                    <h4 class="mb-3">Multiple</h4>
+                    <label class="form-label" for="input_select_countries">Which European countries would you like to travel to?</label>
+                    <input id="input_select_countries" class="form-control" type="text" name="country_id[]"
+                           data-bs-toggle="suggest" autocomplete="false"
+                           data-bs-target="./actions.php">
+                </div>
+                <div class="p-3">
+                    <h5>Playground</h5>
+                    <div class="mb-3">
+                        <label class="form-label" for="selectCountries">Playground: set via method val (multiple)</label>
+                        <select class="form-select border-dark" id="selectCountries" multiple size="12">
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-muted small">Method buttons act on the Multiple instance</span>
                     </div>
                     <button type="button" class="btn btn-outline-dark" id="btn_method_destroy">destroy</button>
                     <button type="button" class="btn btn-outline-dark" id="btn_method_init">init</button>
                     <button type="button" class="btn btn-outline-dark" id="btn_method_refresh">refresh</button>
-                    <button type="button" class="btn btn-outline-dark" id="btn_method_updateOptions">updateOptions
-                    </button>
+                    <button type="button" class="btn btn-outline-dark" id="btn_method_updateOptions">updateOptions</button>
                     <button type="button" class="btn btn-outline-dark" id="btn_method_setDisabled">setDisabled</button>
                     <button type="button" class="btn btn-outline-dark" id="btn_method_setBtnClass">setBtnClass</button>
                 </div>
             </div>
-
-            <!--            <div class="p-3">-->
-            <!--                <label class="form-label" for="input_select_countries_2">Which European country would you like to travel-->
-            <!--                    to?</label>-->
-            <!--                <input id="input_select_countries_2" class="form-control" type="text" name="country_id_2" value="2"-->
-            <!--                       data-bs-toggle="suggest" autocomplete="false"-->
-            <!--                       data-bs-target="./actions.php">-->
-            <!--            </div>-->
-
         </div>
         <div class="p-3">
             <button type="submit" class="btn btn-success">submit</button>
@@ -62,11 +74,12 @@
             let disabled = false;
             let body = $(this),
                 suggestions = {
-                    countries: '#input_select_countries',
-                    // countries2: '#input_select_countries_2',
+                    single: '#input_select_countries_single',
+                    multiple: '#input_select_countries',
                 },
                 selects = {
-                    countries: '#selectCountries'
+                    single: '#selectCountrySingle',
+                    multiple: '#selectCountries'
                 },
                 buttons = {
                     destroy: '#btn_method_destroy',
@@ -79,57 +92,90 @@
 
             function getCountries() {
                 $.getJSON('countries.json', function (json) {
-                    let select = $(selects.countries);
-                    $('<option>').appendTo(select);
+                    // Single select
+                    let selectSingle = $(selects.single).empty();
+                    $('<option>').appendTo(selectSingle);
+                    // Multiple select
+                    let selectMulti = $(selects.multiple).empty();
+                    $('<option>').appendTo(selectMulti);
+
                     json.forEach(item => {
-                        $('<option>', {
-                            value: item.id,
-                            text: item.text
-                        }).appendTo(select);
-                    })
+                        const opt = $('<option>', { value: item.id, text: item.text });
+                        opt.clone().appendTo(selectSingle);
+                        opt.clone().appendTo(selectMulti);
+                    });
                 });
             }
 
             function events() {
                 body
-                    .on('change', suggestions.countries, function (e, id) {
-                        $(selects.countries).val(id)
+                    // reflect plugin changes (single)
+                    .on('change.bs.suggest', suggestions.single, function (e, a/*id*/, b/*text*/) {
+                        const value = (a != null ? String(a) : '');
+                        $(selects.single).val(value).trigger('change.select2_silent');
+                    })
+                    // reflect plugin changes (multiple)
+                    .on('change.bs.suggest', suggestions.multiple, function (e, a/*ids*/, b/*items*/) {
+                        const values = Array.isArray(a) ? a.map(String) : (a != null ? [String(a)] : []);
+                        $(selects.multiple).val(values).trigger('change.select2_silent');
                     })
                     .on('submit', 'form', function (e) {
                         e.preventDefault();
                         alert($('form').serialize());
                     })
                     .on('click', buttons.destroy, function () {
-                        // alert($(suggestions.countries).length);
-                        $(suggestions.countries).suggest('destroy');
+                        $(suggestions.multiple).suggest('destroy');
                     })
                     .on('click', buttons.setDisabled, function () {
-                        // alert($(suggestions.countries).length);
-                        $(suggestions.countries).suggest('setDisabled', !disabled);
+                        $(suggestions.multiple).suggest('setDisabled', !disabled);
                         disabled = !disabled;
                     })
                     .on('click', buttons.setBtnClass, function () {
-                        // alert($(suggestions.countries).length);
-                        $(suggestions.countries).suggest('setBtnClass', 'btn btn-primary btn-sm rounded-0');
+                        $(suggestions.multiple).suggest('setBtnClass', 'btn btn-primary btn-sm rounded-0');
                     })
                     .on('click', buttons.update, function () {
-                        $(suggestions.countries).suggest('updateOptions', {
+                        $(suggestions.multiple).suggest('updateOptions', {
                             btnClass: 'btn btn-danger btn-lg'
                         });
                     })
                     .on('click', buttons.refresh, function () {
-                        $(suggestions.countries).suggest('refresh');
+                        $(suggestions.multiple).suggest('refresh');
                     })
                     .on('click', buttons.init, function () {
                         initSuggestions();
                     })
-                    .on('change', selects.countries, function () {
-                        $(suggestions.countries).suggest('val', $(this).val());
+                    // when changing the playground select (multiple), push values into the widget
+                    .on('change', selects.multiple, function () {
+                        const vals = $(this).val() || [];
+                        $(suggestions.multiple).suggest('val', vals);
+                    })
+                    // when changing the playground select (single), push value into the widget
+                    .on('change', selects.single, function () {
+                        const val = $(this).val();
+                        $(suggestions.single).suggest('val', val && val !== '' ? val : null);
                     })
             }
 
             function initSuggestions() {
-                $(suggestions.countries).suggest({
+                // Single instance
+                $(suggestions.single).suggest({
+                    debug: true,
+                    limit: 25,
+                    typingInterval: 400,
+                    multiple: false,
+                    btnWidth: '400px',
+                    btnClass: 'btn btn-secondary shadow',
+                    searchPlaceholderText: "Search by country",
+                    btnEmptyText: 'Please choose a country',
+                    waitingForTypingText: 'Waiting for typing',
+                    typingText: 'typing..',
+                    loadingText: 'Loading..',
+                    headerActionMode: 'clear',
+                    showHeaderActionText: false
+                });
+
+                // Multiple instance
+                $(suggestions.multiple).suggest({
                     debug: true,
                     limit: 25,
                     typingInterval: 400,
