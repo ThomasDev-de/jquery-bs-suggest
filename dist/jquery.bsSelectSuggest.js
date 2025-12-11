@@ -40,7 +40,7 @@
         return `
 <div class="dropdown">
     <button type="button" class="js-suggest-btn ${settings.btnClass} ${disabledClass} d-flex align-items-center" aria-expanded="false" style="width:${settings.btnWidth}">
-        <div class="js-selected-text">${settings.btnEmptyText}</div>
+        <div class="js-selected-text overflow-hidden">${settings.btnEmptyText}</div>
     </button>
     <div class="dropdown-menu p-0 mt-1" style="min-width: 250px">
         <div class="w-100">
