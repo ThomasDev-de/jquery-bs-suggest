@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Demo</title>
     <link href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Optional: Bootstrap Icons for remove (bi-x) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body class="bg-dark h-100">
 <div class="container bg-white py-5 h-100">
@@ -30,19 +32,20 @@
                     <button type="button" class="btn btn-outline-dark" id="btn_method_destroy">destroy</button>
                     <button type="button" class="btn btn-outline-dark" id="btn_method_init">init</button>
                     <button type="button" class="btn btn-outline-dark" id="btn_method_refresh">refresh</button>
-                    <button type="button" class="btn btn-outline-dark" id="btn_method_updateOptions">updateOptions</button>
+                    <button type="button" class="btn btn-outline-dark" id="btn_method_updateOptions">updateOptions
+                    </button>
                     <button type="button" class="btn btn-outline-dark" id="btn_method_setDisabled">setDisabled</button>
                     <button type="button" class="btn btn-outline-dark" id="btn_method_setBtnClass">setBtnClass</button>
                 </div>
             </div>
 
-<!--            <div class="p-3">-->
-<!--                <label class="form-label" for="input_select_countries_2">Which European country would you like to travel-->
-<!--                    to?</label>-->
-<!--                <input id="input_select_countries_2" class="form-control" type="text" name="country_id_2" value="2"-->
-<!--                       data-bs-toggle="suggest" autocomplete="false"-->
-<!--                       data-bs-target="./actions.php">-->
-<!--            </div>-->
+            <!--            <div class="p-3">-->
+            <!--                <label class="form-label" for="input_select_countries_2">Which European country would you like to travel-->
+            <!--                    to?</label>-->
+            <!--                <input id="input_select_countries_2" class="form-control" type="text" name="country_id_2" value="2"-->
+            <!--                       data-bs-toggle="suggest" autocomplete="false"-->
+            <!--                       data-bs-target="./actions.php">-->
+            <!--            </div>-->
 
         </div>
         <div class="p-3">
@@ -127,18 +130,22 @@
 
             function initSuggestions() {
                 $(suggestions.countries).suggest({
-                    debug:true,
+                    debug: true,
                     limit: 25,
-                    width: '100%',
                     typingInterval: 400,
-                    darkMenu: true,
+                    multiple: true,
+                    showMultipleAsList: false,
                     btnWidth: '400px',
-                    btnClass: 'btn btn-light border',
+                    btnClass: 'btn btn-primary shadow',
                     searchPlaceholderText: "Search by country",
-                    // emptyText: 'Please choose a country',
+                    btnEmptyText: 'Please choose a country',
                     waitingForTypingText: 'Waiting for typing',
                     typingText: 'typing..',
                     loadingText: 'Loading..',
+                    // Header action: icon-only trash (no label) to avoid multilingual text
+                    headerActionMode: 'clear',
+                    showHeaderActionText: false
+                    // Use the default nicely formatted renderer (badges + optional subtext)
                 });
             }
 

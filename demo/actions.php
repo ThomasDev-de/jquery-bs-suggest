@@ -25,7 +25,28 @@ try {
         $data = array_values(array_filter($countries, static function($country) use ($value){
             return $country->id === $value;
         }));
-        $return = $data[0];
+        $c = $data[0] ?? null;
+        if ($c !== null) {
+            // Prefer pre-defined formatted from JSON if present; else build default
+            $formatted = property_exists($c, 'formatted') && !empty($c->formatted)
+                ? $c->formatted
+                : (function($c){
+                    $sub = $c->subtext ?? null;
+                    return '<div class="w-100 rounded-2 px-2 py-1">'
+                        . '<div class="fw-semibold">' . htmlspecialchars($c->text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</div>'
+                        . (!empty($sub) ? '<div class="small opacity-75 mt-1">' . htmlspecialchars($sub, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</div>' : '')
+                        . '</div>';
+                })($c);
+            $return = [
+                'id' => $c->id,
+                'text' => $c->text,
+                'subtext' => $c->subtext ?? null,
+                'formatted' => $formatted,
+            ];
+            if (!empty($c->group)) {
+                $return['group'] = $c->group;
+            }
+        }
     }
     // if no
     else
@@ -38,31 +59,61 @@ try {
 
 		if (false === $search){
 			$min = min($limit, count($countries));
-			for($i = 0; $i < $min; $i++){
-				$c = $countries[$i];
+            for($i = 0; $i < $min; $i++){
+                $c = $countries[$i];
+                // Use provided formatted if available, otherwise generate
+                $formatted = property_exists($c, 'formatted') && !empty($c->formatted)
+                    ? $c->formatted
+                    : (function($c){
+                        $sub = $c->subtext ?? null;
+                        return '<div class="w-100 rounded-2 px-2 py-1">'
+                            . '<div class="fw-semibold">' . htmlspecialchars($c->text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</div>'
+                            . (!empty($sub) ? '<div class="small opacity-75 mt-1">' . htmlspecialchars($sub, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</div>' : '')
+                            . '</div>';
+                    })($c);
                 $d = [
                     'id' => $c->id,
                     'text' => $c->text,
                     'subtext' => $c->subtext ?? null,
+                    'formatted' => $formatted,
                 ];
                 if (!empty($c->group)){
                     $d['group'] = $c->group;
                 }
 
-				$data[] = $d;
-			}
-		}
-		else {
-			// If q was not passed or is empty, do not return any results either.
-			// Otherwise, search for matches of the search string.
-			$data = array_slice(
-				array:array_values(array_filter($countries, static function($country) use ($search){
-					return str_contains(strtolower($country->text), $search);
-				})),
-				offset: 0,
-				length: $limit
-			);
-		}
+                $data[] = $d;
+            }
+        }
+        else {
+            // If q was not passed or is empty, do not return any results either.
+            // Otherwise, search for matches of the search string.
+            $filtered = array_values(array_filter($countries, static function($country) use ($search){
+                return str_contains(strtolower($country->text), $search);
+            }));
+            $filtered = array_slice($filtered, 0, $limit);
+            $data = array_map(static function($c){
+                // Use provided formatted if available, otherwise generate
+                $formatted = property_exists($c, 'formatted') && !empty($c->formatted)
+                    ? $c->formatted
+                    : (function($c){
+                        $sub = $c->subtext ?? null;
+                        return '<div class="w-100 rounded-2 px-2 py-1">'
+                            . '<div class="fw-semibold">' . htmlspecialchars($c->text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</div>'
+                            . (!empty($sub) ? '<div class="small opacity-75 mt-1">' . htmlspecialchars($sub, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</div>' : '')
+                            . '</div>';
+                    })($c);
+                $d = [
+                    'id' => $c->id,
+                    'text' => $c->text,
+                    'subtext' => $c->subtext ?? null,
+                    'formatted' => $formatted,
+                ];
+                if (!empty($c->group)){
+                    $d['group'] = $c->group;
+                }
+                return $d;
+            }, $filtered);
+        }
 
 
 
