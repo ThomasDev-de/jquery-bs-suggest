@@ -4,20 +4,6 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and the versioning follows SemVer.
 
-#### [Unreleased]
-
-- Changes prepared after 1.1.1 but not released yet:
-  - Translations schema simplified and renamed:
-    - New keys: `translations = { search, placeholder, waiting, typing, loading, clear, close }`.
-    - Backward compatibility: legacy keys are mapped automatically (`emptyText`/`btnEmptyText` → `placeholder`, `searchPlaceholderText` → `search`, etc.).
-  - Clear behavior: Header "Clear" only clears the current selection and keeps the current search query and results visible (dropdown stays open).
-  - Dropdown selection visuals: no colored backgrounds; selection indicated via trailing icons only.
-    - New icon hooks: `icons.checked`, `icons.unchecked` (defaults provided; can be customized).
-    - Defensive: do not rely on Bootstrap's `.active` class for coloring.
-  - UI polish: removed remaining blue background flash on click by rendering items with neutral classes and stripping `.active`.
-  - API/behavior fix: `updateOptions({ selected: ... })` now applies the provided selection instead of restoring the previous one.
-  - Multiple mode: selected chips inside the button are rendered in alphabetical order by their visible text (fallback to `id`).
-
 #### [1.1.1] - 2025-12-12
 
 - Options API cleanup and consistency:
@@ -32,6 +18,18 @@ The format is based on Keep a Changelog, and the versioning follows SemVer.
 - Demo and docs:
   - Demo updated to use `translations` and remove `headerActionMode`.
   - README updated: documented `translations`, removed styling/visual options and `headerActionMode`, updated examples, and version badge.
+
+Additional changes included in 1.1.1:
+- Translations schema simplified and renamed to a compact form:
+  - New keys: `translations = { search, placeholder, waiting, typing, loading, clear, close }`.
+  - Backward compatibility: legacy keys are mapped automatically (`emptyText`/`btnEmptyText` → `placeholder`, `searchPlaceholderText` → `search`, etc.).
+- Clear behavior: Header "Clear" only clears the current selection and keeps the current search query and results visible (dropdown stays open).
+- Dropdown selection visuals: no colored backgrounds; selection indicated via trailing icons only.
+  - New icon hooks: `icons.checked`, `icons.unchecked` (defaults provided; can be customized).
+  - Defensive: do not rely on Bootstrap's `.active` class for coloring.
+- UI polish: removed remaining blue background flash on click by rendering items with neutral classes and stripping `.active`.
+- API/behavior fix: `updateOptions({ selected: ... })` now applies the provided selection instead of restoring the previous one.
+- Multiple mode: selected chips inside the button are rendered in alphabetical order by their visible text (fallback to `id`).
 
 #### [1.1.0] - 2025-12-11
 
