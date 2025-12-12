@@ -16,41 +16,42 @@
     function getTemplate($input) {
         const disabledClass = $input.prop('disabled') ? 'disabled' : '';
         let settings = $input.data('settings');
-        // Build header action buttons according to settings
-        const actionMode = settings.headerActionMode; // 'clear' | 'close' | 'both' | 'none'
+        const t = settings.translations || {};
         const showText = !!settings.showHeaderActionText;
-        const clearIcon = `<i class="${settings.headerClearIconClass}"></i>`;
-        const closeIcon = `<i class="${settings.headerCloseIconClass}"></i>`;
-        const clearLabel = settings.headerClearText || 'Clear';
-        const closeLabel = settings.headerCloseText || 'Close';
+        // Backward-compat: headerClearIconClass/headerCloseIconClass map into icons if present
+        const icons = settings.icons || {};
+        const clearIconHtml = icons.clear || (settings.headerClearIconClass ? `<i class="${settings.headerClearIconClass}"></i>` : '<i class="bi bi-trash"></i>');
+        const closeIconHtml = icons.close || (settings.headerCloseIconClass ? `<i class="${settings.headerCloseIconClass}"></i>` : '<i class="bi bi-x-lg"></i>');
+        const clearLabel = t.clear || 'Clear';
+        const closeLabel = t.close || 'Close';
         const btnBaseCls = 'btn btn-light bg-transparent ms-2';
         const buildClearBtn = () => `
                 <button role="button" type="button" class="${btnBaseCls} js-webcito-clear" title="${clearLabel}" aria-label="${clearLabel}">
-                    ${clearIcon}${showText ? ` <span class="ms-1">${clearLabel}</span>` : ''}
+                    ${clearIconHtml}${showText ? ` <span class="ms-1">${clearLabel}</span>` : ''}
                 </button>`;
         const buildCloseBtn = () => `
                 <button role="button" type="button" class="${btnBaseCls} js-webcito-close" title="${closeLabel}" aria-label="${closeLabel}">
-                    ${closeIcon}${showText ? ` <span class="ms-1">${closeLabel}</span>` : ''}
+                    ${closeIconHtml}${showText ? ` <span class="ms-1">${closeLabel}</span>` : ''}
                 </button>`;
-        let headerActionsHtml = '';
-        if (actionMode === 'clear') headerActionsHtml = buildClearBtn();
-        else if (actionMode === 'close') headerActionsHtml = buildCloseBtn();
-        else if (actionMode === 'both') headerActionsHtml = buildClearBtn() + buildCloseBtn();
-        // 'none' => no action buttons
+        // Always show both actions (headerActionMode removed)
+        let headerActionsHtml = buildClearBtn() + buildCloseBtn();
+        const headerClass = 'p-0 d-flex flex-nowrap align-items-center justify-content-between';
+        const searchInputClass = 'form-control ms-2 form-control-sm flex-fill border-0 bg-transparent px-1';
+        const listMax = 400;
         return `
 <div class="dropdown">
     <button type="button" class="js-suggest-btn ${settings.btnClass} ${disabledClass} d-flex align-items-center" aria-expanded="false" style="width:${settings.btnWidth}">
-        <div class="js-selected-text overflow-hidden">${settings.btnEmptyText}</div>
+        <div class="js-selected-text overflow-visible">${t.placeholder || 'Please choose..'}</div>
     </button>
-    <div class="dropdown-menu p-0 mt-1" style="min-width: 250px">
+    <div class="dropdown-menu bg-body p-0 mt-1 shadow rounded-3" style="min-width: 250px">
         <div class="w-100">
-            <div class="p-2 d-flex flex-nowrap align-items-center justify-content-between border-bottom">
-                <input autocomplete="false" type="search" class="form-control form-control-sm flex-fill" placeholder="${settings.searchPlaceholderText}">
+            <div class="${headerClass}">
+                <input autocomplete="false" type="search" class="${searchInputClass}" placeholder="${t.search || 'Search'}">
                 ${headerActionsHtml}
             </div>
-            <div class="js-suggest-results" style="max-height: 400px; overflow-y: auto;"></div>
+            <div class="js-suggest-results" style="max-height: ${listMax}px; overflow-y: auto;"></div>
             <div class="p-2 p-1 fw-light fst-italic d-flex align-items-center">
-                <small class="suggest-status-text">${settings.waitingForTypingText}</small>
+                <small class="suggest-status-text">${t.waiting || 'Waiting for typing'}</small>
             </div>
         </div>
     </div>
@@ -103,16 +104,22 @@
      * @param {Object} $input - The selectable element to be refreshed, which should contain a 'settings' data property.
      * @return {void}
      */
-    function refresh($input) {
+    function refresh($input, preserveSelection = true) {
         const settings = $input.data('settings');
-        // Preserve current selection explicitly before rebuilding
+        // Preserve current selection explicitly before rebuilding (optional)
         const wasMultiple = !!(settings && settings.multiple);
-        const preservedIds = wasMultiple ? ((($input.data('selected')) || []).map(String)) : null;
-        const preservedSingle = !wasMultiple ? $input.val() : null;
+        const preservedIds = preserveSelection && wasMultiple ? ((($input.data('selected')) || []).map(String)) : null;
+        const preservedSingle = preserveSelection && !wasMultiple ? $input.val() : null;
 
         destroy($input, false);
         // Re-init with previous settings
         $input.suggest(settings);
+
+        if (!preserveSelection) {
+            // Do not restore previous selection. If new settings contain `selected`,
+            // initial hydration will be handled by init logic. Otherwise, leave UI as placeholder.
+            return;
+        }
 
         // Restore selection without triggering change
         try {
@@ -172,6 +179,36 @@
         }
     }
 
+    // Escapes HTML for safe text-only badge rendering inside the button
+    function escapeHtml(str) {
+        return String(str == null ? '' : str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    // Button renderer: neutral chip (border only), text-only, optional inline remove control
+    function renderButtonItem(item, options) {
+        const opts = options || {};
+        const text = !isValueEmpty(item && item.text) ? String(item.text) : String((item && item.id) ?? '');
+        const idStr = String(item && item.id != null ? item.id : '');
+        const removeIcon = opts.removeIconHtml || '<i class="bi bi-x"></i>';
+        const removeHtml = opts.showRemove ? (
+            `<span class="js-suggest-remove position-absolute top-0 start-100 translate-middle rounded-circle border-0 text-bg-light p-0"
+  style="line-height:1;opacity:.8;"
+  data-id="${idStr}" aria-label="Remove">${removeIcon}</span>`
+        ) : '';
+
+        return `
+  <span class="d-inline-flex gap-2 overflow-visible align-items-center border rounded-3 px-3 py-0 bg-transparent position-relative">
+    <span class="text-truncate">${escapeHtml(text)}</span>
+    ${removeHtml}
+  </span>
+`;
+    }
+
     /**
      * Updates the text of a dropdown element.
      *
@@ -187,75 +224,57 @@
             console.log('setDropdownText', item, wrapper, settings);
         }
 
-        // Multiple selection: render selected items using the same formatting as options (formatItem)
+        // Multiple selection: render selected items as neutral chips inside the button.
+        // Note: formatItem applies ONLY to the suggestion list, not to the button.
         if (settings.multiple) {
             const selectedItems = ($input.data('selectedItems') || []).filter(it => it && !isValueEmpty(it.id));
             const isList = !!settings.showMultipleAsList; // true => vertical list, false => floating/wrapping
-            const containerClass = isList
-                ? 'd-flex flex-column align-items-start'
-                : 'd-flex flex-wrap align-items-start gap-2';
+            const containerClass = isList ? 'd-flex flex-column align-items-center' : 'd-flex flex-wrap align-items-center gap-2 pt-1';
+
+            const isDisabled = wrapper.find('.js-suggest-btn').hasClass('disabled') || $input.prop('disabled');
 
             if (!selectedItems.length) {
-                wrapper.find('.js-selected-text').html(`<div class="${containerClass}">${settings.btnEmptyText}</div>`);
+                const t = (settings && settings.translations) ? settings.translations : {};
+                wrapper.find('.js-selected-text').html(`<div class="${containerClass}">${t.placeholder || 'Please choose..'}</div>`);
                 return;
             }
 
-            // Build item HTML. For floating mode we try to make items inline-friendly by
-            // relaxing some block/w-100 defaults when possible. Additionally, add a small
-            // remove button per selected item, positioned as a corner control on the item.
-            const itemsHtml = selectedItems.map(it => {
+            // Sort a copy of items alphabetically by visible text to render in a predictable order (UI only)
+            const sortedForRender = selectedItems.slice().sort((a, b) => {
+                const ta = String(!isValueEmpty(a.text) ? a.text : a.id).toLowerCase();
+                const tb = String(!isValueEmpty(b.text) ? b.text : b.id).toLowerCase();
+                return ta.localeCompare(tb);
+            });
+
+            // Build item HTML using the neutral chip renderer with optional inline remove control.
+            const itemsHtml = sortedForRender.map(it => {
                 const idStr = String(it.id);
-                let inner = getItemHtml($input, it, false);
-                if (!isList) {
-                    // Make the inner wrapper inline-friendly
-                    inner = inner.replace(
-                        /class="([^"]*)\bd-flex\s+flex-column\s+align-items-start([^"]*)"/,
-                        'class="$1d-inline-flex align-items-center$2"'
-                    );
-                    inner = inner.replace(/\bw-100\b/g, 'w-auto');
-                }
-                // Wrap each item with a relative container and position the remove control in the top-right corner
-                const itemWrapperClass = isList
-                    ? 'suggest-selected-item position-relative d-block w-100'
-                    : 'suggest-selected-item position-relative d-inline-block me-1 mb-1';
-                // Use a non-button control to avoid nested button -> dropdown toggle conflicts
-                // Position the remove icon INSIDE the item (top-right corner) to avoid clipping by the button border
-                // and keep it readable. We also add tiny margins to detach it from edges.
-                // Keep the remove icon fully visible inside each item: place it at the inner top-right
-                // corner (no translate) and give it a slight z-index. Also increase right padding on
-                // the content so the icon doesn’t overlap text.
-                const removeBtnClass = 'js-suggest-remove position-absolute top-0 end-0 mt-1 me-1 bg-light border rounded-circle d-inline-flex align-items-center justify-content-center text-secondary shadow-sm z-1';
-                // Use Bootstrap Icons by request (bi-x)
-                const removeIcon = '<i class="bi bi-x"></i>';
-                return `
-<div class="${itemWrapperClass}" data-id="${idStr}">
-  <div class="suggest-selected-content pe-4">${inner}</div>
-  <span role="button" tabindex="0" class="${removeBtnClass}" data-id="${idStr}" aria-label="Remove" style="width:1.25rem;height:1.25rem">${removeIcon}</span>
-</div>`;
+                const inner = renderButtonItem(it, { showRemove: !isDisabled, removeIconHtml: (settings.icons && settings.icons.remove) ? settings.icons.remove : '<i class="bi bi-x"></i>' });
+                const itemWrapperClass = isList ? 'suggest-selected-item d-block w-100' : 'suggest-selected-item d-inline-block me-1 mb-1';
+                return `<div class="${itemWrapperClass}" data-id="${idStr}">${inner}</div>`;
             }).join('');
 
             wrapper.find('.js-selected-text').html(`<div class="${containerClass}">${itemsHtml}</div>`);
             return;
         }
 
-        // Single selection behavior (backward compatible)
-        let html = '';
+        // Single selection: render rich HTML in the button using formatted/formatItem when available
+        // No inline remove control in single mode
+        const t = (settings && settings.translations) ? settings.translations : {};
+        let contentHtml = t.placeholder || 'Please choose..';
         if (!isValueEmpty(item)) {
-            // Prefer server-provided HTML if available
             const hasFormatted = item && typeof item.formatted === 'string' && item.formatted.trim().length > 0;
             if (hasFormatted) {
-                html = item.formatted;
+                contentHtml = item.formatted;
             } else if (typeof settings.formatItem === 'function') {
-                html = settings.formatItem(item);
+                contentHtml = settings.formatItem(item);
             } else {
-                html = formatItem(item);
+                contentHtml = formatItem(item);
             }
         }
-        const formatted = isValueEmpty(item) ?
-            '<div class="d-flex flex-column align-items-start">' + settings.btnEmptyText + '</div>'
-            : '<div class="d-flex flex-column align-items-start">' + html + '</div>';
+        const container = '<div class="d-flex align-items-center text-start">' + contentHtml + '</div>';
 
-        wrapper.find('.js-selected-text').html(formatted);
+        wrapper.find('.js-selected-text').html(container);
     }
 
     /**
@@ -277,6 +296,7 @@
      */
     function reset($input) {
         const settings = $input.data('settings');
+        const t = (settings && settings.translations) ? settings.translations : {};
         const wrapper = getWrapper($input);
         const searchBox = wrapper.find('[type="search"]');
         const list = wrapper.find('.js-suggest-results');
@@ -286,7 +306,7 @@
         $input.data('selectedItems', []);
         searchBox.val(null);
         list.empty();
-        setStatus($input, settings.waitingForTypingText);
+        setStatus($input, t.waiting || 'Waiting for typing');
     }
 
     /**
@@ -329,6 +349,13 @@
             btn.removeClass('disabled');
             $input.prop('disabled', false);
         }
+        // Re-render chips to reflect visibility of inline remove controls in multiple mode
+        try {
+            const settings = getSettings($input);
+            if (settings.multiple) {
+                setDropdownText($input, null);
+            }
+        } catch (e) { /* no-op */ }
         trigger($input, 'toggleDisabled.bs.suggest', [status]);
     }
 
@@ -367,20 +394,26 @@
     function clear($input) {
         const settings = getSettings($input);
         const wrapper = getWrapper($input);
-        const searchBox = wrapper.find('[type="search"]');
         const list = wrapper.find('.js-suggest-results');
 
         if (settings.debug) {
             console.log('function', 'clear');
         }
         const valueBefore = $input.val();
+        // Clear only selection, keep current search query and list intact
         $input.val(settings.multiple ? [] : null);
         $input.data('selected', []);
         $input.data('selectedItems', []);
-        searchBox.val(null);
-        list.empty();
         setDropdownText($input, null);
-        setStatus($input, settings.waitingForTypingText);
+        // Remove selection state from list items but keep them visible; also update trailing icons
+        list.find('.dropdown-item').each(function(){
+            const $a = $(this);
+            $a.attr('aria-selected', 'false');
+            $a.removeClass('is-active');
+            const icons = (settings && settings.icons) || {};
+            const uncheckedIcon = icons.unchecked || '<i class="bi bi-circle"></i>';
+            $a.find('.js-suggest-check').html(uncheckedIcon);
+        });
         if (settings.multiple) {
             trigger($input, 'change.bs.suggest', [[], []]);
         } else {
@@ -429,7 +462,9 @@
                 .off(ns)
                 .on('click' + ns, function (e) {
                     // Ignore clicks inside the widget
-                    if (wrapper.is(e.target) || wrapper.has(e.target).length) return;
+                    if (wrapper.is(e.target) || wrapper.has(e.target).length) {
+                        return;
+                    }
                     // If open, hide it
                     if (menu.hasClass('show')) {
                         const inst = $input.data('dropdownInst');
@@ -453,7 +488,8 @@
             }
 
             typingTimer = setTimeout(function () {
-                setStatus($input, settings.loadingText);
+                const t = (settings && settings.translations) ? settings.translations : {};
+                setStatus($input, t.loading || 'Loading..');
                 getData($input).then(() => {
 
                 });
@@ -469,7 +505,8 @@
                 clearTimeout(typingTimer);
             }
             $input.data('typingTimer', typingTimer);
-            setStatus($input, settings.typingText);
+            const t = (settings && settings.translations) ? settings.translations : {};
+            setStatus($input, t.typing || 'typing..');
         });
 
         wrapper
@@ -511,7 +548,9 @@
                 const isKey = e.type === 'keydown';
                 if (isKey) {
                     const key = e.key || e.code;
-                    if (!(key === 'Enter' || key === ' ' || key === 'Spacebar')) return;
+                    if (!(key === 'Enter' || key === ' ' || key === 'Spacebar')) {
+                        return;
+                    }
                 }
                 e.preventDefault();
                 e.stopImmediatePropagation();
@@ -521,7 +560,9 @@
                 const isKey = e.type === 'keydown';
                 if (isKey) {
                     const key = e.key || e.code;
-                    if (!(key === 'Enter' || key === ' ' || key === 'Spacebar')) return;
+                    if (!(key === 'Enter' || key === ' ' || key === 'Spacebar')) {
+                        return;
+                    }
                 }
                 e.preventDefault();
                 e.stopImmediatePropagation();
@@ -550,7 +591,7 @@
                     if (idx > -1) {
                         selectedIds.splice(idx, 1);
                         selectedItems = selectedItems.filter(it => String(it.id) !== String(value));
-                        a.removeClass('active');
+                        applySelectionState(a, false, settings);
                     } else {
                         selectedIds.push(String(value));
                         selectedIds = Array.from(new Set(selectedIds));
@@ -561,7 +602,7 @@
                         } else {
                             selectedItems.push(item);
                         }
-                        a.addClass('active');
+                        applySelectionState(a, true, settings);
                     }
                     $input.data('selected', selectedIds);
                     $input.data('selectedItems', selectedItems);
@@ -576,8 +617,11 @@
                 // Single selection mode
                 // Always reflect active state in the list
                 const listEl = getWrapper($input).find('.js-suggest-results');
-                listEl.find('.dropdown-item.active').removeClass('active');
-                a.addClass('active');
+                listEl.find('.dropdown-item.is-active').each(function(){
+                    const $it = $(this);
+                    applySelectionState($it, false, settings);
+                });
+                applySelectionState(a, true, settings);
 
                 const beforeVal = $input.val();
                 if (beforeVal !== value) {
@@ -606,17 +650,11 @@
             })
             // Block early events on the remove control so the dropdown toggle never sees them
             .on('pointerdown mousedown mouseup touchstart touchend', '.js-suggest-remove', function (e) {
-                if (!settings.multiple) {
-                    return;
-                }
                 e.preventDefault();
                 e.stopImmediatePropagation(); // ensure nothing else handles it
             })
             // Keyboard support: remove on Enter/Space without opening dropdown
             .on('keydown', '.js-suggest-remove', function (e) {
-                if (!settings.multiple) {
-                    return;
-                }
                 const key = e.key || e.code;
                 if (key === 'Enter' || key === ' ' || key === 'Spacebar') {
                     e.preventDefault();
@@ -626,37 +664,42 @@
                 }
             })
             .on('click', '.js-suggest-remove', function (e) {
-                // Remove a selected item directly from the button (multiple mode only)
-                if (!settings.multiple) {
-                    return;
-                }
+                // Remove a selected item directly from the button
                 e.preventDefault();
                 e.stopImmediatePropagation(); // do not toggle dropdown
                 const btn = $(e.currentTarget);
                 const id = String(btn.data('id'));
-                let selectedIds = ($input.data('selected') || []).slice();
-                let selectedItems = ($input.data('selectedItems') || []).slice();
-                const idx = selectedIds.indexOf(id);
-                if (idx > -1) {
-                    selectedIds.splice(idx, 1);
-                }
-                selectedItems = selectedItems.filter(it => String(it.id) !== id);
-                const before = $input.val();
-                $input.data('selected', selectedIds);
-                $input.data('selectedItems', selectedItems);
-                $input.val(selectedIds);
-                setDropdownText($input, null);
-                // Also update active state in the dropdown list if it is open
-                const list = getWrapper($input).find('.js-suggest-results');
-                list.find('.dropdown-item.active').each(function(){
-                    const a = $(this);
-                    const it = a.data('item');
-                    if (it && String(it.id) === id) {
-                        a.removeClass('active');
+                if (settings.multiple) {
+                    let selectedIds = ($input.data('selected') || []).slice();
+                    let selectedItems = ($input.data('selectedItems') || []).slice();
+                    const idx = selectedIds.indexOf(id);
+                    if (idx > -1) {
+                        selectedIds.splice(idx, 1);
                     }
-                });
-                if (String(before) !== String(selectedIds)) {
-                    trigger($input, 'change.bs.suggest', [selectedIds, selectedItems]);
+                    selectedItems = selectedItems.filter(it => String(it.id) !== id);
+                    const before = $input.val();
+                    $input.data('selected', selectedIds);
+                    $input.data('selectedItems', selectedItems);
+                    $input.val(selectedIds);
+                    setDropdownText($input, null);
+                    // Also update active state in the dropdown list if it is open
+                    const list = getWrapper($input).find('.js-suggest-results');
+                    list.find('.dropdown-item.is-active').each(function(){
+                        const $a = $(this);
+                        const it = $a.data('item');
+                        if (it && String(it.id) === id) {
+                            applySelectionState($a, false, settings);
+                        }
+                    });
+                    if (String(before) !== String(selectedIds)) {
+                        trigger($input, 'change.bs.suggest', [selectedIds, selectedItems]);
+                    }
+                } else {
+                    // single: clear selection
+                    const valueBefore = $input.val();
+                    $input.val(null);
+                    setDropdownText($input, null);
+                    trigger($input, 'change.bs.suggest', [valueBefore, null]);
                 }
             })
             .on('hidden.bs.dropdown', '.dropdown', function () {
@@ -665,7 +708,8 @@
                 }
                 list.empty();
                 searchBox.val(null);
-                setStatus($input, settings.waitingForTypingText);
+                const t = (settings && settings.translations) ? settings.translations : {};
+                setStatus($input, t.waiting || 'Waiting for typing');
             })
             .on('shown.bs.dropdown', '.dropdown', function () {
                 if (settings.debug) {
@@ -780,16 +824,11 @@
 
         const a = div.find('.dropdown-item');
         a.data('item', item);
-        // Mark selected items as active in multiple mode
+        // Mark selected items (no background colors; use aria-selected + trailing icon)
         const settings = getSettings($input);
-        if (settings.multiple) {
-            const selectedIds = ($input.data('selected') || []).map(String);
-            if (selectedIds.includes(String(item.id))) {
-                a.addClass('active');
-            }
-        } else if (String($input.val()) === String(item.id)) {
-            a.addClass('active');
-        }
+        const idStr = String(item.id);
+        const isSelected = settings.multiple ? (($input.data('selected') || []).map(String).includes(idStr)) : (String($input.val()) === idStr);
+        applySelectionState(a, isSelected, settings);
     }
 
     /**
@@ -808,15 +847,35 @@
         if (hasFormatted) {
             html = item.formatted;
         } else if (typeof settings.formatItem === 'function') {
+            // If the user supplied a custom formatter, do not touch/highlight content
             html = settings.formatItem(item);
         } else {
+            // Built-in formatting (no query highlighting)
             html = formatItem(item);
         }
-        const commonClasses = 'd-flex flex-column align-items-start';
+        // Build anchor as a horizontal row; inner content remains stacked
+        const contentClasses = 'd-flex flex-column align-items-start';
         if (asDropdownItem) {
-            return `<a class="dropdown-item px-2 ${commonClasses}" href="#">${html}</a>`;
+            const densityClass = 'px-2 py-1';
+            // Determine selected state to choose trailing icon
+            const settings = getSettings($input);
+            const idStr = String(item.id);
+            let isSelected = false;
+            if (settings.multiple) {
+                const selectedIds = ($input.data('selected') || []).map(String);
+                isSelected = selectedIds.includes(idStr);
+            } else {
+                isSelected = String($input.val()) === idStr;
+            }
+            const icons = settings.icons || {};
+            const checkedIcon = icons.checked || '<i class="bi bi-check2"></i>';
+            const uncheckedIcon = icons.unchecked || '<i class="bi bi-circle"></i>';
+            const trailIcon = isSelected ? checkedIcon : uncheckedIcon;
+            const ariaSel = isSelected ? 'true' : 'false';
+            // Use bg-transparent to suppress Bootstrap's default active/hover background (no extra CSS)
+            return `<a class="dropdown-item bg-transparent text-reset d-flex align-items-center justify-content-between gap-2 ${densityClass}" href="#" role="option" aria-selected="${ariaSel}"><span class="flex-grow-1 ${contentClasses}">${html}</span><span class="mx-2 js-suggest-check">${trailIcon}</span></a>`;
         }
-        return `<div class="${commonClasses}">${html}</div>`;
+        return `<div class="${contentClasses}">${html}</div>`;
     }
 
     /**
@@ -909,14 +968,31 @@
         }
     }
 
+    // Helper: apply selection visuals to a dropdown item (no background colors)
+    function applySelectionState($a, isSelected, settings) {
+        try {
+            $a.attr('aria-selected', isSelected ? 'true' : 'false');
+            // Ensure we never rely on Bootstrap's .active coloring
+            $a.removeClass('active').toggleClass('is-active', !!isSelected);
+            const icons = (settings && settings.icons) || {};
+            const checkedIcon = icons.checked || '<i class="bi bi-check2"></i>';
+            const uncheckedIcon = icons.unchecked || '<i class="bi bi-circle"></i>';
+            const trail = $a.find('.js-suggest-check');
+            if (trail.length) {
+                trail.html(isSelected ? checkedIcon : uncheckedIcon);
+            }
+        } catch (e) { /* no-op */ }
+    }
+
     function formatItem(item) {
         // Modern, clean default rendering without forcing a light background.
-        // Important: Avoid fixed light backgrounds in dropdown so that
-        // .dropdown-item.active (Bootstrap) can provide proper contrast.
-        const text = String(item.text ?? item.id ?? '');
+        // Uses only Bootstrap utilities.
+        const rawText = String(item.text ?? item.id ?? '');
         const hasSub = Object.prototype.hasOwnProperty.call(item, 'subtext') && !isValueEmpty(item.subtext);
+        function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+        const text = esc(rawText);
         // Use opacity instead of text-muted to keep good contrast on dark/active backgrounds
-        const sub = hasSub ? `<div class="small opacity-75 mt-1">${item.subtext}</div>` : '';
+        const sub = hasSub ? `<div class="small opacity-75 mt-1">${esc(item.subtext)}</div>` : '';
         // Only Bootstrap 5 utilities, no custom CSS
         return `
 <div class="w-100 rounded-2 px-2 py-1">
@@ -946,22 +1022,34 @@
             showMultipleAsList:false,
             btnWidth: 'fit-content',
             btnClass: 'btn btn-outline-secondary',
-            searchPlaceholderText: "Search",
-            btnEmptyText: 'Please choose..',
-            waitingForTypingText: 'Waiting for typing',
-            typingText: 'typing..',
-            loadingText: 'Loading..',
+            // All UI texts live here (new compact schema)
+            translations: {
+                search: 'Search',
+                placeholder: 'Please choose..',
+                waiting: 'Waiting for typing',
+                typing: 'typing..',
+                loading: 'Loading..',
+                clear: 'Clear',
+                close: 'Close'
+            },
+            // Icons used by controls inside the widget
+            icons: {
+                remove: '<i class="bi bi-x"></i>',
+                clear: '<i class="bi bi-trash"></i>',
+                close: '<i class="bi bi-x-lg"></i>',
+                // New: icons for list selection state (dropdown items)
+                checked: '<i class="bi bi-check-square-fill"></i>',
+                unchecked: '<i class="bi bi-square"></i>'
+            },
+            // Initial selection: in single mode a scalar (string|number|any), in multiple mode an array of ids
+            // When defined and not null/empty, the plugin will resolve it via the backend and preselect it on init
+            selected: null,
             queryParams: function (params) {
                 return params;
             },
-            // Provide a nicely formatted default renderer used by both dropdown and button
+            // Renderer for suggestion list items only (button uses an internal text-only badge renderer)
             formatItem: formatItem,
-            // Header action configuration (to avoid ambiguous "x")
-            headerActionMode: 'clear', // 'clear' | 'close' | 'both' | 'none'
-            headerClearIconClass: 'bi bi-trash',
-            headerCloseIconClass: 'bi bi-x-lg',
-            headerClearText: 'Clear',
-            headerCloseText: 'Close',
+            // Whether header action buttons should show their text label next to the icon
             showHeaderActionText: false
         };
 
@@ -991,18 +1079,54 @@
                     o = $input.data('settings');
                 }
 
-                const settings = $.extend({}, DEFAULTS, o);
+                const settings = $.extend(true, {}, DEFAULTS, o);
 
-                // Backward compatibility: support legacy option name `emptyText`
-                if (o && typeof o.emptyText !== 'undefined' && typeof settings.btnEmptyText === 'string') {
-                    settings.btnEmptyText = o.emptyText;
+                // Backward compatibility: map legacy flat options and old translation keys into new compact schema
+                if (o) {
+                    const t = settings.translations || (settings.translations = {});
+                    // Flat options (very old)
+                    if (typeof o.emptyText !== 'undefined' && typeof t.placeholder === 'undefined') { t.placeholder = o.emptyText; }
+                    if (typeof o.btnEmptyText !== 'undefined' && typeof t.placeholder === 'undefined') { t.placeholder = o.btnEmptyText; }
+                    if (typeof o.searchPlaceholderText !== 'undefined' && typeof t.search === 'undefined') { t.search = o.searchPlaceholderText; }
+                    if (typeof o.waitingForTypingText !== 'undefined' && typeof t.waiting === 'undefined') { t.waiting = o.waitingForTypingText; }
+                    if (typeof o.typingText !== 'undefined' && typeof t.typing === 'undefined') { t.typing = o.typingText; }
+                    if (typeof o.loadingText !== 'undefined' && typeof t.loading === 'undefined') { t.loading = o.loadingText; }
+                    if (typeof o.headerClearText !== 'undefined' && typeof t.clear === 'undefined') { t.clear = o.headerClearText; }
+                    if (typeof o.headerCloseText !== 'undefined' && typeof t.close === 'undefined') { t.close = o.headerCloseText; }
+
+                    // If user provided translations object with old keys, map them as well
+                    if (o.translations && typeof o.translations === 'object') {
+                        const ot = o.translations;
+                        if (typeof ot.btnEmptyText !== 'undefined' && typeof t.placeholder === 'undefined') { t.placeholder = ot.btnEmptyText; }
+                        if (typeof ot.searchPlaceholderText !== 'undefined' && typeof t.search === 'undefined') { t.search = ot.searchPlaceholderText; }
+                        if (typeof ot.waitingForTypingText !== 'undefined' && typeof t.waiting === 'undefined') { t.waiting = ot.waitingForTypingText; }
+                        if (typeof ot.typingText !== 'undefined' && typeof t.typing === 'undefined') { t.typing = ot.typingText; }
+                        if (typeof ot.loadingText !== 'undefined' && typeof t.loading === 'undefined') { t.loading = ot.loadingText; }
+                        if (typeof ot.headerClearText !== 'undefined' && typeof t.clear === 'undefined') { t.clear = ot.headerClearText; }
+                        if (typeof ot.headerCloseText !== 'undefined' && typeof t.close === 'undefined') { t.close = ot.headerCloseText; }
+                    }
                 }
 
-                // Deprecation notices for truly unsupported options
+                // Deprecation notices for removed/unsupported visual options
                 if (settings.debug && o) {
                     if (Object.prototype.hasOwnProperty.call(o, 'multipleBadgeClass') ||
                         Object.prototype.hasOwnProperty.call(o, 'formatBadge')) {
                         console.warn('jquery.bsSelectSuggest: Options multipleBadgeClass and formatBadge are deprecated and ignored. Use formatItem to control rendering.');
+                    }
+                    const deprecated = ['menuClass','density','menuMaxHeight','showCheckmark','checkIconHtml','highlightQuery','headerClass','searchInputClass','itemClass','activeItemClass','headerActionMode'];
+                    deprecated.forEach(function(key){
+                        if (Object.prototype.hasOwnProperty.call(o, key)) {
+                            console.warn('jquery.bsSelectSuggest: Option "'+key+'" has been removed. Visual tuning is internal now.');
+                        }
+                    });
+                    // Map legacy icon class options into the new icons map for compatibility
+                    if (Object.prototype.hasOwnProperty.call(o, 'headerClearIconClass')) {
+                        settings.icons = settings.icons || {};
+                        settings.icons.clear = `<i class="${o.headerClearIconClass}"></i>`;
+                    }
+                    if (Object.prototype.hasOwnProperty.call(o, 'headerCloseIconClass')) {
+                        settings.icons = settings.icons || {};
+                        settings.icons.close = `<i class="${o.headerCloseIconClass}"></i>`;
                     }
                 }
 
@@ -1032,10 +1156,30 @@
 
             events($input);
 
-            const currentVal = $input.val();
-            const value = isValueEmpty(currentVal) ? null : (Array.isArray(currentVal) ? currentVal : String(currentVal).trim());
-            if (value !== null) {
-                getData($input, false, value).then(() => {
+            // Determine initial value to resolve: prefer explicit options.selected when provided
+            const settingsInit = getSettings($input);
+            let initialValue = null;
+            const hasSelectedOption = settingsInit && !isValueEmpty(settingsInit.selected);
+            if (hasSelectedOption) {
+                if (settingsInit.multiple) {
+                    if (Array.isArray(settingsInit.selected)) {
+                        initialValue = settingsInit.selected.map(String);
+                    } else if (typeof settingsInit.selected === 'string') {
+                        initialValue = settingsInit.selected.split(/[;.,\s]+/).filter(v => !isValueEmpty(v));
+                    } else {
+                        initialValue = [String(settingsInit.selected)];
+                    }
+                } else {
+                    initialValue = String(settingsInit.selected);
+                }
+            } else {
+                const currentVal = $input.val();
+                initialValue = isValueEmpty(currentVal) ? null : (Array.isArray(currentVal) ? currentVal : String(currentVal).trim());
+            }
+
+            if (!isValueEmpty(initialValue)) {
+                // Resolve without triggering change event
+                getData($input, false, initialValue, false).then(() => {
                 });
             }
         }
@@ -1096,8 +1240,12 @@
                     if (settings.debug) {
                         console.log('method', 'updateOptions', params, $input);
                     }
-                    $input.data('settings', $.extend({}, DEFAULTS, settings, params || {}));
-                    refresh($input);
+                    const nextSettings = $.extend(true, {}, DEFAULTS, settings, params || {});
+                    $input.data('settings', nextSettings);
+                    // If caller provided `selected`, do not preserve previous selection on refresh
+                    const hasSelectedProp = params && Object.prototype.hasOwnProperty.call(params, 'selected');
+                    const preserve = !hasSelectedProp;
+                    refresh($input, preserve);
                 }
                     break;
                 case 'setBtnClass': {

@@ -104,6 +104,12 @@
                         opt.clone().appendTo(selectSingle);
                         opt.clone().appendTo(selectMulti);
                     });
+
+                    // Preselect some values in the playground to mirror demo instances
+                    // Single: id 1 (Germany)
+                    $(selects.single).val('1').trigger('change.select2_silent');
+                    // Multiple: ids 1 and 3
+                    $(selects.multiple).val(['1', '3']).trigger('change.select2_silent');
                 });
             }
 
@@ -165,13 +171,19 @@
                     multiple: false,
                     btnWidth: '400px',
                     btnClass: 'btn btn-secondary shadow',
-                    searchPlaceholderText: "Search by country",
-                    btnEmptyText: 'Please choose a country',
-                    waitingForTypingText: 'Waiting for typing',
-                    typingText: 'typing..',
-                    loadingText: 'Loading..',
-                    headerActionMode: 'clear',
-                    showHeaderActionText: false
+                    translations: {
+                        search: 'Search by country',
+                        placeholder: 'Please choose a country',
+                        waiting: 'Waiting for typing',
+                        typing: 'typing..',
+                        loading: 'Loading..',
+                        clear: 'Clear',
+                        close: 'Close'
+                    },
+                    showHeaderActionText: false,
+                    // Preselect one item (resolved via backend on init)
+                    selected: 1,
+                    formatItem: null
                 });
 
                 // Multiple instance
@@ -181,17 +193,21 @@
                     typingInterval: 400,
                     multiple: true,
                     showMultipleAsList: false,
-                    btnWidth: '400px',
-                    btnClass: 'btn btn-primary shadow',
-                    searchPlaceholderText: "Search by country",
-                    btnEmptyText: 'Please choose a country',
-                    waitingForTypingText: 'Waiting for typing',
-                    typingText: 'typing..',
-                    loadingText: 'Loading..',
-                    // Header action: icon-only trash (no label) to avoid multilingual text
-                    headerActionMode: 'clear',
-                    showHeaderActionText: false
-                    // Use the default nicely formatted renderer (badges + optional subtext)
+                    btnWidth: 'fit-content',
+                    btnClass: 'btn border rounded-3 rounded-0',
+                    translations: {
+                        search: 'Search by country',
+                        placeholder: 'Please choose a country',
+                        waiting: 'Waiting for typing',
+                        typing: 'typing..',
+                        loading: 'Loading..',
+                        clear: 'Clear',
+                        close: 'Close'
+                    },
+                    // Header action labels disabled (icons only)
+                    showHeaderActionText: false,
+                    // Preselect multiple items (resolved via backend on init)
+                    selected: [1, 3]
                 });
             }
 
