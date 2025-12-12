@@ -53,12 +53,19 @@ CDN example (Bootstrap 5 + jQuery + optional Bootstrap Icons):
 <!-- Bootstrap 5 JS (depends on Popper, included) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-<!-- Plugin (self-hosted build) -->
-<script src="/dist/jquery.bsSelectSuggest.min.js"></script>
+<!-- Plugin (CDN via jsDelivr GitHub tag) -->
+<script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.1/dist/jquery.bsSelectSuggest.min.js"></script>
 ```
 
 CDN for the plugin itself:
-- TODO: Publish the plugin to a public CDN (e.g., jsDelivr/unpkg via npm or jsDelivr GitHub). Once available, reference it here instead of `/dist/...`.
+- jsDelivr (GitHub):
+  ```html
+  <script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.1/dist/jquery.bsSelectSuggest.min.js"></script>
+  ```
+  Note: If your release tag is named differently (e.g. `v1.1.1`), adjust the `@1.1.1` segment accordingly.
+- When published to npm, you can also use:
+  - jsDelivr (npm): `https://cdn.jsdelivr.net/npm/@webcito/jquery-select-suggest@1.1.1/dist/jquery.bsSelectSuggest.min.js`
+  - unpkg: `https://unpkg.com/@webcito/jquery-select-suggest@1.1.1/dist/jquery.bsSelectSuggest.min.js`
 
 Self-hosted (no CDN):
 ```html
@@ -141,7 +148,7 @@ Quick start example (full page):
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/dist/jquery.bsSelectSuggest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.1/dist/jquery.bsSelectSuggest.min.js"></script>
     <script>
       $(function(){
         $('#exampleInput').suggest({ limit: 10, multiple: false });

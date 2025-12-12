@@ -1,9 +1,24 @@
 {
   "name": "webcito/jquery-select-suggest",
   "version": "1.1.1",
-  "description": "description",
+  "description": "Bootstrap-powered jQuery dropdown for server-side suggestions (typeahead with selectable items).",
+  "type": "library",
+  "license": "MIT",
   "minimum-stability": "stable",
-  "license": "proprietary",
+  "prefer-stable": true,
+  "keywords": [
+    "jquery",
+    "bootstrap",
+    "typeahead",
+    "autocomplete",
+    "suggest",
+    "dropdown",
+    "bootstrap-icons"
+  ],
+  "homepage": "https://github.com/webcito/jquery-select-suggest",
+  "support": {
+    "issues": "https://github.com/webcito/jquery-select-suggest/issues"
+  },
   "authors": [
     {
       "name": "thomas",
@@ -12,9 +27,9 @@
   ],
   "require": {
     "components/jquery": "^3",
-    "twbs/bootstrap": "^4 || ^5"
-  }
-  ,
+    "twbs/bootstrap": "^4 || ^5",
+    "twbs/bootstrap-icons": "^1"
+  },
   "require-dev": {
     "roave/security-advisories": "dev-latest"
   }
