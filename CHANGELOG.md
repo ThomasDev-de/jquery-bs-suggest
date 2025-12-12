@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and the versioning follows SemVer.
 
+#### [Unreleased]
+
+- Changes prepared after 1.1.1 but not released yet:
+  - Translations schema simplified and renamed:
+    - New keys: `translations = { search, placeholder, waiting, typing, loading, clear, close }`.
+    - Backward compatibility: legacy keys are mapped automatically (`emptyText`/`btnEmptyText` → `placeholder`, `searchPlaceholderText` → `search`, etc.).
+  - Clear behavior: Header "Clear" only clears the current selection and keeps the current search query and results visible (dropdown stays open).
+  - Dropdown selection visuals: no colored backgrounds; selection indicated via trailing icons only.
+    - New icon hooks: `icons.checked`, `icons.unchecked` (defaults provided; can be customized).
+    - Defensive: do not rely on Bootstrap's `.active` class for coloring.
+  - UI polish: removed remaining blue background flash on click by rendering items with neutral classes and stripping `.active`.
+  - API/behavior fix: `updateOptions({ selected: ... })` now applies the provided selection instead of restoring the previous one.
+  - Multiple mode: selected chips inside the button are rendered in alphabetical order by their visible text (fallback to `id`).
+
 #### [1.1.1] - 2025-12-12
 
 - Options API cleanup and consistency:
@@ -50,57 +64,3 @@ The format is based on Keep a Changelog, and the versioning follows SemVer.
 
 [1.1.0]: https://github.com/webcito/jquery-select-suggest/compare/v1.0.17...v1.1.0
 [1.1.1]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.0...v1.1.1
-
-#### [1.1.2] - 2025-12-12
-
-- Translations schema simplified and renamed for clarity:
-  - New keys: `translations = { search, placeholder, waiting, typing, loading, clear, close }`.
-  - Backward compatibility: old keys are mapped automatically:
-    - `emptyText`/`btnEmptyText` → `placeholder`
-    - `searchPlaceholderText` → `search`
-    - `waitingForTypingText` → `waiting`
-    - `typingText` → `typing`
-    - `loadingText` → `loading`
-    - `headerClearText` → `clear`
-    - `headerCloseText` → `close`
-- Behavior: Header "Clear" now only clears the selection and keeps the current search input and result list visible (dropdown stays open).
-- Demo updated to the new translations keys.
-- Docs updated (README) to reflect the new schema and behavior.
-
-[1.1.2]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.1...v1.1.2
-
-#### [1.1.3] - 2025-12-12
-
-- Dropdown selection visuals simplified and modernized:
-  - Removed colored background/text changes for selected items in the dropdown list.
-  - Introduced two new icon hooks: `icons.checked` and `icons.unchecked` to indicate selection state.
-  - Each dropdown item now shows a trailing icon that toggles between checked/unchecked; `aria-selected` is updated accordingly.
-- API:
-  - `icons` now supports `{ remove, clear, close, checked, unchecked }`.
-  - No breaking changes; defaults are provided when not set.
-- Behavior:
-  - Clear action continues to clear only the selection and keeps search/results intact; icons update accordingly.
-- Docs & Demo:
-  - README updated to document new icons and the no-background selection design.
-  - Demo initialization shows how to provide `checked`/`unchecked` icons.
-
-[1.1.3]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.2...v1.1.3
-
-#### [1.1.4] - 2025-12-12
-
-- Fix: Removed the remaining blue background flash when clicking items in the dropdown.
-  - Anchors now include `bg-transparent text-reset` to neutralize Bootstrap's default :active/hover background without custom CSS.
-  - Defensive: strip `.active` from items and rely on a logic-only class `.is-active` plus checked/unchecked icons.
-- No API changes.
-- Docs: Version bump only.
-
-[1.1.4]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.3...v1.1.4
-
-#### [1.1.5] - 2025-12-12
-
-- Fix: `updateOptions` now respects the provided `selected` option instead of preserving the previous selection.
-  - When calling `$('...').suggest('updateOptions', { selected: ... })`, the widget refreshes without restoring the prior value and hydrates the new `selected` via backend resolution (single and multiple).
-  - Calling `updateOptions` without `selected` continues to preserve the current selection.
-- Internal change: `refresh($input, preserveSelection = true)` added; `updateOptions` passes `preserveSelection = false` only when `params` contains `selected`.
-
-[1.1.5]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.4...v1.1.5
