@@ -1002,7 +1002,8 @@
     }
 
     function getSelectedText($input) {
-        return $input.closest('.dropdown').find('.js-selected-text').html();
+        const wrapper = getWrapper($input);
+        return wrapper.find('.js-selected-text').html();
     }
 
     $.fn.suggest = function (options, params, params2) {
