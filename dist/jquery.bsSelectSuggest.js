@@ -1279,6 +1279,6 @@
         }
 
         // return the reference for chaining
-        return $input;
+        return $returnValue;
     };
 }(jQuery));
