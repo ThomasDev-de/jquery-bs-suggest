@@ -269,16 +269,18 @@ $('selector')
     .suggest('destroy')  // destroy the dropdown
     .suggest('updateOptions', newOptions)  // update options
     .suggest('setDisabled', true|false);  // toggle disable class
+
+$('selector').suggest('getSelectedText')
 ```
 ### Events
 ```js
 $('selector')
-    .on('change', function(e, a, b){
+    .on('change.bs.suggest', function(e, a, b){
         // Single select: a = id, b = text
         // Multiple select: a = array of ids, b = array of full item objects
         console.log('change', a, b);
     })
-    .on('error', function(e, message){
+    .on('error.bs.suggest', function(e, message){
         console.log('error', message);
     })
 ```

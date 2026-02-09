@@ -1,6 +1,6 @@
 {
   "name": "webcito/jquery-select-suggest",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Bootstrap-powered jQuery dropdown for server-side suggestions (typeahead with selectable items).",
   "type": "library",
   "license": "MIT",

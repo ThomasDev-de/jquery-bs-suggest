@@ -1001,6 +1001,10 @@
 </div>`;
     }
 
+    function getSelectedText($input) {
+        return $input.closest('.dropdown').find('.js-selected-text').html();
+    }
+
     $.fn.suggest = function (options, params, params2) {
 
         if (!$(this).length) {
@@ -1184,9 +1188,14 @@
             }
         }
 
+        let $returnValue = $input;
         // call methods
         if (isCallMethod) {
             switch (options) {
+                case 'getSelectedText': {
+                    $returnValue = getSelectedText($input);
+                    break;
+                }
                 case 'val': {
                     const settings = getSettings($input);
                     if (settings.debug) {
