@@ -412,7 +412,7 @@
             $a.removeClass('is-active');
             const icons = (settings && settings.icons) || {};
             const uncheckedIcon = icons.unchecked || '<i class="bi bi-circle"></i>';
-            $a.find('.js-suggest-check').html(uncheckedIcon);
+            $a.find('.js-suggest-check').html(settings.multiple ? uncheckedIcon : '');
         });
         if (settings.multiple) {
             trigger($input, 'change.bs.suggest', [[], []]);
@@ -870,7 +870,10 @@
             const icons = settings.icons || {};
             const checkedIcon = icons.checked || '<i class="bi bi-check2"></i>';
             const uncheckedIcon = icons.unchecked || '<i class="bi bi-circle"></i>';
-            const trailIcon = isSelected ? checkedIcon : uncheckedIcon;
+            let trailIcon = isSelected ? checkedIcon : uncheckedIcon;
+            if (! settings.multiple) {
+                trailIcon = '';
+            }
             const ariaSel = isSelected ? 'true' : 'false';
             // Use bg-transparent to suppress Bootstrap's default active/hover background (no extra CSS)
             return `<a class="dropdown-item bg-transparent text-reset d-flex align-items-center justify-content-between gap-2 ${densityClass}" href="#" role="option" aria-selected="${ariaSel}"><span class="flex-grow-1 ${contentClasses}">${html}</span><span class="mx-2 js-suggest-check">${trailIcon}</span></a>`;
@@ -979,7 +982,11 @@
             const uncheckedIcon = icons.unchecked || '<i class="bi bi-circle"></i>';
             const trail = $a.find('.js-suggest-check');
             if (trail.length) {
-                trail.html(isSelected ? checkedIcon : uncheckedIcon);
+                if (!settings.multiple) {
+                    trail.html(isSelected ? checkedIcon : uncheckedIcon);
+                } else {
+                    trail.html('');
+                }
             }
         } catch (e) { /* no-op */ }
     }

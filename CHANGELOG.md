@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and the versioning follows SemVer.
 
+#### main-dev
+- Added support for single-select mode: when `multiple: false`, checkboxes are hidden and only the selected item is displayed.
+
 #### [1.1.1] - 2025-12-12
 
 - Options API cleanup and consistency:
