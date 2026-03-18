@@ -630,7 +630,7 @@
                 if (beforeVal !== value) {
                     $input.val(value);
                     setDropdownText($input, item);
-                    trigger($input, 'change.bs.suggest', [item.id, item.text]);
+                    trigger($input, 'change.bs.suggest', [item.id, item.text, item]);
                 } else {
                     // Even if the value didn't change, keep the UI in sync
                     setDropdownText($input, item);
