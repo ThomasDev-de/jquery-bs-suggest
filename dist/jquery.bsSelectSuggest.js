@@ -967,7 +967,7 @@
                     $input.val(response.id);
                     setDropdownText($input, response);
                     if (triggerChange) {
-                        trigger($input, 'change.bs.suggest', [response.id, response.text]);
+                        trigger($input, 'change.bs.suggest', [response.id, response.text, response]);
                     }
                 }
             }
