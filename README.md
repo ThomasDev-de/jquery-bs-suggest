@@ -450,3 +450,10 @@ This project is licensed under the MIT License — see `LICENSE` for details.
 ### Changelog
 
 See `CHANGELOG.md` for a detailed list of changes. Current version: 1.1.1 (2025-12-12).
+
+
+## Support this project
+
+If this project helps you, feel free to support its development:
+
+[☕ Buy me a coffee via PayPal](https://paypal.me/thomaskirsch1529)
