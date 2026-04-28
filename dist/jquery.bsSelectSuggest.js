@@ -24,7 +24,7 @@
         const closeIconHtml = icons.close || (settings.headerCloseIconClass ? `<i class="${settings.headerCloseIconClass}"></i>` : '<i class="bi bi-x-lg"></i>');
         const clearLabel = t.clear || 'Clear';
         const closeLabel = t.close || 'Close';
-        const btnBaseCls = 'btn btn-light bg-transparent ms-2';
+        const btnBaseCls = 'btn bg-transparent ms-2 border-0';
         const buildClearBtn = () => `
                 <button role="button" type="button" class="${btnBaseCls} js-webcito-clear" title="${clearLabel}" aria-label="${clearLabel}">
                     ${clearIconHtml}${showText ? ` <span class="ms-1">${clearLabel}</span>` : ''}

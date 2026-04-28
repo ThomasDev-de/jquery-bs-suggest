@@ -6,7 +6,7 @@ The format is based on Keep a Changelog, and the versioning follows SemVer.
 
 #### main-dev
 - Added support for single-select mode: when `multiple: false`, checkboxes are hidden and only the selected item is displayed.
-
+- Update button base class to remove redundant styling; refactor for cleaner HTML output.
 #### [1.1.1] - 2025-12-12
 
 - Options API cleanup and consistency:
