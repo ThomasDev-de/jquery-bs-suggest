@@ -5,8 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and the versioning follows SemVer.
 
 #### main-dev
+- No unreleased changes yet.
+#### [1.1.5] - 2026-05-04
+
 - Added support for single-select mode: when `multiple: false`, checkboxes are hidden and only the selected item is displayed.
-- Update button base class to remove redundant styling; refactor for cleaner HTML output.
+- Updated button base class to remove redundant styling; refactored for cleaner HTML output.
+- Bootstrap 4/5 compatibility improvements:
+  - Reworked dropdown control logic to support both Bootstrap 5 (`bootstrap.Dropdown`) and Bootstrap 4 (`$(...).dropdown(...)`).
+  - Added robust fallback behavior when no Bootstrap dropdown API is available.
+- Markup/CSS utility compatibility pass:
+  - Replaced Bootstrap 5-only utility classes in critical template parts with Bootstrap 4/5-compatible alternatives.
+  - Removed/adjusted spacing utilities that are unavailable in Bootstrap 4 (while preserving behavior).
+
 #### [1.1.1] - 2025-12-12
 
 - Options API cleanup and consistency:
@@ -65,3 +75,4 @@ Additional changes included in 1.1.1:
 
 [1.1.0]: https://github.com/webcito/jquery-select-suggest/compare/v1.0.17...v1.1.0
 [1.1.1]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.0...v1.1.1
+[1.1.5]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.4...v1.1.5

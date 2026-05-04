@@ -24,33 +24,33 @@
         const closeIconHtml = icons.close || (settings.headerCloseIconClass ? `<i class="${settings.headerCloseIconClass}"></i>` : '<i class="bi bi-x-lg"></i>');
         const clearLabel = t.clear || 'Clear';
         const closeLabel = t.close || 'Close';
-        const btnBaseCls = 'btn bg-transparent ms-2 border-0';
+        const btnBaseCls = 'btn bg-transparent ms-2 ml-2 border-0';
         const buildClearBtn = () => `
                 <button role="button" type="button" class="${btnBaseCls} js-webcito-clear" title="${clearLabel}" aria-label="${clearLabel}">
-                    ${clearIconHtml}${showText ? ` <span class="ms-1">${clearLabel}</span>` : ''}
+                    ${clearIconHtml}${showText ? ` <span class="ms-1 ml-1">${clearLabel}</span>` : ''}
                 </button>`;
         const buildCloseBtn = () => `
                 <button role="button" type="button" class="${btnBaseCls} js-webcito-close" title="${closeLabel}" aria-label="${closeLabel}">
-                    ${closeIconHtml}${showText ? ` <span class="ms-1">${closeLabel}</span>` : ''}
+                    ${closeIconHtml}${showText ? ` <span class="ms-1 ml-1">${closeLabel}</span>` : ''}
                 </button>`;
         // Always show both actions (headerActionMode removed)
         let headerActionsHtml = buildClearBtn() + buildCloseBtn();
         const headerClass = 'p-0 d-flex flex-nowrap align-items-center justify-content-between';
-        const searchInputClass = 'form-control ms-2 form-control-sm flex-fill border-0 bg-transparent px-1';
+        const searchInputClass = 'form-control ms-2 ml-2 form-control-sm flex-fill border-0 bg-transparent px-1';
         const listMax = 400;
         return `
 <div class="dropdown">
     <button type="button" class="js-suggest-btn ${settings.btnClass} ${disabledClass} d-flex align-items-center" aria-expanded="false" style="width:${settings.btnWidth}">
         <div class="js-selected-text overflow-visible">${t.placeholder || 'Please choose..'}</div>
     </button>
-    <div class="dropdown-menu bg-body p-0 mt-1 shadow rounded-3" style="min-width: 250px">
+    <div class="dropdown-menu bg-white p-0 mt-1 shadow rounded" style="min-width: 250px">
         <div class="w-100">
             <div class="${headerClass}">
                 <input autocomplete="false" type="search" class="${searchInputClass}" placeholder="${t.search || 'Search'}">
                 ${headerActionsHtml}
             </div>
             <div class="js-suggest-results" style="max-height: ${listMax}px; overflow-y: auto;"></div>
-            <div class="p-2 p-1 fw-light fst-italic d-flex align-items-center">
+            <div class="p-2 p-1 font-weight-light font-italic d-flex align-items-center">
                 <small class="suggest-status-text">${t.waiting || 'Waiting for typing'}</small>
             </div>
         </div>
@@ -196,13 +196,13 @@
         const idStr = String(item && item.id != null ? item.id : '');
         const removeIcon = opts.removeIconHtml || '<i class="bi bi-x"></i>';
         const removeHtml = opts.showRemove ? (
-            `<span class="js-suggest-remove position-absolute top-0 start-100 translate-middle rounded-circle border-0 text-bg-light p-0"
-  style="line-height:1;opacity:.8;"
+            `<span class="js-suggest-remove position-absolute rounded-circle border-0 bg-light p-0"
+  style="right:-.5rem;top:0;transform:translate(50%,-50%);line-height:1;opacity:.8;"
   data-id="${idStr}" aria-label="Remove">${removeIcon}</span>`
         ) : '';
 
         return `
-  <span class="d-inline-flex gap-2 overflow-visible align-items-center border rounded-3 px-3 py-0 bg-transparent position-relative">
+  <span class="d-inline-flex overflow-visible align-items-center border rounded px-3 py-0 bg-transparent position-relative">
     <span class="text-truncate">${escapeHtml(text)}</span>
     ${removeHtml}
   </span>
@@ -229,7 +229,7 @@
         if (settings.multiple) {
             const selectedItems = ($input.data('selectedItems') || []).filter(it => it && !isValueEmpty(it.id));
             const isList = !!settings.showMultipleAsList; // true => vertical list, false => floating/wrapping
-            const containerClass = isList ? 'd-flex flex-column align-items-center' : 'd-flex flex-wrap align-items-center gap-2 pt-1';
+            const containerClass = isList ? 'd-flex flex-column align-items-center' : 'd-flex flex-wrap align-items-center pt-1';
 
             const isDisabled = wrapper.find('.js-suggest-btn').hasClass('disabled') || $input.prop('disabled');
 
@@ -250,7 +250,7 @@
             const itemsHtml = sortedForRender.map(it => {
                 const idStr = String(it.id);
                 const inner = renderButtonItem(it, { showRemove: !isDisabled, removeIconHtml: (settings.icons && settings.icons.remove) ? settings.icons.remove : '<i class="bi bi-x"></i>' });
-                const itemWrapperClass = isList ? 'suggest-selected-item d-block w-100' : 'suggest-selected-item d-inline-block me-1 mb-1';
+                const itemWrapperClass = isList ? 'suggest-selected-item d-block w-100' : 'suggest-selected-item d-inline-block me-1 mr-1 mb-1';
                 return `<div class="${itemWrapperClass}" data-id="${idStr}">${inner}</div>`;
             }).join('');
 
@@ -439,28 +439,74 @@
 
         const list = wrapper.find('.js-suggest-results');
 
-        // Create or get a Bootstrap Dropdown instance and control it manually
-        let dropdownInst = null;
+        // Create a dropdown adapter that works for Bootstrap 5 and 4.
         const btnEl = wrapper.find('.js-suggest-btn').get(0);
-        if (btnEl && typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+        const menu = wrapper.find('.dropdown-menu');
+        const parent = wrapper.find('.dropdown').first();
+        const supportsBs5 = !!(btnEl && typeof bootstrap !== 'undefined' && bootstrap.Dropdown);
+        const supportsBs4 = !!(btnEl && $.fn && typeof $.fn.dropdown === 'function');
+        let bs5Inst = null;
+
+        function fallbackToggleClass() {
+            menu.toggleClass('show');
+            parent.toggleClass('show', menu.hasClass('show'));
+        }
+
+        function fallbackHideClass() {
+            menu.removeClass('show');
+            parent.removeClass('show');
+        }
+
+        function dropdownToggle() {
             try {
-                dropdownInst = bootstrap.Dropdown.getOrCreateInstance(btnEl, {
-                    autoClose: settings.multiple ? 'outside' : true
-                });
-                // keep a reference if needed later
-                $input.data('dropdownInst', dropdownInst);
-            } catch (e) {
+                if (supportsBs5) {
+                    if (!bs5Inst) {
+                        bs5Inst = bootstrap.Dropdown.getOrCreateInstance(btnEl, {
+                            autoClose: settings.multiple ? 'outside' : true
+                        });
+                    }
+                    bs5Inst.toggle();
+                    return;
+                }
+                if (supportsBs4) {
+                    $(btnEl).dropdown('toggle');
+                    return;
+                }
+            } catch (err) {
                 if (settings.debug) {
-                    console.warn('Dropdown instance failed to init', e);
+                    console.warn('toggle failed', err);
                 }
             }
+            fallbackToggleClass();
+        }
+
+        function dropdownHide() {
+            try {
+                if (supportsBs5) {
+                    if (!bs5Inst) {
+                        bs5Inst = bootstrap.Dropdown.getOrCreateInstance(btnEl, {
+                            autoClose: settings.multiple ? 'outside' : true
+                        });
+                    }
+                    bs5Inst.hide();
+                    return;
+                }
+                if (supportsBs4) {
+                    $(btnEl).dropdown('hide');
+                    return;
+                }
+            } catch (err) {
+                if (settings.debug) {
+                    console.warn('hide failed', err);
+                }
+            }
+            fallbackHideClass();
         }
 
         // Robust outside-click close fallback (in case Bootstrap's autoClose is bypassed)
         try {
             const wrapId = wrapper.attr('id');
             const ns = '.suggestOutside-' + wrapId;
-            const menu = wrapper.find('.dropdown-menu');
             $(document)
                 .off(ns)
                 .on('click' + ns, function (e) {
@@ -470,12 +516,7 @@
                     }
                     // If open, hide it
                     if (menu.hasClass('show')) {
-                        const inst = $input.data('dropdownInst');
-                        if (inst && typeof inst.hide === 'function') {
-                            inst.hide();
-                        } else {
-                            menu.removeClass('show');
-                        }
+                        dropdownHide();
                     }
                 });
         } catch (e) {
@@ -526,25 +567,7 @@
                     return;
                 }
                 e.preventDefault();
-                const menu = wrapper.find('.dropdown-menu');
-                try {
-                    const inst = $input.data('dropdownInst');
-                    if (inst && typeof inst.toggle === 'function') {
-                        inst.toggle();
-                    } else if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
-                        // fallback create-on-demand
-                        const tmp = bootstrap.Dropdown.getOrCreateInstance(this, {autoClose: settings.multiple ? 'outside' : true});
-                        tmp.toggle();
-                        $input.data('dropdownInst', tmp);
-                    } else {
-                        // last resort: toggle class (limited)
-                        menu.toggleClass('show');
-                    }
-                } catch (err) {
-                    if (settings.debug) {
-                        console.warn('toggle failed', err);
-                    }
-                }
+                dropdownToggle();
             })
             // Header actions: clear/close (and legacy .js-webcito-reset mapped to clear)
             .on('click keydown', '.js-webcito-clear, .js-webcito-reset', function (e) {
@@ -569,14 +592,7 @@
                 }
                 e.preventDefault();
                 e.stopImmediatePropagation();
-                try {
-                    const inst = $input.data('dropdownInst');
-                    if (inst && typeof inst.hide === 'function') {
-                        inst.hide();
-                    } else {
-                        getWrapper($input).find('.dropdown-menu').removeClass('show');
-                    }
-                } catch (err) { /* no-op */ }
+                dropdownHide();
             })
             .on('click', '.dropdown-item', function (e) {
                 e.preventDefault();
@@ -640,16 +656,7 @@
                 }
 
                 // Close the dropdown after selection in single mode
-                try {
-                    const inst = $input.data('dropdownInst');
-                    if (inst && typeof inst.hide === 'function') {
-                        inst.hide();
-                    } else {
-                        getWrapper($input).find('.dropdown-menu').removeClass('show');
-                    }
-                } catch (err) {
-                    // no-op
-                }
+                dropdownHide();
             })
             // Block early events on the remove control so the dropdown toggle never sees them
             .on('pointerdown mousedown mouseup touchstart touchend', '.js-suggest-remove', function (e) {
@@ -883,7 +890,7 @@
                 tailWrapper = `<span class="mx-2 js-suggest-check">${trailIcon}</span>`;
             }
             // Use bg-transparent to suppress Bootstrap's default active/hover background (no extra CSS)
-            return `<a class="dropdown-item bg-transparent text-reset d-flex align-items-center justify-content-between gap-2 ${densityClass}" href="#" role="option" aria-selected="${ariaSel}"><span class="flex-grow-1 ${contentClasses}">${html}</span>${tailWrapper}</a>`;
+            return `<a class="dropdown-item bg-transparent text-reset d-flex align-items-center justify-content-between ${densityClass}" href="#" role="option" aria-selected="${ariaSel}"><span class="flex-grow-1 ${contentClasses}">${html}</span>${tailWrapper}</a>`;
         }
         return `<div class="${contentClasses}">${html}</div>`;
     }
