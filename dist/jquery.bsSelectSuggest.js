@@ -457,6 +457,12 @@
             parent.removeClass('show');
         }
 
+        function focusSearchBox() {
+            setTimeout(function () {
+                searchBox.trigger('focus');
+            }, 0);
+        }
+
         function dropdownToggle() {
             try {
                 if (supportsBs5) {
@@ -477,7 +483,11 @@
                     console.warn('toggle failed', err);
                 }
             }
+            const wasOpen = menu.hasClass('show');
             fallbackToggleClass();
+            if (!wasOpen && menu.hasClass('show')) {
+                focusSearchBox();
+            }
         }
 
         function dropdownHide() {
@@ -725,7 +735,7 @@
                 if (settings.debug) {
                     console.log('shown.bs.dropdown', '.dropdown');
                 }
-                searchBox.focus();
+                focusSearchBox();
             })
             .on('show.bs.dropdown', '.dropdown', function () {
                 if (settings.debug) {

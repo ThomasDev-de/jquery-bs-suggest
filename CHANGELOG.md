@@ -5,7 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and the versioning follows SemVer.
 
 #### main-dev
-- No unreleased changes yet.
+- UX: When opening the dropdown, focus is now set reliably to the search input.
+  - Added a fallback focus path for non-Bootstrap/manual toggle mode so the cursor lands in the search field immediately after open.
 #### [1.1.5] - 2026-05-04
 
 - Added support for single-select mode: when `multiple: false`, checkboxes are hidden and only the selected item is displayed.
