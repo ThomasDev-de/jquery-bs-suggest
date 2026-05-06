@@ -1,0 +1,9 @@
+window.bsSuggestTranslations = {
+    search: 'Išči',
+    placeholder: 'Prosimo izberite..',
+    waiting: 'Čakanje na vnos',
+    typing: 'Tipkanje..',
+    loading: 'Nalaganje..',
+    clear: 'Počisti',
+    close: 'Zapri'
+};

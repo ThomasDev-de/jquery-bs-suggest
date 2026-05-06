@@ -1,0 +1,9 @@
+window.bsSuggestTranslations = {
+    search: 'Fittex',
+    placeholder: 'Jekk jogħġbok agħżel..',
+    waiting: 'Stennija għall-kitba',
+    typing: 'Qed tittajpja..',
+    loading: 'Qed jitgħabba..',
+    clear: 'Ħassar',
+    close: 'Agħlaq'
+};

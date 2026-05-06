@@ -1,0 +1,9 @@
+window.bsSuggestTranslations = {
+    search: 'Sichen',
+    placeholder: 'Wielt w.e.g...',
+    waiting: 'Waart op Agab',
+    typing: 'Tippen..',
+    loading: 'Lueden..',
+    clear: 'Läschen',
+    close: 'Zoumaachen'
+};

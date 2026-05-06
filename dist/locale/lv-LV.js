@@ -1,0 +1,9 @@
+window.bsSuggestTranslations = {
+    search: 'Meklēt',
+    placeholder: 'Lūdzu izvēlieties..',
+    waiting: 'Gaida ievadi',
+    typing: 'Raksta..',
+    loading: 'Ielādē..',
+    clear: 'Notīrīt',
+    close: 'Aizvērt'
+};

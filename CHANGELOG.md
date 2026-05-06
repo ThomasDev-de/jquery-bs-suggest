@@ -5,8 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and the versioning follows SemVer.
 
 #### main-dev
+
+#### [1.1.6] - 2026-05-06
+- Added locale support via `window.bsSuggestTranslations`.
+  - Initialization now merges translations in this order: defaults, loaded locale, manual `options.translations`.
+  - Added European locale files under `dist/locale/` with minified builds.
 - UX: When opening the dropdown, focus is now set reliably to the search input.
   - Added a fallback focus path for non-Bootstrap/manual toggle mode so the cursor lands in the search field immediately after open.
+
 #### [1.1.5] - 2026-05-04
 
 - Added support for single-select mode: when `multiple: false`, checkboxes are hidden and only the selected item is displayed.
@@ -77,3 +83,4 @@ Additional changes included in 1.1.1:
 [1.1.0]: https://github.com/webcito/jquery-select-suggest/compare/v1.0.17...v1.1.0
 [1.1.1]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.0...v1.1.1
 [1.1.5]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.4...v1.1.5
+[1.1.6]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.5...v1.1.6

@@ -54,18 +54,18 @@ CDN example (Bootstrap 5 + jQuery + optional Bootstrap Icons):
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <!-- Plugin (CDN via jsDelivr GitHub tag) -->
-<script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.5/dist/jquery.bsSelectSuggest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.6/dist/jquery.bsSelectSuggest.min.js"></script>
 ```
 
 CDN for the plugin itself:
 - jsDelivr (GitHub):
   ```html
-  <script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.5/dist/jquery.bsSelectSuggest.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.6/dist/jquery.bsSelectSuggest.min.js"></script>
   ```
-  Note: If your release tag is named differently (e.g. `v1.1.5`), adjust the `@1.1.5` segment accordingly.
+  Note: If your release tag is named differently (e.g. `v1.1.6`), adjust the `@1.1.6` segment accordingly.
 - When published to npm, you can also use:
-  - jsDelivr (npm): `https://cdn.jsdelivr.net/npm/@webcito/jquery-select-suggest@1.1.5/dist/jquery.bsSelectSuggest.min.js`
-  - unpkg: `https://unpkg.com/@webcito/jquery-select-suggest@1.1.5/dist/jquery.bsSelectSuggest.min.js`
+  - jsDelivr (npm): `https://cdn.jsdelivr.net/npm/@webcito/jquery-select-suggest@1.1.6/dist/jquery.bsSelectSuggest.min.js`
+  - unpkg: `https://unpkg.com/@webcito/jquery-select-suggest@1.1.6/dist/jquery.bsSelectSuggest.min.js`
 
 Self-hosted (no CDN):
 ```html
@@ -74,6 +74,16 @@ Self-hosted (no CDN):
 <script src="/path/to/bootstrap.bundle.min.js"></script>
 <script src="/dist/jquery.bsSelectSuggest.min.js"></script>
 ```
+
+Locales can be loaded before plugin initialization. A locale file sets `window.bsSuggestTranslations`; the plugin merges defaults first, then the loaded locale, then manually provided `translations`.
+```html
+<script src="/dist/jquery.bsSelectSuggest.min.js"></script>
+<script src="/dist/locale/de-DE.min.js"></script>
+<script>
+  $('[data-bs-toggle="suggest"]').suggest();
+</script>
+```
+Included European locales: `be-BY`, `bg-BG`, `bs-BA`, `ca-ES`, `cs-CZ`, `cy-GB`, `da-DK`, `de-DE`, `el-GR`, `en-GB`, `es-ES`, `et-EE`, `eu-ES`, `fi-FI`, `fr-FR`, `ga-IE`, `gl-ES`, `hr-HR`, `hu-HU`, `is-IS`, `it-IT`, `lb-LU`, `lt-LT`, `lv-LV`, `mk-MK`, `mt-MT`, `nb-NO`, `nl-NL`, `pl-PL`, `pt-PT`, `ro-RO`, `ru-RU`, `sk-SK`, `sl-SI`, `sq-AL`, `sr-RS`, `sv-SE`, `tr-TR`, `uk-UA`.
 
 ### Installation via Composer
 Composer is not required to use the plugin in the browser. The JavaScript you need lives in `dist/`. In this repository, Composer is primarily used for the PHP demo to fetch Bootstrap and jQuery into `vendor/` (see “Run the demo locally”).
@@ -148,7 +158,7 @@ Quick start example (full page):
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.5/dist/jquery.bsSelectSuggest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.6/dist/jquery.bsSelectSuggest.min.js"></script>
     <script>
       $(function(){
         $('#exampleInput').suggest({ limit: 10, multiple: false });
@@ -209,6 +219,7 @@ let options = {
 }
 ```
 Notes:
+- Locale files in `dist/locale/` provide ready-to-use translations. Load one locale before calling `.suggest()` to use it as the default UI text set. Explicit `options.translations` values always win.
 - Legacy names are still accepted and mapped internally to the new schema:
   - `emptyText`/`btnEmptyText` → `translations.placeholder`
   - `searchPlaceholderText` → `translations.search`
@@ -436,6 +447,7 @@ php -S 127.0.0.1:8000 -t demo
 ### Project structure
 - `dist/jquery.bsSelectSuggest.js` — unminified plugin
 - `dist/jquery.bsSelectSuggest.min.js` — minified plugin
+- `dist/locale/` — locale files and minified locale builds
 - `demo/` — HTML + PHP demo and sample data
 - `CHANGELOG.md` — changes per version
 - `LICENSE` — MIT license
@@ -449,7 +461,7 @@ This project is licensed under the MIT License — see `LICENSE` for details.
 
 ### Changelog
 
-See `CHANGELOG.md` for a detailed list of changes. Current version: 1.1.5 (2026-05-04).
+See `CHANGELOG.md` for a detailed list of changes. Current version: 1.1.6 (2026-05-06).
 
 
 ## Support this project

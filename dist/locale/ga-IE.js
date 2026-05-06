@@ -1,0 +1,9 @@
+window.bsSuggestTranslations = {
+    search: 'Cuardaigh',
+    placeholder: 'Roghnaigh le do thoil..',
+    waiting: 'Ag fanacht le hionchur',
+    typing: 'Ag clóscríobh..',
+    loading: 'Á luchtú..',
+    clear: 'Glan',
+    close: 'Dún'
+};

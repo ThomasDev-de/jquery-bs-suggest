@@ -1,0 +1,9 @@
+window.bsSuggestTranslations = {
+    search: 'Kërko',
+    placeholder: 'Ju lutemi zgjidhni..',
+    waiting: 'Në pritje të shkrimit',
+    typing: 'Duke shkruar..',
+    loading: 'Duke ngarkuar..',
+    clear: 'Pastro',
+    close: 'Mbyll'
+};

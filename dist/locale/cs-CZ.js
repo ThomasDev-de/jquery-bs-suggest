@@ -1,0 +1,9 @@
+window.bsSuggestTranslations = {
+    search: 'Hledat',
+    placeholder: 'Vyberte prosím..',
+    waiting: 'Čekání na zadání',
+    typing: 'Píšete..',
+    loading: 'Načítání..',
+    clear: 'Vymazat',
+    close: 'Zavřít'
+};

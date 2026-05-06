@@ -1,0 +1,9 @@
+window.bsSuggestTranslations = {
+    search: 'Ieškoti',
+    placeholder: 'Pasirinkite..',
+    waiting: 'Laukiama įvedimo',
+    typing: 'Rašoma..',
+    loading: 'Įkeliama..',
+    clear: 'Išvalyti',
+    close: 'Uždaryti'
+};

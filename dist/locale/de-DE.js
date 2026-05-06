@@ -1,0 +1,9 @@
+window.bsSuggestTranslations = {
+    search: 'Suchen',
+    placeholder: 'Bitte wählen..',
+    waiting: 'Warten auf Eingabe',
+    typing: 'Tippt..',
+    loading: 'Lädt..',
+    clear: 'Löschen',
+    close: 'Schließen'
+};

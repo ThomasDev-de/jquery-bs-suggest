@@ -1,0 +1,9 @@
+window.bsSuggestTranslations = {
+    search: 'Ara',
+    placeholder: 'Lütfen seçin..',
+    waiting: 'Yazma bekleniyor',
+    typing: 'Yazılıyor..',
+    loading: 'Yükleniyor..',
+    clear: 'Temizle',
+    close: 'Kapat'
+};

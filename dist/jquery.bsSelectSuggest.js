@@ -1115,7 +1115,12 @@
                     o = $input.data('settings');
                 }
 
-                const settings = $.extend(true, {}, DEFAULTS, o);
+                const globalTranslations = (
+                    typeof window !== 'undefined' &&
+                    window.bsSuggestTranslations &&
+                    typeof window.bsSuggestTranslations === 'object'
+                ) ? window.bsSuggestTranslations : {};
+                const settings = $.extend(true, {}, DEFAULTS, { translations: globalTranslations }, o);
 
                 // Backward compatibility: map legacy flat options and old translation keys into new compact schema
                 if (o) {
