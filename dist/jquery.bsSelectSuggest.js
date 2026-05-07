@@ -463,6 +463,27 @@
             }, 0);
         }
 
+        function fitMenuToViewport() {
+            const el = menu.get(0);
+            if (!el) {
+                return;
+            }
+            const pad = 8;
+            menu.css('margin-left', '0px');
+            const rect = el.getBoundingClientRect();
+            let delta = 0;
+            const maxRight = window.innerWidth - pad;
+            if (rect.right > maxRight) {
+                delta -= (rect.right - maxRight);
+            }
+            if (rect.left < pad) {
+                delta += (pad - rect.left);
+            }
+            if (delta !== 0) {
+                menu.css('margin-left', delta + 'px');
+            }
+        }
+
         function dropdownToggle() {
             try {
                 if (supportsBs5) {
@@ -486,6 +507,7 @@
             const wasOpen = menu.hasClass('show');
             fallbackToggleClass();
             if (!wasOpen && menu.hasClass('show')) {
+                fitMenuToViewport();
                 focusSearchBox();
             }
         }
@@ -726,6 +748,7 @@
                 if (settings.debug) {
                     console.log('hidden.bs.dropdown', '.dropdown');
                 }
+                menu.css('margin-left', '0px');
                 list.empty();
                 searchBox.val(null);
                 const t = (settings && settings.translations) ? settings.translations : {};
@@ -735,6 +758,7 @@
                 if (settings.debug) {
                     console.log('shown.bs.dropdown', '.dropdown');
                 }
+                fitMenuToViewport();
                 focusSearchBox();
             })
             .on('show.bs.dropdown', '.dropdown', function () {
