@@ -40,8 +40,8 @@
         const listMax = 400;
         return `
 <div class="dropdown">
-    <button type="button" class="js-suggest-btn ${settings.btnClass} ${disabledClass} d-flex align-items-center" aria-expanded="false" style="width:${settings.btnWidth}">
-        <div class="js-selected-text overflow-visible">${t.placeholder || 'Please choose..'}</div>
+    <button type="button" class="js-suggest-btn ${settings.btnClass} ${disabledClass} d-flex align-items-center" aria-expanded="false" style="width:${settings.btnWidth};max-width:100%;overflow:hidden;">
+        <div class="js-selected-text w-100 overflow-hidden">${t.placeholder || 'Please choose..'}</div>
     </button>
     <div class="dropdown-menu bg-white p-0 mt-1 shadow rounded" style="min-width:min(250px, calc(100vw - 1rem));max-width:calc(100vw - 1rem);overflow-x:hidden;">
         <div class="w-100">
@@ -272,7 +272,7 @@
                 contentHtml = formatItem(item);
             }
         }
-        const container = '<div class="d-flex align-items-center text-start">' + contentHtml + '</div>';
+        const container = '<div class="d-flex align-items-center text-start w-100" style="max-width:100%;overflow:hidden;">' + contentHtml + '</div>';
 
         wrapper.find('.js-selected-text').html(container);
     }
