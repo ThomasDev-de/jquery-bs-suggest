@@ -43,13 +43,13 @@
     <button type="button" class="js-suggest-btn ${settings.btnClass} ${disabledClass} d-flex align-items-center" aria-expanded="false" style="width:${settings.btnWidth}">
         <div class="js-selected-text overflow-visible">${t.placeholder || 'Please choose..'}</div>
     </button>
-    <div class="dropdown-menu bg-white p-0 mt-1 shadow rounded" style="min-width:min(250px, calc(100vw - 1rem));max-width:calc(100vw - 1rem);">
+    <div class="dropdown-menu bg-white p-0 mt-1 shadow rounded" style="min-width:min(250px, calc(100vw - 1rem));max-width:calc(100vw - 1rem);overflow-x:hidden;">
         <div class="w-100">
             <div class="${headerClass}">
                 <input autocomplete="false" type="search" class="${searchInputClass}" placeholder="${t.search || 'Search'}">
                 ${headerActionsHtml}
             </div>
-            <div class="js-suggest-results" style="max-height: ${listMax}px; overflow-y: auto;"></div>
+            <div class="js-suggest-results" style="max-height: ${listMax}px; overflow-y: auto; overflow-x: hidden;"></div>
             <div class="p-2 p-1 font-weight-light font-italic d-flex align-items-center">
                 <small class="suggest-status-text">${t.waiting || 'Waiting for typing'}</small>
             </div>
@@ -567,7 +567,9 @@
                 const t = (settings && settings.translations) ? settings.translations : {};
                 setStatus($input, t.loading || 'Loading..');
                 getData($input).then(() => {
-
+                    if (menu.hasClass('show')) {
+                        fitMenuToViewport();
+                    }
                 });
             }, settings.typingInterval);
             $input.data('typingTimer', typingTimer);
@@ -768,6 +770,9 @@
 
                 if (settings.loadDataOnShow) {
                     getData($input, true).then(() => {
+                        if (menu.hasClass('show')) {
+                            fitMenuToViewport();
+                        }
                     });
                 }
             });
@@ -924,7 +929,7 @@
                 tailWrapper = `<span class="mx-2 js-suggest-check">${trailIcon}</span>`;
             }
             // Use bg-transparent to suppress Bootstrap's default active/hover background (no extra CSS)
-            return `<a class="dropdown-item bg-transparent text-reset d-flex align-items-center justify-content-between ${densityClass}" href="#" role="option" aria-selected="${ariaSel}"><span class="flex-grow-1 ${contentClasses}">${html}</span>${tailWrapper}</a>`;
+            return `<a class="dropdown-item bg-transparent text-reset d-flex align-items-center justify-content-between ${densityClass}" href="#" role="option" aria-selected="${ariaSel}" style="max-width:100%;white-space:normal;overflow:hidden;"><span class="flex-grow-1 ${contentClasses}" style="min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:break-word;">${html}</span>${tailWrapper}</a>`;
         }
         return `<div class="${contentClasses}">${html}</div>`;
     }
