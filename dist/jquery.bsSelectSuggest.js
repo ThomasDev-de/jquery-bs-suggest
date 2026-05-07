@@ -35,7 +35,7 @@
                 </button>`;
         // Always show both actions (headerActionMode removed)
         let headerActionsHtml = buildClearBtn() + buildCloseBtn();
-        const headerClass = 'p-0 d-flex flex-nowrap align-items-center justify-content-between';
+        const headerClass = 'px-0 py-2 border-bottom d-flex flex-nowrap align-items-center justify-content-between';
         const searchInputClass = 'form-control ms-2 ml-2 form-control-sm flex-fill border-0 bg-transparent px-1';
         const listMax = 400;
         return `
