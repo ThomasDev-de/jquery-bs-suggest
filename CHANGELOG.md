@@ -6,6 +6,9 @@ The format is based on Keep a Changelog, and the versioning follows SemVer.
 
 #### main-dev
 
+- Mobile dropdown width fix:
+  - Prevented `.dropdown-menu` from exceeding viewport width on small screens by capping it with `max-width: calc(100vw - 1rem)` and using `min-width: min(250px, calc(100vw - 1rem))`.
+
 #### [1.1.6] - 2026-05-06
 - Added locale support via `window.bsSuggestTranslations`.
   - Initialization now merges translations in this order: defaults, loaded locale, manual `options.translations`.

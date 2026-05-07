@@ -43,7 +43,7 @@
     <button type="button" class="js-suggest-btn ${settings.btnClass} ${disabledClass} d-flex align-items-center" aria-expanded="false" style="width:${settings.btnWidth}">
         <div class="js-selected-text overflow-visible">${t.placeholder || 'Please choose..'}</div>
     </button>
-    <div class="dropdown-menu bg-white p-0 mt-1 shadow rounded" style="min-width: 250px">
+    <div class="dropdown-menu bg-white p-0 mt-1 shadow rounded" style="min-width:min(250px, calc(100vw - 1rem));max-width:calc(100vw - 1rem);">
         <div class="w-100">
             <div class="${headerClass}">
                 <input autocomplete="false" type="search" class="${searchInputClass}" placeholder="${t.search || 'Search'}">
