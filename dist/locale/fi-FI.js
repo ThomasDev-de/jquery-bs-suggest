@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Kirjoitetaan..',
     loading: 'Ladataan..',
     clear: 'Tyhjennä',
-    close: 'Sulje'
+    close: 'Sulje',
+    results: function (count, total) { return count !== total ? 'Näytetään ' + count + ' / ' + total + ' tulosta' : 'Tulokset: ' + count; }
 };

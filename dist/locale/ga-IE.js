@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Ag clóscríobh..',
     loading: 'Á luchtú..',
     clear: 'Glan',
-    close: 'Dún'
+    close: 'Dún',
+    results: function (count, total) { return count !== total ? 'Ag taispeáint ' + count + ' / ' + total + ' toradh' : 'Torthaí: ' + count; }
 };

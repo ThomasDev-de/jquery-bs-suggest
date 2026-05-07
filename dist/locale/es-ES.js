@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Escribiendo..',
     loading: 'Cargando..',
     clear: 'Borrar',
-    close: 'Cerrar'
+    close: 'Cerrar',
+    results: function (count, total) { return count !== total ? 'Mostrando ' + count + ' / ' + total + ' resultados' : 'Resultados: ' + count; }
 };

@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Skrifar..',
     loading: 'Hleður..',
     clear: 'Hreinsa',
-    close: 'Loka'
+    close: 'Loka',
+    results: function (count, total) { return count !== total ? 'Sýni ' + count + ' / ' + total + ' niðurstöður' : 'Niðurstöður: ' + count; }
 };

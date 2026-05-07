@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Duke shkruar..',
     loading: 'Duke ngarkuar..',
     clear: 'Pastro',
-    close: 'Mbyll'
+    close: 'Mbyll',
+    results: function (count, total) { return count !== total ? 'Duke shfaqur ' + count + ' / ' + total + ' rezultate' : 'Rezultate: ' + count; }
 };

@@ -855,7 +855,16 @@
                 });
             }
         }
-        setStatus($input, countItems !== total ? `showing ${countItems} / ${total} results` : `results: ${countItems}`);
+        const t = (getSettings($input).translations) || {};
+        let footerText = countItems !== total ? `showing ${countItems} / ${total} results` : `results: ${countItems}`;
+        if (typeof t.results === 'function') {
+            try {
+                footerText = t.results(countItems, total);
+            } catch (e) {
+                // keep fallback text
+            }
+        }
+        setStatus($input, footerText);
     }
 
     /**
@@ -1095,7 +1104,10 @@
                 typing: 'typing..',
                 loading: 'Loading..',
                 clear: 'Clear',
-                close: 'Close'
+                close: 'Close',
+                results: function (count, total) {
+                    return count !== total ? `showing ${count} / ${total} results` : `results: ${count}`;
+                }
             },
             // Icons used by controls inside the widget
             icons: {

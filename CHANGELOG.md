@@ -6,9 +6,17 @@ The format is based on Keep a Changelog, and the versioning follows SemVer.
 
 #### main-dev
 
+#### [1.1.7] - 2026-05-07
+
 - Mobile dropdown width fix:
   - Prevented `.dropdown-menu` from exceeding viewport width on small screens by capping it with `max-width: calc(100vw - 1rem)` and using `min-width: min(250px, calc(100vw - 1rem))`.
   - Added viewport-fit repositioning on open so the dropdown is shifted horizontally when needed and no longer overflows right/left when the trigger is offset from the screen edge.
+- Mobile selected-value clipping fix:
+  - Constrained selected content inside the trigger button (`max-width: 100%`, overflow hidden) so long/rich labels no longer bleed outside the button on small screens.
+- Translation improvements for result footer text:
+  - Added `translations.results(count, total)` to defaults and status rendering.
+  - Replaced hardcoded English footer text with locale-driven text.
+  - Updated all locale files in `dist/locale/` (`*.js`, `*.min.js`) to provide `results(count, total)`.
 
 #### [1.1.6] - 2026-05-06
 - Added locale support via `window.bsSuggestTranslations`.
@@ -88,3 +96,4 @@ Additional changes included in 1.1.1:
 [1.1.1]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.0...v1.1.1
 [1.1.5]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.4...v1.1.5
 [1.1.6]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.5...v1.1.6
+[1.1.7]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.6...v1.1.7

@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Se tastează..',
     loading: 'Se încarcă..',
     clear: 'Șterge',
-    close: 'Închide'
+    close: 'Închide',
+    results: function (count, total) { return count !== total ? 'Se afișează ' + count + ' / ' + total + ' rezultate' : 'Rezultate: ' + count; }
 };

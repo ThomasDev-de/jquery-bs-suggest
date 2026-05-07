@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Píšete..',
     loading: 'Načítání..',
     clear: 'Vymazat',
-    close: 'Zavřít'
+    close: 'Zavřít',
+    results: function (count, total) { return count !== total ? 'Zobrazeno ' + count + ' / ' + total + ' výsledků' : 'Výsledky: ' + count; }
 };

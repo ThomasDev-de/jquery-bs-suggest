@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Tippen..',
     loading: 'Lueden..',
     clear: 'Läschen',
-    close: 'Zoumaachen'
+    close: 'Zoumaachen',
+    results: function (count, total) { return count !== total ? 'Weist ' + count + ' / ' + total + ' Resultater' : 'Resultater: ' + count; }
 };

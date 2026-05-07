@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Idazten..',
     loading: 'Kargatzen..',
     clear: 'Garbitu',
-    close: 'Itxi'
+    close: 'Itxi',
+    results: function (count, total) { return count !== total ? 'Erakusten ' + count + ' / ' + total + ' emaitza' : 'Emaitzak: ' + count; }
 };

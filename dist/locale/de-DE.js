@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Tippt..',
     loading: 'Lädt..',
     clear: 'Löschen',
-    close: 'Schließen'
+    close: 'Schließen',
+    results: function (count, total) { return count !== total ? 'Zeige ' + count + ' / ' + total + ' Ergebnisse' : 'Ergebnisse: ' + count; }
 };

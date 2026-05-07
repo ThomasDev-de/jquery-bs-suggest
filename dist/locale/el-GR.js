@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Πληκτρολογείτε..',
     loading: 'Φόρτωση..',
     clear: 'Εκκαθάριση',
-    close: 'Κλείσιμο'
+    close: 'Κλείσιμο',
+    results: function (count, total) { return count !== total ? 'Εμφάνιση ' + count + ' / ' + total + ' αποτελεσμάτων' : 'Αποτελέσματα: ' + count; }
 };

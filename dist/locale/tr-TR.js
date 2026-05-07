@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Yazılıyor..',
     loading: 'Yükleniyor..',
     clear: 'Temizle',
-    close: 'Kapat'
+    close: 'Kapat',
+    results: function (count, total) { return count !== total ? 'Gösterilen ' + count + ' / ' + total + ' sonuç' : 'Sonuçlar: ' + count; }
 };

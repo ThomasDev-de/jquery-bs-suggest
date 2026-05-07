@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Rašoma..',
     loading: 'Įkeliama..',
     clear: 'Išvalyti',
-    close: 'Uždaryti'
+    close: 'Uždaryti',
+    results: function (count, total) { return count !== total ? 'Rodoma ' + count + ' / ' + total + ' rezultatų' : 'Rezultatai: ' + count; }
 };

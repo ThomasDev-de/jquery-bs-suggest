@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Въвеждане..',
     loading: 'Зареждане..',
     clear: 'Изчисти',
-    close: 'Затвори'
+    close: 'Затвори',
+    results: function (count, total) { return count !== total ? 'Показани ' + count + ' / ' + total + ' резултата' : 'Резултати: ' + count; }
 };

@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Raksta..',
     loading: 'Ielādē..',
     clear: 'Notīrīt',
-    close: 'Aizvērt'
+    close: 'Aizvērt',
+    results: function (count, total) { return count !== total ? 'Rāda ' + count + ' / ' + total + ' rezultātus' : 'Rezultāti: ' + count; }
 };

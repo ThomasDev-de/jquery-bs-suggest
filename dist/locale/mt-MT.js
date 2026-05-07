@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Qed tittajpja..',
     loading: 'Qed jitgħabba..',
     clear: 'Ħassar',
-    close: 'Agħlaq'
+    close: 'Agħlaq',
+    results: function (count, total) { return count !== total ? 'Qiegħed juri ' + count + ' / ' + total + ' riżultati' : 'Riżultati: ' + count; }
 };

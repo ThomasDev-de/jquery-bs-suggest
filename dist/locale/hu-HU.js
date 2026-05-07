@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Gépelés..',
     loading: 'Betöltés..',
     clear: 'Törlés',
-    close: 'Bezárás'
+    close: 'Bezárás',
+    results: function (count, total) { return count !== total ? 'Megjelenítve ' + count + ' / ' + total + ' találat' : 'Találatok: ' + count; }
 };

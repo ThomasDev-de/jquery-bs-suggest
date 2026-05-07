@@ -5,5 +5,6 @@ window.bsSuggestTranslations = {
     typing: 'Sisestamine..',
     loading: 'Laadimine..',
     clear: 'Tühjenda',
-    close: 'Sulge'
+    close: 'Sulge',
+    results: function (count, total) { return count !== total ? 'Kuvatakse ' + count + ' / ' + total + ' tulemust' : 'Tulemused: ' + count; }
 };
