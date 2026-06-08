@@ -37,7 +37,7 @@
                             </label>
                             <input id="input_select_countries_single" class="form-control form-control-lg" type="text" name="country_id_single"
                                    data-bs-toggle="suggest" autocomplete="false"
-                                   data-bs-target="/demo/actions.php">
+                                   data-bs-target="./actions.php">
                         </div>
 
                         <div class="mt-4 pt-4 border-top">
@@ -67,7 +67,7 @@
                             </label>
                             <input id="input_select_countries" class="form-control form-control-lg" type="text" name="country_id[]"
                                    data-bs-toggle="suggest" autocomplete="false"
-                                   data-bs-target="/demo/actions.php">
+                                   data-bs-target="./actions.php">
                         </div>
 
                         <div class="mt-4 pt-4 border-top">
@@ -127,7 +127,7 @@
                 }
 
             function getCountries() {
-                $.getJSON('demo/countries.json', function (json) {
+                $.getJSON('./countries.json', function (json) {
                     // Single select
                     let selectSingle = $(selects.single).empty();
                     $('<option>').appendTo(selectSingle);
