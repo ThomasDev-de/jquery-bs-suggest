@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="h-100">
+<html lang="en" class="h-100" data-bs-theme="auto">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,62 +8,98 @@
     <!-- Optional: Bootstrap Icons for remove (bi-x) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
-<body class="bg-dark h-100">
-<div class="container bg-white py-5 h-100">
-    <h1 class="border-bottom pb-2">$.fn.suggest</h1>
+<body class="h-100 bg-body-tertiary">
+<div class="container py-5">
+    <header class="pb-4 mb-5 border-bottom">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold text-primary">$.fn.suggest</h1>
+                <p class="lead mb-0 text-secondary">A modern, lightweight autocomplete & suggest plugin for Bootstrap 5.</p>
+            </div>
+        </div>
+    </header>
+
     <form autocomplete="off">
-        <div class="row">
-            <!-- LEFT: Single select playground -->
-            <div class="col-md-6 border-end">
-                <div class="p-3">
-                    <h4 class="mb-3">Single</h4>
-                    <label class="form-label" for="input_select_countries_single">Which European country would you like to travel to?</label>
-                    <input id="input_select_countries_single" class="form-control" type="text" name="country_id_single"
-                           data-bs-toggle="suggest" autocomplete="false"
-                           data-bs-target="./actions.php">
-                </div>
-                <div class="p-3">
-                    <h5>Playground</h5>
-                    <div class="mb-3">
-                        <label class="form-label" for="selectCountrySingle">Playground: set via method val (single)</label>
-                        <select class="form-select border-dark" id="selectCountrySingle">
-                        </select>
+        <div class="row g-4">
+            <!-- LEFT: Single select showcase -->
+            <div class="col-lg-6">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-header py-3">
+                        <h5 class="card-title mb-0"><i class="bi bi-person-check me-2"></i>Single Selection</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-4 text-muted small">
+                            Perfect for selecting a single entity from a large dataset with server-side search.
+                        </div>
+                        <div class="mb-5">
+                            <label class="form-label fw-semibold" for="input_select_countries_single">
+                                Where would you like to travel?
+                            </label>
+                            <input id="input_select_countries_single" class="form-control form-control-lg" type="text" name="country_id_single"
+                                   data-bs-toggle="suggest" autocomplete="false"
+                                   data-bs-target="/demo/actions.php">
+                        </div>
+
+                        <div class="mt-4 pt-4 border-top">
+                            <h6 class="text-uppercase text-secondary fw-bold small mb-3">Backend Synchronization</h6>
+                            <label class="form-label small" for="selectCountrySingle">Mirroring Hidden Field State:</label>
+                            <select class="form-select form-select-sm" id="selectCountrySingle">
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- RIGHT: Multiple select playground -->
-            <div class="col-md-6">
-                <div class="p-3">
-                    <h4 class="mb-3">Multiple</h4>
-                    <label class="form-label" for="input_select_countries">Which European countries would you like to travel to?</label>
-                    <input id="input_select_countries" class="form-control" type="text" name="country_id[]"
-                           data-bs-toggle="suggest" autocomplete="false"
-                           data-bs-target="./actions.php">
-                </div>
-                <div class="p-3">
-                    <h5>Playground</h5>
-                    <div class="mb-3">
-                        <label class="form-label" for="selectCountries">Playground: set via method val (multiple)</label>
-                        <select class="form-select border-dark" id="selectCountries" multiple size="12">
-                        </select>
+            <!-- RIGHT: Multiple select showcase -->
+            <div class="col-lg-6">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0"><i class="bi bi-tags me-2"></i>Multiple Selection</h5>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill">Tagging Mode</span>
                     </div>
-                    <div class="mb-2">
-                        <span class="text-muted small">Method buttons act on the Multiple instance</span>
+                    <div class="card-body p-4">
+                        <div class="mb-4 text-muted small">
+                            Ideal for tagging or selecting multiple items. Supports custom rendering and batch actions.
+                        </div>
+                        <div class="mb-5">
+                            <label class="form-label fw-semibold" for="input_select_countries">
+                                Your favorite European countries?
+                            </label>
+                            <input id="input_select_countries" class="form-control form-control-lg" type="text" name="country_id[]"
+                                   data-bs-toggle="suggest" autocomplete="false"
+                                   data-bs-target="/demo/actions.php">
+                        </div>
+
+                        <div class="mt-4 pt-4 border-top">
+                            <h6 class="text-uppercase text-secondary fw-bold small mb-3">Interactive Controls</h6>
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="btn_method_destroy">Destroy</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="btn_method_init">Re-Init</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="btn_method_refresh">Refresh</button>
+                                <button type="button" class="btn btn-sm btn-outline-success" id="btn_method_setBtnClass">Pill Style</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="btn_method_updateOptions">Big & Red</button>
+                                <button type="button" class="btn btn-sm btn-outline-warning" id="btn_method_setDisabled">Toggle State</button>
+                            </div>
+                            
+                            <label class="form-label small" for="selectCountries">Multiple Select State:</label>
+                            <select class="form-select form-select-sm" id="selectCountries" multiple size="5">
+                            </select>
+                        </div>
                     </div>
-                    <button type="button" class="btn btn-outline-dark" id="btn_method_destroy">destroy</button>
-                    <button type="button" class="btn btn-outline-dark" id="btn_method_init">init</button>
-                    <button type="button" class="btn btn-outline-dark" id="btn_method_refresh">refresh</button>
-                    <button type="button" class="btn btn-outline-dark" id="btn_method_updateOptions">updateOptions</button>
-                    <button type="button" class="btn btn-outline-dark" id="btn_method_setDisabled">setDisabled</button>
-                    <button type="button" class="btn btn-outline-dark" id="btn_method_setBtnClass">setBtnClass</button>
                 </div>
             </div>
         </div>
-        <div class="p-3">
-            <button type="submit" class="btn btn-success">submit</button>
+
+        <div class="text-center mt-5">
+            <button type="submit" class="btn btn-primary btn-lg px-5 shadow">
+                <i class="bi bi-send me-2"></i>Submit Form
+            </button>
         </div>
     </form>
+
+    <footer class="mt-5 pt-5 text-center text-muted border-top small">
+        &copy; 2026 tt-websolutions &bull; Built with Bootstrap 5 & jQuery
+    </footer>
 </div>
 <script src="../vendor/components/jquery/jquery.min.js"></script>
 <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.js"></script>
@@ -91,7 +127,7 @@
                 }
 
             function getCountries() {
-                $.getJSON('countries.json', function (json) {
+                $.getJSON('demo/countries.json', function (json) {
                     // Single select
                     let selectSingle = $(selects.single).empty();
                     $('<option>').appendTo(selectSingle);
@@ -137,7 +173,7 @@
                         disabled = !disabled;
                     })
                     .on('click', buttons.setBtnClass, function () {
-                        $(suggestions.multiple).suggest('setBtnClass', 'btn btn-primary btn-sm rounded-0');
+                        $(suggestions.multiple).suggest('setBtnClass', 'btn btn-primary btn-sm rounded-pill');
                     })
                     .on('click', buttons.update, function () {
                         $(suggestions.multiple).suggest('updateOptions', {
@@ -169,17 +205,8 @@
                     limit: 25,
                     typingInterval: 400,
                     multiple: false,
-                    btnWidth: '400px',
-                    btnClass: 'btn btn-secondary shadow',
-                    translations: {
-                        search: 'Search by country',
-                        placeholder: 'Please choose a country',
-                        waiting: 'Waiting for typing',
-                        typing: 'typing..',
-                        loading: 'Loading..',
-                        clear: 'Clear',
-                        close: 'Close'
-                    },
+                    btnWidth: '100%',
+                    btnClass: 'btn btn-outline-secondary',
                     showHeaderActionText: false,
                     // Preselect one item (resolved via backend on init)
                     selected: 1,
@@ -194,16 +221,7 @@
                     multiple: true,
                     showMultipleAsList: false,
                     btnWidth: 'fit-content',
-                    btnClass: 'btn border rounded-3 rounded-0',
-                    translations: {
-                        search: 'Search by country',
-                        placeholder: 'Please choose a country',
-                        waiting: 'Waiting for typing',
-                        typing: 'typing..',
-                        loading: 'Loading..',
-                        clear: 'Clear',
-                        close: 'Close'
-                    },
+                    btnClass: 'btn btn-outline-secondary',
                     // Header action labels disabled (icons only)
                     showHeaderActionText: false,
                     // Preselect multiple items (resolved via backend on init)

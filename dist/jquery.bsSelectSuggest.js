@@ -40,10 +40,10 @@
         const listMax = 400;
         return `
 <div class="dropdown">
-    <button type="button" class="js-suggest-btn ${settings.btnClass} ${disabledClass} d-flex align-items-center" aria-expanded="false" style="width:${settings.btnWidth};max-width:100%;overflow:hidden;">
-        <div class="js-selected-text w-100 overflow-hidden">${t.placeholder || 'Please choose..'}</div>
+    <button type="button" class="js-suggest-btn ${settings.btnClass} ${disabledClass} d-flex align-items-center" aria-expanded="false" data-bs-toggle="dropdown" style="width:${settings.btnWidth};max-width:100%;">
+        <div class="js-selected-text w-100">${t.placeholder || 'Please choose..'}</div>
     </button>
-    <div class="dropdown-menu bg-white p-0 mt-1 shadow rounded" style="min-width:min(250px, calc(100vw - 1rem));max-width:calc(100vw - 1rem);overflow-x:hidden;">
+    <div class="dropdown-menu p-0 mt-1 shadow rounded" style="min-width:min(250px, calc(100vw - 1rem));max-width:calc(100vw - 1rem);overflow-x:hidden;">
         <div class="w-100">
             <div class="${headerClass}">
                 <input autocomplete="false" type="search" class="${searchInputClass}" placeholder="${t.search || 'Search'}">
@@ -196,13 +196,13 @@
         const idStr = String(item && item.id != null ? item.id : '');
         const removeIcon = opts.removeIconHtml || '<i class="bi bi-x"></i>';
         const removeHtml = opts.showRemove ? (
-            `<span class="js-suggest-remove position-absolute rounded-circle border-0 bg-light p-0"
-  style="right:-.5rem;top:0;transform:translate(50%,-50%);line-height:1;opacity:.8;"
+            `<span class="js-suggest-remove rounded-circle border-0 p-0 ms-1 d-flex align-items-center justify-content-center"
+  style="line-height:1;width:1.2em;height:1.2em;background-color:rgba(128,128,128,0.25);cursor:pointer;color:inherit;"
   data-id="${idStr}" aria-label="Remove">${removeIcon}</span>`
         ) : '';
 
         return `
-  <span class="d-inline-flex overflow-visible align-items-center border rounded px-3 py-0 bg-transparent position-relative">
+  <span class="d-inline-flex align-items-center border rounded ps-2 pe-1 py-0 bg-transparent">
     <span class="text-truncate">${escapeHtml(text)}</span>
     ${removeHtml}
   </span>
@@ -229,7 +229,7 @@
         if (settings.multiple) {
             const selectedItems = ($input.data('selectedItems') || []).filter(it => it && !isValueEmpty(it.id));
             const isList = !!settings.showMultipleAsList; // true => vertical list, false => floating/wrapping
-            const containerClass = isList ? 'd-flex flex-column align-items-center' : 'd-flex flex-wrap align-items-center pt-1';
+            const containerClass = isList ? 'd-flex flex-column align-items-center' : 'd-flex flex-wrap align-items-center gap-2';
 
             const isDisabled = wrapper.find('.js-suggest-btn').hasClass('disabled') || $input.prop('disabled');
 
@@ -250,7 +250,7 @@
             const itemsHtml = sortedForRender.map(it => {
                 const idStr = String(it.id);
                 const inner = renderButtonItem(it, { showRemove: !isDisabled, removeIconHtml: (settings.icons && settings.icons.remove) ? settings.icons.remove : '<i class="bi bi-x"></i>' });
-                const itemWrapperClass = isList ? 'suggest-selected-item d-block w-100' : 'suggest-selected-item d-inline-block me-1 mr-1 mb-1';
+                const itemWrapperClass = isList ? 'suggest-selected-item d-block w-100' : 'suggest-selected-item d-inline-block';
                 return `<div class="${itemWrapperClass}" data-id="${idStr}">${inner}</div>`;
             }).join('');
 
@@ -272,7 +272,7 @@
                 contentHtml = formatItem(item);
             }
         }
-        const container = '<div class="d-flex align-items-center text-start w-100" style="max-width:100%;overflow:hidden;">' + contentHtml + '</div>';
+        const container = '<div class="d-flex align-items-center text-start w-100">' + contentHtml + '</div>';
 
         wrapper.find('.js-selected-text').html(container);
     }
@@ -443,7 +443,7 @@
         const btnEl = wrapper.find('.js-suggest-btn').get(0);
         const menu = wrapper.find('.dropdown-menu');
         const parent = wrapper.find('.dropdown').first();
-        const supportsBs5 = !!(btnEl && typeof bootstrap !== 'undefined' && bootstrap.Dropdown);
+        const supportsBs5 = !!(btnEl && (typeof bootstrap !== 'undefined' && bootstrap.Dropdown || $(btnEl).data('bs.dropdown')));
         const supportsBs4 = !!(btnEl && $.fn && typeof $.fn.dropdown === 'function');
         let bs5Inst = null;
 
@@ -460,7 +460,7 @@
         function focusSearchBox() {
             setTimeout(function () {
                 searchBox.trigger('focus');
-            }, 0);
+            }, 100);
         }
 
         function fitMenuToViewport() {
@@ -484,33 +484,11 @@
             }
         }
 
-        function dropdownToggle() {
-            try {
-                if (supportsBs5) {
-                    if (!bs5Inst) {
-                        bs5Inst = bootstrap.Dropdown.getOrCreateInstance(btnEl, {
-                            autoClose: settings.multiple ? 'outside' : true
-                        });
-                    }
-                    bs5Inst.toggle();
-                    return;
-                }
-                if (supportsBs4) {
-                    $(btnEl).dropdown('toggle');
-                    return;
-                }
-            } catch (err) {
-                if (settings.debug) {
-                    console.warn('toggle failed', err);
-                }
-            }
-            const wasOpen = menu.hasClass('show');
-            fallbackToggleClass();
-            if (!wasOpen && menu.hasClass('show')) {
-                fitMenuToViewport();
-                focusSearchBox();
-            }
-        }
+        // Listener for Bootstrap dropdown events to trigger custom logic
+        $(btnEl).on('shown.bs.dropdown', function () {
+            fitMenuToViewport();
+            focusSearchBox();
+        });
 
         function dropdownHide() {
             try {
@@ -600,8 +578,8 @@
                     e.preventDefault();
                     return;
                 }
-                e.preventDefault();
-                dropdownToggle();
+                // e.preventDefault(); // Removed to allow data-bs-toggle="dropdown" to work
+                // dropdownToggle(); // Removed to avoid double toggle
             })
             // Header actions: clear/close (and legacy .js-webcito-reset mapped to clear)
             .on('click keydown', '.js-webcito-clear, .js-webcito-reset', function (e) {
