@@ -109,7 +109,7 @@
         // Preserve current selection explicitly before rebuilding (optional)
         const wasMultiple = !!(settings && settings.multiple);
         const preservedIds = preserveSelection && wasMultiple ? ((($input.data('selected')) || []).map(String)) : null;
-        const preservedSingle = preserveSelection && !wasMultiple ? $input.val() : null;
+        const preservedSingle = preserveSelection && !wasMultiple ? getInputValue($input) : null;
 
         destroy($input, false);
         // Re-init with previous settings
@@ -150,8 +150,7 @@
      * @return {void} - This function does not return any value.
      */
     function destroy($input, show) {
-        let valBefore = $input.val();
-        const inputTypeBefore = $input.data('typeBefore');
+        const valBefore = getInputValue($input);
         let wrapper = getWrapper($input);
 
         // Unbind any document-level outside-click handlers for this instance
@@ -164,17 +163,53 @@
             // no-op
         }
 
-        $input.val(valBefore);
+        setInputValue($input, valBefore);
+
         $input.insertBefore(wrapper);
         wrapper.remove();
 
         $input.removeClass('js-suggest');
+
+        if (show) {
+            restoreOriginalElement($input);
+        }
+
         $input.removeData('settings');
         $input.removeData('selected');
         $input.removeData('selectedItems');
         $input.removeData('initSuggest');
+        $input.removeData('typeBefore');
+        $input.removeData('suggestAddedDNone');
+    }
 
-        if (show) {
+    function hideOriginalElement($input) {
+        if (isSelectElement($input)) {
+            if (!$input.hasClass('d-none')) {
+                $input.data('suggestAddedDNone', true);
+                $input.addClass('d-none');
+            }
+            return;
+        }
+
+        if ($input.attr('type') !== 'hidden') {
+            const inputTypeBefore = $input.attr('type') || 'text';
+            $input.attr('type', 'hidden');
+            $input.data('typeBefore', inputTypeBefore);
+        }
+    }
+
+    function restoreOriginalElement($input) {
+        if (isSelectElement($input)) {
+            if ($input.data('suggestAddedDNone')) {
+                $input.removeClass('d-none');
+                $input.removeData('suggestAddedDNone');
+            }
+            return;
+        }
+
+        const inputTypeBefore = $input.data('typeBefore');
+
+        if (inputTypeBefore) {
             $input.attr('type', inputTypeBefore);
         }
     }
@@ -301,7 +336,7 @@
         const searchBox = wrapper.find('[type="search"]');
         const list = wrapper.find('.js-suggest-results');
 
-        $input.val(settings.multiple ? [] : null);
+        setInputValue($input, settings.multiple ? [] : null);
         $input.data('selected', []);
         $input.data('selectedItems', []);
         searchBox.val(null);
@@ -399,9 +434,9 @@
         if (settings.debug) {
             console.log('function', 'clear');
         }
-        const valueBefore = $input.val();
+        const valueBefore = getInputValue($input);
         // Clear only selection, keep current search query and list intact
-        $input.val(settings.multiple ? [] : null);
+        setInputValue($input, settings.multiple ? [] : null);
         $input.data('selected', []);
         $input.data('selectedItems', []);
         setDropdownText($input, null);
@@ -637,8 +672,8 @@
                     }
                     $input.data('selected', selectedIds);
                     $input.data('selectedItems', selectedItems);
-                    const before = $input.val();
-                    $input.val(selectedIds);
+                    const before = getInputValue($input);
+                    setInputValue($input, selectedIds);
                     setDropdownText($input, null);
                     if (String(before) !== String(selectedIds)) {
                         trigger($input, 'change.bs.suggest', [selectedIds, selectedItems]);
@@ -654,9 +689,9 @@
                 });
                 applySelectionState(a, true, settings);
 
-                const beforeVal = $input.val();
+                const beforeVal = getInputValue($input);
                 if (beforeVal !== value) {
-                    $input.val(value);
+                    setInputValue($input, value);
                     setDropdownText($input, item);
                     trigger($input, 'change.bs.suggest', [item.id, item.text, item]);
                 } else {
@@ -699,10 +734,10 @@
                         selectedIds.splice(idx, 1);
                     }
                     selectedItems = selectedItems.filter(it => String(it.id) !== id);
-                    const before = $input.val();
+                    const before = getInputValue($input);
                     $input.data('selected', selectedIds);
                     $input.data('selectedItems', selectedItems);
-                    $input.val(selectedIds);
+                    setInputValue($input, selectedIds);
                     setDropdownText($input, null);
                     // Also update active state in the dropdown list if it is open
                     const list = getWrapper($input).find('.js-suggest-results');
@@ -718,8 +753,8 @@
                     }
                 } else {
                     // single: clear selection
-                    const valueBefore = $input.val();
-                    $input.val(null);
+                    const valueBefore = getInputValue($input);
+                    setInputValue($input, null);
                     setDropdownText($input, null);
                     trigger($input, 'change.bs.suggest', [valueBefore, null]);
                 }
@@ -776,6 +811,49 @@
         }
         return false; // All other values are considered non-empty (including numbers)
     }
+
+    function isSelectElement($input) {
+        return String($input.prop('tagName') || '').toLowerCase() === 'select';
+    }
+
+    function setInputValue($input, value) {
+        const settings = getSettings($input);
+
+        if (settings.multiple && Array.isArray(value)) {
+            if (isSelectElement($input)) {
+                $input.val(value);
+            } else {
+                $input.val(value.join(settings.multipleSeparator || ','));
+            }
+
+            return;
+        }
+
+        $input.val(value);
+    }
+
+    function getInputValue($input) {
+        const settings = getSettings($input);
+        const value = $input.val();
+
+        if (!settings.multiple) {
+            return value;
+        }
+
+        if (Array.isArray(value)) {
+            return value;
+        }
+
+        if (typeof value === 'string' && value !== '') {
+            return value
+                .split(settings.multipleSeparator || ',')
+                .map(v => v.trim())
+                .filter(v => !isValueEmpty(v));
+        }
+
+        return [];
+    }
+
 
     /**
      * Builds and groups items for the suggestion dropdown.
@@ -863,7 +941,9 @@
         // Mark selected items (no background colors; use aria-selected + trailing icon)
         const settings = getSettings($input);
         const idStr = String(item.id);
-        const isSelected = settings.multiple ? (($input.data('selected') || []).map(String).includes(idStr)) : (String($input.val()) === idStr);
+        const isSelected = settings.multiple
+            ? (($input.data('selected') || []).map(String).includes(idStr))
+            : (String(getInputValue($input)) === idStr);
         applySelectionState(a, isSelected, settings);
     }
 
@@ -901,7 +981,7 @@
                 const selectedIds = ($input.data('selected') || []).map(String);
                 isSelected = selectedIds.includes(idStr);
             } else {
-                isSelected = String($input.val()) === idStr;
+                isSelected = String(getInputValue($input)) === idStr;
             }
             const icons = settings.icons || {};
             const checkedIcon = icons.checked || '<i class="bi bi-check2"></i>';
@@ -1001,8 +1081,8 @@
                     $input.data('selected', ids);
                     $input.data('selectedItems', items);
 
-                    const before = $input.val();
-                    $input.val(ids);
+                    const before = getInputValue($input);
+                    setInputValue($input, ids);
 
                     setDropdownText($input, null);
 
@@ -1010,7 +1090,7 @@
                         trigger($input, 'change.bs.suggest', [ids, items]);
                     }
                 } else {
-                    $input.val(response.id);
+                    setInputValue($input, response.id);
                     setDropdownText($input, response);
 
                     if (triggerChange) {
@@ -1085,6 +1165,7 @@
             loadDataOnShow: true,
             typingInterval: 400,
             multiple: false,
+            multipleSeparator: ',',
             showMultipleAsList:false,
             btnWidth: 'fit-content',
             btnClass: 'btn btn-outline-secondary',
@@ -1131,12 +1212,7 @@
 
             $input.data('initSuggest', true);
 
-            if ($input.attr('type') !== 'hidden') {
-                const inputTypeBefore = $input.attr('type');
-                $input.attr('type', 'hidden');
-                $input.data('typeBefore', inputTypeBefore);
-            }
-
+            hideOriginalElement($input);
 
             $input.addClass('js-suggest');
 
@@ -1206,20 +1282,24 @@
 
                 $input.data('settings', settings);
                 if (settings.multiple) {
-                    const raw = $input.val();
+                    const raw = getInputValue($input);
                     let selected = [];
+
                     if (!isValueEmpty(raw)) {
                         if (Array.isArray(raw)) {
                             selected = raw.map(String);
                         } else if (typeof raw === 'string') {
-                            // Fallback: split common separators
-                            selected = raw.split(/[;,\s]+/).filter(v => !isValueEmpty(v));
+                            selected = raw
+                                .split(settings.multipleSeparator || ',')
+                                .map(v => v.trim())
+                                .filter(v => !isValueEmpty(v));
                         }
                     }
+
                     $input.data('selected', selected);
                     $input.data('selectedItems', []);
-                    // Reflect array into the hidden input for consistency
-                    $input.val(selected);
+
+                    setInputValue($input, selected);
                 }
                 if (settings.debug) {
                     console.log('init', settings);
@@ -1239,7 +1319,10 @@
                     if (Array.isArray(settingsInit.selected)) {
                         initialValue = settingsInit.selected.map(String);
                     } else if (typeof settingsInit.selected === 'string') {
-                        initialValue = settingsInit.selected.split(/[;.,\s]+/).filter(v => !isValueEmpty(v));
+                        initialValue = settingsInit.selected
+                            .split(settingsInit.multipleSeparator || ',')
+                            .map(v => v.trim())
+                            .filter(v => !isValueEmpty(v));
                     } else {
                         initialValue = [String(settingsInit.selected)];
                     }
@@ -1247,8 +1330,8 @@
                     initialValue = String(settingsInit.selected);
                 }
             } else {
-                const currentVal = $input.val();
-                initialValue = isValueEmpty(currentVal) ? null : (Array.isArray(currentVal) ? currentVal : String(currentVal).trim());
+                const currentVal = getInputValue($input);
+                initialValue = isValueEmpty(currentVal) ? null : currentVal;
             }
 
             if (!isValueEmpty(initialValue)) {
@@ -1271,24 +1354,29 @@
                     if (settings.debug) {
                         console.log('method', 'val', params, $input);
                     }
+
                     reset($input);
-                    // Normalize to array for multiple; keep single as-is
+
                     let p = params;
-                    if (getSettings($input).multiple) {
+
+                    if (settings.multiple) {
                         if (Array.isArray(params)) {
                             p = params.map(String);
                         } else if (params == null || params === '') {
                             p = [];
                         } else if (typeof params === 'string') {
-                            p = params.split(/[;,\s]+/).filter(v => !isValueEmpty(v));
+                            p = params
+                                .split(settings.multipleSeparator || ',')
+                                .map(v => v.trim())
+                                .filter(v => !isValueEmpty(v));
                         } else {
                             p = [String(params)];
                         }
                     }
-                    getData($input, false, p, params2 ?? false).then(() => {
-                    });
-                }
+
+                    getData($input, false, p, params2 ?? false).then(() => {});
                     break;
+                }
                 case 'destroy': {
                     const settings = getSettings($input);
                     if (settings.debug) {

@@ -54,18 +54,18 @@ CDN example (Bootstrap 5 + jQuery + optional Bootstrap Icons):
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <!-- Plugin (CDN via jsDelivr GitHub tag) -->
-<script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.7/dist/jquery.bsSelectSuggest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.8/dist/jquery.bsSelectSuggest.min.js"></script>
 ```
 
 CDN for the plugin itself:
 - jsDelivr (GitHub):
   ```html
-  <script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.7/dist/jquery.bsSelectSuggest.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.8/dist/jquery.bsSelectSuggest.min.js"></script>
   ```
-  Note: If your release tag is named differently (e.g. `v1.1.7`), adjust the `@1.1.7` segment accordingly.
+  Note: If your release tag is named differently (e.g. `v1.1.8`), adjust the `@1.1.8` segment accordingly.
 - When published to npm, you can also use:
-  - jsDelivr (npm): `https://cdn.jsdelivr.net/npm/@webcito/jquery-select-suggest@1.1.7/dist/jquery.bsSelectSuggest.min.js`
-  - unpkg: `https://unpkg.com/@webcito/jquery-select-suggest@1.1.7/dist/jquery.bsSelectSuggest.min.js`
+  - jsDelivr (npm): `https://cdn.jsdelivr.net/npm/@webcito/jquery-select-suggest@1.1.8/dist/jquery.bsSelectSuggest.min.js`
+  - unpkg: `https://unpkg.com/@webcito/jquery-select-suggest@1.1.8/dist/jquery.bsSelectSuggest.min.js`
 
 Self-hosted (no CDN):
 ```html
@@ -158,7 +158,7 @@ Quick start example (full page):
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.7/dist/jquery.bsSelectSuggest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.8/dist/jquery.bsSelectSuggest.min.js"></script>
     <script>
       $(function(){
         $('#exampleInput').suggest({ limit: 10, multiple: false });
@@ -177,7 +177,8 @@ let options = {
   loadDataOnShow: true,      // load first page on open
   typingInterval: 400,       // debounce between keyup and request
   multiple: false,           // allow multiple selection
-  selected: null,            // preselection on init; single: scalar, multiple: array of ids
+  multipleSeparator: ',',    // delimiter for non-select multiple values
+  selected: null,            // preselection on init; single: scalar, multiple: array or separator string
 
   // Button
   btnWidth: 'fit-content',   // CSS width value for the trigger button
@@ -231,12 +232,15 @@ Notes:
   - `loadingText` → `translations.loading`
   - `headerClearText` → `translations.clear`
   - `headerCloseText` → `translations.close`
-- In `multiple: true` mode, the hidden input value is an array. For form submissions, use a field name with brackets, e.g. `name="country_id[]"` to receive an array server‑side.
+- In `multiple: true` mode, value storage depends on the original element:
+  - Native `<select>` elements keep jQuery's array behavior via `.val(array)`.
+  - Regular inputs, including hidden inputs, store selected IDs as one separator-based string using `multipleSeparator` (default: `,`), e.g. `GUID1,GUID2,GUID3`.
+- Use a native `<select multiple name="country_id[]">` when the browser form submit should send an array. Use a regular or hidden input when you want a single delimited value and parse it server-side.
 
 Preselection with `selected`:
 - If `selected` is defined and not null/empty, the plugin will immediately resolve those ids via the backend and set the selection on init (no `change` event is fired for this initial hydrate).
 - Single select: pass a scalar (string/number). Example: `selected: 1`.
-- Multiple select: pass an array of ids (strings/numbers). Example: `selected: [1, 3]`.
+- Multiple select: pass an array of ids or a string separated by `multipleSeparator`. Examples: `selected: [1, 3]` or `selected: '1,3'`.
 
 Rendering model:
 - Suggestion list items use `formatItem(item)` (or the server‑provided `formatted` HTML when present) to render rich content.
@@ -254,6 +258,12 @@ Multiple button layout:
   - `true` (default): vertical stack (`d-flex flex-column align-items-start`).
   - `false`: floating/wrapping layout (`d-flex flex-wrap align-items-center gap-1`). The plugin also relaxes some block utilities (e.g. converts `w-100` to `w-auto`) for a tighter inline look.
 
+Multiple value separator:
+- `multipleSeparator` (string): Controls how multiple IDs are read from and written to regular input elements.
+- Default: `,`.
+- This option is also used when parsing `selected` or `suggest('val', value)` if `value` is provided as a string.
+- Native `<select>` elements are not joined into a string; they continue to use jQuery's array value handling.
+
 Dropdown header actions (to avoid ambiguous "x"):
 - The header shows Clear and Close actions by default (icons only). You can customize labels via `translations.clear` and `translations.close`, and toggle labels via `showHeaderActionText`.
   - Behavior:
@@ -264,7 +274,7 @@ Dropdown header actions (to avoid ambiguous "x"):
 
 Removal from selection (multiple mode):
 - Each selected item shown in the button includes a small remove control ("x"). The inline remove is only present in `multiple: true` and is hidden when the widget is disabled.
-- Clicking it removes that item from the selection, updates the hidden input array, re-renders the button, syncs the active state in the dropdown, and triggers `change.bs.suggest` with `([ids], [items])`.
+- Clicking it removes that item from the selection, syncs the original element value, re-renders the button, syncs the active state in the dropdown, and triggers `change.bs.suggest` with `([ids], [items])`.
 - For best visuals, include Bootstrap Icons:
   ```html
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -318,7 +328,7 @@ Optionally you can provide:
 ```
 When the method `val` is called, only the parameter `value` is sent to the server.  
 For single select the server should return a single item object.  
-For multiple select the server will send `value[]` as an array of IDs (jQuery serializes arrays like this) and expects an array in `items`.
+For multiple value resolving, the server receives `value[]` as an array of IDs (jQuery serializes arrays like this) and expects an array in `items`. This AJAX resolving behavior is independent of whether the original form element stores its submitted value as a native select array or as an input string via `multipleSeparator`.
 The optional fields `subtext` and `formatted` are supported here as well — if `formatted` is provided, it is used directly for the suggestion list. In single select mode, the button also prefers `formatted`/`formatItem`; in multiple mode the button uses text‑only chips.
 ```json
 { "id": 1, "text": "Germany", "formatted": "<strong>Germany</strong>" }
@@ -406,7 +416,8 @@ try {
 Using modern chips/tiles (default rendering):
 ```js
 $('#example').suggest({
-  multiple: true
+  multiple: true,
+  multipleSeparator: ',',
   // default formatItem produces a subtle chip/tile per item
 });
 ```
@@ -464,7 +475,7 @@ This project is licensed under the MIT License — see `LICENSE` for details.
 
 ### Changelog
 
-See `CHANGELOG.md` for a detailed list of changes. Current version: 1.1.7 (2026-05-07).
+See `CHANGELOG.md` for a detailed list of changes. Current version: 1.1.8 (2026-06-24).
 
 
 ## Support this project

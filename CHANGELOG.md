@@ -6,7 +6,30 @@ The format is based on Keep a Changelog, and the versioning follows SemVer.
 
 #### main-dev
 
- - Enhance user selection handling by ensuring value conversion to strings for `multiple` mode and addressing empty array cases.
+#### [1.1.8] - 2026-06-24
+
+- Added `multipleSeparator` option for `multiple: true` inputs.
+  - Default value: `","`.
+  - The separator is used when reading from or writing multiple values to non-`select` input elements.
+  - Example: `multipleSeparator: ','` stores hidden-input values as `GUID1,GUID2,GUID3`.
+- Improved multiple selection value handling:
+  - Native `<select>` elements keep jQuery’s `.val(array)` behavior.
+  - Regular input elements, including hidden inputs, now store multiple values as a separator-based string.
+  - Existing multiple values are parsed using the configured `multipleSeparator`.
+- Improved programmatic value setting:
+  - `suggest('val', ...)` now respects `multipleSeparator`.
+  - Multiple values can be set consistently with arrays or separator-based strings.
+- Improved empty multiple selection handling:
+  - Empty multiple selections are preserved internally as an empty array.
+  - AJAX value resolving can now send an explicit empty placeholder instead of confusing an empty selection with a missing value.
+- Improved refresh and destroy handling:
+  - Refresh now preserves single values through the normalized value helpers.
+  - Destroy now restores non-hidden input types and only removes the `d-none` class from native selects when the plugin added it.
+- Internal cleanup:
+  - Centralized input value reading/writing through helper logic.
+  - Selected IDs remain available via `$input.data('selected')`.
+  - Full selected item objects remain available via `$input.data('selectedItems')`.
+  - The visible button/chip UI continues to render from `selectedItems`.
 
 #### [1.1.7] - 2026-05-07
 
@@ -99,3 +122,4 @@ Additional changes included in 1.1.1:
 [1.1.5]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.4...v1.1.5
 [1.1.6]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.5...v1.1.6
 [1.1.7]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.6...v1.1.7
+[1.1.8]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.7...v1.1.8
