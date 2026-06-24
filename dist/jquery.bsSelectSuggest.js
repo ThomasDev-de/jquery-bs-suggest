@@ -935,13 +935,12 @@
         const wrapper = getWrapper($input);
         const searchBox = wrapper.find('[type="search"]');
 
-        if(! searchModus && val === null) {
+        if (!searchModus && val === null) {
             wrapper.find('.js-suggest-results').empty();
             setDropdownText($input, null);
             return;
         }
 
-        // Abbrechen des bestehenden XMLHttpRequest, falls vorhanden.
         let xhr = $input.data('xhr') || null;
         if (xhr && xhr.abort) {
             xhr.abort();
@@ -950,18 +949,28 @@
 
         const searchValue = isValueEmpty(searchBox.val()) ? null : searchBox.val().trim();
 
-        // Normalize value for non-search mode (programmatic set)
         let valueForQuery = val;
+
         if (!searchModus) {
             if (Array.isArray(val)) {
-                // In multiple mode send the array (serialized as value[]=..), single mode reduce to single scalar
-                valueForQuery = settings.multiple ? val : (val[0] ?? null);
+                if (settings.multiple) {
+                    valueForQuery = val.map(String);
+
+                    if (valueForQuery.length === 0) {
+                        valueForQuery = [''];
+                    }
+                } else {
+                    valueForQuery = val[0] ?? null;
+                }
             } else if (val != null) {
                 valueForQuery = String(val);
             }
         }
 
-        const data = searchModus ? {q: searchValue, limit: settings.limit} : {value: valueForQuery};
+        const data = searchModus
+            ? { q: searchValue, limit: settings.limit }
+            : { value: valueForQuery };
+
         const query = settings.queryParams(data);
 
         try {
@@ -980,25 +989,30 @@
                 buildItems($input, items, response.total);
             } else {
                 if (settings.multiple) {
-                    // Expect response.items as array; fallback to single item
                     let items = [];
+
                     if (Array.isArray(response.items)) {
                         items = response.items;
                     } else if (response.id !== undefined) {
                         items = [response];
                     }
+
                     const ids = items.map(it => String(it.id));
                     $input.data('selected', ids);
                     $input.data('selectedItems', items);
+
                     const before = $input.val();
                     $input.val(ids);
+
                     setDropdownText($input, null);
+
                     if (triggerChange && String(before) !== String(ids)) {
                         trigger($input, 'change.bs.suggest', [ids, items]);
                     }
                 } else {
                     $input.val(response.id);
                     setDropdownText($input, response);
+
                     if (triggerChange) {
                         trigger($input, 'change.bs.suggest', [response.id, response.text, response]);
                     }
@@ -1007,7 +1021,7 @@
         } catch (error) {
             trigger($input, 'error.bs.suggest', [error.message]);
         } finally {
-            $input.data('xhr', null);  // Reset the xhr data
+            $input.data('xhr', null);
         }
     }
 
