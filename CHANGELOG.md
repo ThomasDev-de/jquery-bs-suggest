@@ -6,6 +6,8 @@ The format is based on Keep a Changelog, and the versioning follows SemVer.
 
 #### main-dev
 
+ - Enhance user selection handling by ensuring value conversion to strings for `multiple` mode and addressing empty array cases.
+
 #### [1.1.7] - 2026-05-07
 
 - Mobile dropdown width fix:
