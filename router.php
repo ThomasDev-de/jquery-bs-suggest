@@ -11,6 +11,11 @@ if ($file && str_starts_with($file, $root) && is_file($file)) {
 
 // Redirect root to /demo/
 if ($uri === '/' || $uri === '') {
+    header('Location: /demo/');
+    return true;
+}
+
+if ($uri === '/demo/') {
     require $root . '/demo/index.html';
     return true;
 }
@@ -18,7 +23,9 @@ if ($uri === '/' || $uri === '') {
 // Optional: Make demo files accessible without /demo
 $demoFile = realpath($root . '/demo' . $uri);
 if ($demoFile && str_starts_with($demoFile, $root . '/demo') && is_file($demoFile)) {
-    return false;
+    $query = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
+    header('Location: /demo' . $uri . ($query !== null ? '?' . $query : ''));
+    return true;
 }
 
 // Fallback

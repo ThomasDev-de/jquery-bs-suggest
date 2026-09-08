@@ -24,13 +24,14 @@
         const closeIconHtml = icons.close || (settings.headerCloseIconClass ? `<i class="${settings.headerCloseIconClass}"></i>` : '<i class="bi bi-x-lg"></i>');
         const clearLabel = t.clear || 'Clear';
         const closeLabel = t.close || 'Close';
-        const btnBaseCls = 'btn bg-transparent ms-2 ml-2 border-0';
+        const btnBaseCls = 'btn text-body bg-transparent ms-2 ml-2 border-0';
+        const btnStyle = '--bs-btn-focus-shadow-rgb: var(--bs-secondary-rgb, 108, 117, 125);';
         const buildClearBtn = () => `
-                <button role="button" type="button" class="${btnBaseCls} js-webcito-clear" title="${clearLabel}" aria-label="${clearLabel}">
+                <button role="button" type="button" class="${btnBaseCls} js-webcito-clear" style="${btnStyle}" title="${clearLabel}" aria-label="${clearLabel}">
                     ${clearIconHtml}${showText ? ` <span class="ms-1 ml-1">${clearLabel}</span>` : ''}
                 </button>`;
         const buildCloseBtn = () => `
-                <button role="button" type="button" class="${btnBaseCls} js-webcito-close" title="${closeLabel}" aria-label="${closeLabel}">
+                <button role="button" type="button" class="${btnBaseCls} me-2 mr-2 js-webcito-close" style="${btnStyle}" title="${closeLabel}" aria-label="${closeLabel}">
                     ${closeIconHtml}${showText ? ` <span class="ms-1 ml-1">${closeLabel}</span>` : ''}
                 </button>`;
         // Always show both actions (headerActionMode removed)
@@ -568,14 +569,16 @@
             // no-op
         }
 
-        searchBox.on('keyup', function () {
+        searchBox.on('input', function () {
             if (settings.debug) {
-                console.log('keyup');
+                console.log('input');
             }
             if (typingTimer !== null) {
                 clearTimeout(typingTimer);
             }
 
+            const t = (settings && settings.translations) ? settings.translations : {};
+            setStatus($input, t.typing || 'typing..');
             typingTimer = setTimeout(function () {
                 const t = (settings && settings.translations) ? settings.translations : {};
                 setStatus($input, t.loading || 'Loading..');
@@ -588,16 +591,29 @@
             $input.data('typingTimer', typingTimer);
         });
 
-        searchBox.on('keydown', function () {
-            if (settings.debug) {
-                console.log('keydown');
+        // Keep Tab navigation inside the open menu in DOM order, without trapping focus.
+        menu.on('keydown', function (e) {
+            if (e.key !== 'Tab' || !menu.hasClass('show')) {
+                return;
             }
-            if (typingTimer !== null) {
-                clearTimeout(typingTimer);
+            const focusable = menu.find('input, button, a[href], select, textarea, [tabindex]')
+                .filter(':visible')
+                .not(':disabled, .disabled, [aria-disabled="true"], [tabindex="-1"]');
+            const index = focusable.index(e.target);
+            const next = index + (e.shiftKey ? -1 : 1);
+            if (index !== -1 && next >= 0 && next < focusable.length) {
+                e.preventDefault();
+                e.stopPropagation();
+                focusable.eq(next).trigger('focus');
             }
-            $input.data('typingTimer', typingTimer);
-            const t = (settings && settings.translations) ? settings.translations : {};
-            setStatus($input, t.typing || 'typing..');
+        });
+
+        wrapper.on('focusout', function () {
+            setTimeout(function () {
+                if (menu.hasClass('show') && !wrapper.get(0).contains(document.activeElement)) {
+                    dropdownHide();
+                }
+            }, 0);
         });
 
         wrapper

@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 try {
     // Fetch a test data set
     /** @var stdClass[] $countries */
-    $countries = json_decode(file_get_contents('countries.json'), false, 512, JSON_THROW_ON_ERROR);
+    $countries = json_decode(file_get_contents(__DIR__ . '/countries.json'), false, 512, JSON_THROW_ON_ERROR);
 
     // Try to find the query parameter value (supports both value and value[])
     $value = filter_input(INPUT_GET, 'value'); // may be string or null

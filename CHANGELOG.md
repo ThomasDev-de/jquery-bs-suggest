@@ -6,6 +6,25 @@ The format is based on Keep a Changelog, and the versioning follows SemVer.
 
 #### main-dev
 
+#### [1.1.9] - 2026-09-08
+
+- Improved keyboard navigation:
+  - Tab and Shift+Tab follow the dropdown controls in DOM order without trapping focus.
+  - The dropdown closes when focus leaves the widget.
+  - Search reacts to input changes instead of navigation keystrokes, with immediate typing feedback.
+- Fixed header action styling:
+  - Clear and Close now have visible focus rings while keeping transparent backgrounds and readable icon colors.
+  - Added right spacing to Close to match the search field's left spacing.
+- Rebuilt the demo as an English-language gallery with 11 interactive examples:
+  - Covers selection modes, preselection, rendering, grouping, custom labels and icons, search behavior, filters, native form submission, and API methods.
+  - Includes live field values, copyable code, responsive navigation, and light/dark mode.
+  - Added a dedicated example endpoint with filtering, grouped results, optional backend HTML, and matching result counts.
+  - Loads Bootstrap Icons locally from Composer dependencies.
+- Fixed local demo routing and setup:
+  - Redirects the root URL and shorthand demo file URLs to their correct `/demo/` paths.
+  - Loads the original backend's JSON data relative to the PHP file, independently of the working directory.
+  - Updated the README with the correct server command and PhpStorm configuration.
+
 #### [1.1.8] - 2026-06-24
 
 - Added `multipleSeparator` option for `multiple: true` inputs.
@@ -123,3 +142,4 @@ Additional changes included in 1.1.1:
 [1.1.6]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.5...v1.1.6
 [1.1.7]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.6...v1.1.7
 [1.1.8]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.7...v1.1.8
+[1.1.9]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.8...v1.1.9
