@@ -136,10 +136,10 @@ Additional changes included in 1.1.1:
 
 - Initial public iterations with server-backed suggestions, grouping, basic multiple selection and methods (`val`, `refresh`, `destroy`, `updateOptions`, `setDisabled`).
 
-[1.1.0]: https://github.com/webcito/jquery-select-suggest/compare/v1.0.17...v1.1.0
-[1.1.1]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.0...v1.1.1
-[1.1.5]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.4...v1.1.5
-[1.1.6]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.5...v1.1.6
-[1.1.7]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.6...v1.1.7
-[1.1.8]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.7...v1.1.8
-[1.1.9]: https://github.com/webcito/jquery-select-suggest/compare/v1.1.8...v1.1.9
+[1.1.0]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.0.17...v1.1.0
+[1.1.1]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.0...v1.1.1
+[1.1.5]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.4...v1.1.5
+[1.1.6]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.5...v1.1.6
+[1.1.7]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.6...v1.1.7
+[1.1.8]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.7...v1.1.8
+[1.1.9]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.8...v1.1.9

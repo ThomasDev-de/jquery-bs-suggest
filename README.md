@@ -54,13 +54,13 @@ CDN example (Bootstrap 5 + jQuery + optional Bootstrap Icons):
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <!-- Plugin (CDN via jsDelivr GitHub tag) -->
-<script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.9/dist/jquery.bsSelectSuggest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.9/dist/jquery.bsSelectSuggest.min.js"></script>
 ```
 
 CDN for the plugin itself:
 - jsDelivr (GitHub):
   ```html
-  <script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.9/dist/jquery.bsSelectSuggest.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.9/dist/jquery.bsSelectSuggest.min.js"></script>
   ```
   Note: If your release tag is named differently (e.g. `v1.1.9`), adjust the `@1.1.9` segment accordingly.
 - When published to npm, you can also use:
@@ -109,7 +109,7 @@ composer require webcito/jquery-select-suggest
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/REPO_OWNER/jquery-bs-suggest"
+      "url": "https://github.com/ThomasDev-de/jquery-bs-suggest"
     }
   ],
   "require": {
@@ -117,7 +117,6 @@ composer require webcito/jquery-select-suggest
   }
 }
 ```
-Replace `https://github.com/REPO_OWNER/jquery-bs-suggest` with the actual Git repository URL of this project.
 - Then run:
 ```bash
 composer update webcito/jquery-select-suggest
@@ -158,7 +157,7 @@ Quick start example (full page):
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/webcito/jquery-select-suggest@1.1.9/dist/jquery.bsSelectSuggest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.9/dist/jquery.bsSelectSuggest.min.js"></script>
     <script>
       $(function(){
         $('#exampleInput').suggest({ limit: 10, multiple: false });
