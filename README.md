@@ -54,18 +54,18 @@ CDN example (Bootstrap 5 + jQuery + optional Bootstrap Icons):
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <!-- Plugin (CDN via jsDelivr GitHub tag) -->
-<script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.9/dist/jquery.bsSelectSuggest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.10/dist/jquery.bsSelectSuggest.min.js"></script>
 ```
 
 CDN for the plugin itself:
 - jsDelivr (GitHub):
   ```html
-  <script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.9/dist/jquery.bsSelectSuggest.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.10/dist/jquery.bsSelectSuggest.min.js"></script>
   ```
-  Note: If your release tag is named differently (e.g. `v1.1.9`), adjust the `@1.1.9` segment accordingly.
+  Note: If your release tag is named differently (e.g. `v1.1.10`), adjust the `@1.1.10` segment accordingly.
 - When published to npm, you can also use:
-  - jsDelivr (npm): `https://cdn.jsdelivr.net/npm/@webcito/jquery-select-suggest@1.1.9/dist/jquery.bsSelectSuggest.min.js`
-  - unpkg: `https://unpkg.com/@webcito/jquery-select-suggest@1.1.9/dist/jquery.bsSelectSuggest.min.js`
+  - jsDelivr (npm): `https://cdn.jsdelivr.net/npm/@webcito/jquery-select-suggest@1.1.10/dist/jquery.bsSelectSuggest.min.js`
+  - unpkg: `https://unpkg.com/@webcito/jquery-select-suggest@1.1.10/dist/jquery.bsSelectSuggest.min.js`
 
 Self-hosted (no CDN):
 ```html
@@ -157,7 +157,7 @@ Quick start example (full page):
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.9/dist/jquery.bsSelectSuggest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.10/dist/jquery.bsSelectSuggest.min.js"></script>
     <script>
       $(function(){
         $('#exampleInput').suggest({ limit: 10, multiple: false });
@@ -459,9 +459,11 @@ Run these commands from the project root. The router redirects `/` to `/demo/`, 
 
 For PhpStorm's **PHP Built-in Web Server** configuration, use the project root as **Document root**, select `router.php` as **Router script**, and leave **Custom working directory** empty or set it to the project root. With port `8080`, open `http://localhost:8080/`.
 
-The demo contains 11 interactive examples covering single and multiple selection, stacked values and custom separators, preselection, custom rendering, grouped backend HTML, translations and icons, deferred search, query filters, native form submission, and API methods. Each example includes its current field value and copyable initialization code. The theme toggle lets you try both Bootstrap color modes.
+The demo contains 11 interactive examples covering single and multiple selection, stacked values and custom separators, preselection, custom rendering, grouped backend HTML, translations and icons, deferred search, query filters, native form submission, and API methods. Each example includes its current field value and copyable initialization code. The demo supports both Bootstrap color modes through `data-bs-theme` on the document root; an embedding page can control this attribute.
 
 `demo/examples.php` supplies the example gallery with JSON data. It supports `q`, `limit`, `value` / `value[]`, plus the demo-specific `region`, `grouped`, and `rich` parameters. `demo/actions.php` remains available as the original backend example.
+
+The demo has no standalone header or theme controls, so it can be embedded in an existing showcase. Section navigation scrolls within the current document even when the embedding page injects a `<base>` URL. The documentation link opens in a separate tab.
 
 2) Or open the demo with CDN assets by modifying the `<link>`/`<script>` tags in `demo/index.html` to use the CDN URLs shown in the Installation section.
 
@@ -482,7 +484,7 @@ This project is licensed under the MIT License — see `LICENSE` for details.
 
 ### Changelog
 
-See `CHANGELOG.md` for a detailed list of changes. Current version: 1.1.9 (2026-09-08).
+See `CHANGELOG.md` for a detailed list of changes. Current version: 1.1.10 (2026-09-08).
 
 
 ## Support this project

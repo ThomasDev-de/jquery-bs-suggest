@@ -6,6 +6,16 @@ The format is based on Keep a Changelog, and the versioning follows SemVer.
 
 #### main-dev
 
+#### [1.1.10] - 2026-09-08
+
+- Fixed embedded demo navigation when the hosting page injects a `<base>` URL:
+  - Section links and the skip link now focus and scroll to their targets within the current document instead of navigating to the base directory and potentially returning 403 Forbidden.
+  - Respects reduced-motion preferences when scrolling.
+- Removed the standalone demo header, theme toggle, and header GitHub link; the embedding page controls the color mode.
+- Adjusted the sidebar and scroll offsets for the header-free layout.
+- Opens the documentation on GitHub in a separate tab instead of inside the iframe.
+- Updated README and CDN examples for this release.
+
 #### [1.1.9] - 2026-09-08
 
 - Improved keyboard navigation:
@@ -143,3 +153,4 @@ Additional changes included in 1.1.1:
 [1.1.7]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.6...v1.1.7
 [1.1.8]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.7...v1.1.8
 [1.1.9]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.8...v1.1.9
+[1.1.10]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.9...v1.1.10

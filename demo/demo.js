@@ -264,11 +264,19 @@ const values = new FormData(event.currentTarget)
         }
         setTimeout(() => { button.textContent = 'Copy'; }, 2200);
     });
-    $('#theme-toggle').on('click', function () {
-        const dark = document.documentElement.dataset.bsTheme !== 'dark';
-        document.documentElement.dataset.bsTheme = dark ? 'dark' : 'light';
-        $(this).attr('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode')
-            .html(`<i class="bi bi-${dark ? 'sun' : 'moon'}" aria-hidden="true"></i>`);
+    // An embedding page may inject a <base> URL. Fragment links must stay in this document.
+    $('#example-nav, body > .skip-link').on('click', function (event) {
+        const link = $(event.target).closest('a[href^="#"]')[0];
+        if (!link) return;
+        const target = document.getElementById(link.getAttribute('href').slice(1));
+        if (!target) return;
+        event.preventDefault();
+        target.setAttribute('tabindex', '-1');
+        target.focus({ preventScroll: true });
+        target.scrollIntoView({
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+            block: 'start'
+        });
     });
     if ('IntersectionObserver' in window) {
         const visible = new Set();
@@ -278,7 +286,7 @@ const values = new FormData(event.currentTarget)
             if (!active) return;
             $('#example-nav a').removeClass('is-active').removeAttr('aria-current');
             $(`#example-nav a[href="#${active.id}"]`).addClass('is-active').attr('aria-current', 'location');
-        }, { rootMargin: '-100px 0px -45% 0px' });
+        }, { rootMargin: '-24px 0px -45% 0px' });
         document.querySelectorAll('.example-section').forEach(section => observer.observe(section));
     }
 }(jQuery));
