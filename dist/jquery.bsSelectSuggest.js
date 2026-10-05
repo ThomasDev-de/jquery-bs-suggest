@@ -41,7 +41,7 @@
         const listMax = 400;
         return `
 <div class="dropdown">
-    <button type="button" class="js-suggest-btn ${settings.btnClass} ${disabledClass} d-flex align-items-center" aria-expanded="false" data-bs-toggle="dropdown" style="width:${settings.btnWidth};max-width:100%;">
+    <button type="button" class="js-suggest-btn ${settings.btnClass} ${disabledClass} d-flex align-items-center" aria-expanded="false" data-toggle="dropdown" data-bs-toggle="dropdown" style="width:${settings.btnWidth};max-width:100%;">
         <div class="js-selected-text w-100">${t.placeholder || 'Please choose..'}</div>
     </button>
     <div class="dropdown-menu p-0 mt-1 shadow rounded" style="min-width:min(250px, calc(100vw - 1rem));max-width:calc(100vw - 1rem);overflow-x:hidden;">
@@ -164,6 +164,24 @@
             // no-op
         }
 
+        const removeClickCapture = $input.data('removeClickCapture');
+        if (removeClickCapture) {
+            window.removeEventListener('click', removeClickCapture, true);
+            $input.removeData('removeClickCapture');
+        }
+
+        // Dispose Bootstrap's instance before removing the toggle (also on refresh).
+        const btnEl = wrapper.find('.js-suggest-btn').get(0);
+        const Dropdown = typeof bootstrap !== 'undefined' ? bootstrap.Dropdown : null;
+        if (btnEl && Dropdown && /^5\./.test(Dropdown.VERSION)) {
+            const instance = Dropdown.getInstance(btnEl);
+            if (instance) {
+                instance.dispose();
+            }
+        } else if (btnEl && $.fn && typeof $.fn.dropdown === 'function' && $(btnEl).data('bs.dropdown')) {
+            $(btnEl).dropdown('dispose');
+        }
+
         setInputValue($input, valBefore);
 
         $input.insertBefore(wrapper);
@@ -173,14 +191,14 @@
 
         if (show) {
             restoreOriginalElement($input);
+            $input.removeData('typeBefore');
+            $input.removeData('suggestAddedDNone');
         }
 
         $input.removeData('settings');
         $input.removeData('selected');
         $input.removeData('selectedItems');
         $input.removeData('initSuggest');
-        $input.removeData('typeBefore');
-        $input.removeData('suggestAddedDNone');
     }
 
     function hideOriginalElement($input) {
@@ -232,13 +250,13 @@
         const idStr = String(item && item.id != null ? item.id : '');
         const removeIcon = opts.removeIconHtml || '<i class="bi bi-x"></i>';
         const removeHtml = opts.showRemove ? (
-            `<span class="js-suggest-remove rounded-circle border-0 p-0 ms-1 d-flex align-items-center justify-content-center"
+            `<span class="js-suggest-remove rounded-circle border-0 p-0 ms-1 ml-1 d-flex align-items-center justify-content-center"
   style="line-height:1;width:1.2em;height:1.2em;background-color:rgba(128,128,128,0.25);cursor:pointer;color:inherit;"
   data-id="${idStr}" aria-label="Remove">${removeIcon}</span>`
         ) : '';
 
         return `
-  <span class="d-inline-flex align-items-center border rounded ps-2 pe-1 py-0 bg-transparent">
+  <span class="d-inline-flex align-items-center border rounded ps-2 pl-2 pe-1 pr-1 py-0 bg-transparent">
     <span class="text-truncate">${escapeHtml(text)}</span>
     ${removeHtml}
   </span>
@@ -290,7 +308,7 @@
                 return `<div class="${itemWrapperClass}" data-id="${idStr}">${inner}</div>`;
             }).join('');
 
-            wrapper.find('.js-selected-text').html(`<div class="${containerClass}">${itemsHtml}</div>`);
+            wrapper.find('.js-selected-text').html(`<div class="${containerClass}"${isList ? '' : ' style="gap:0.5rem;"'}>${itemsHtml}</div>`);
             return;
         }
 
@@ -308,7 +326,7 @@
                 contentHtml = formatItem(item);
             }
         }
-        const container = '<div class="d-flex align-items-center text-start w-100">' + contentHtml + '</div>';
+        const container = '<div class="d-flex align-items-center text-left text-start w-100">' + contentHtml + '</div>';
 
         wrapper.find('.js-selected-text').html(container);
     }
@@ -479,13 +497,17 @@
         const btnEl = wrapper.find('.js-suggest-btn').get(0);
         const menu = wrapper.find('.dropdown-menu');
         const parent = wrapper.find('.dropdown').first();
-        const supportsBs5 = !!(btnEl && (typeof bootstrap !== 'undefined' && bootstrap.Dropdown || $(btnEl).data('bs.dropdown')));
+        // Bootstrap 4 also exposes bootstrap.Dropdown in its UMD bundle.
+        const Dropdown = typeof bootstrap !== 'undefined' ? bootstrap.Dropdown : null;
+        const supportsBs5 = !!(btnEl && Dropdown && /^5\./.test(Dropdown.VERSION));
         const supportsBs4 = !!(btnEl && $.fn && typeof $.fn.dropdown === 'function');
-        let bs5Inst = null;
-
-        function fallbackToggleClass() {
-            menu.toggleClass('show');
-            parent.toggleClass('show', menu.hasClass('show'));
+        // Configure autoClose before the first data-api click creates an instance.
+        if (supportsBs5) {
+            const instance = Dropdown.getInstance(btnEl);
+            if (instance) {
+                instance.dispose();
+            }
+            new Dropdown(btnEl, { autoClose: settings.multiple ? 'outside' : true });
         }
 
         function fallbackHideClass() {
@@ -529,12 +551,10 @@
         function dropdownHide() {
             try {
                 if (supportsBs5) {
-                    if (!bs5Inst) {
-                        bs5Inst = bootstrap.Dropdown.getOrCreateInstance(btnEl, {
-                            autoClose: settings.multiple ? 'outside' : true
-                        });
+                    const instance = Dropdown.getInstance(btnEl);
+                    if (instance) {
+                        instance.hide();
                     }
-                    bs5Inst.hide();
                     return;
                 }
                 if (supportsBs4) {
@@ -629,8 +649,7 @@
                     e.preventDefault();
                     return;
                 }
-                // e.preventDefault(); // Removed to allow data-bs-toggle="dropdown" to work
-                // dropdownToggle(); // Removed to avoid double toggle
+                // Let the active Bootstrap version's data-api toggle exactly once.
             })
             // Header actions: clear/close (and legacy .js-webcito-reset mapped to clear)
             .on('click keydown', '.js-webcito-clear, .js-webcito-reset', function (e) {
@@ -667,6 +686,9 @@
                 let value = item.id;
                 // Multiple selection mode: toggle without closing dropdown
                 if (settings.multiple) {
+                    // Bootstrap 4 has no autoClose option; keep its document handler
+                    // from closing the menu after an item click.
+                    e.stopPropagation();
                     let selectedIds = ($input.data('selected') || []).slice();
                     let selectedItems = ($input.data('selectedItems') || []).slice();
                     const idx = selectedIds.indexOf(String(value));
@@ -735,47 +757,66 @@
                     // simulate click removal below
                     $(this).trigger('click');
                 }
-            })
-            .on('click', '.js-suggest-remove', function (e) {
-                // Remove a selected item directly from the button
-                e.preventDefault();
-                e.stopImmediatePropagation(); // do not toggle dropdown
-                const btn = $(e.currentTarget);
-                const id = String(btn.data('id'));
-                if (settings.multiple) {
-                    let selectedIds = ($input.data('selected') || []).slice();
-                    let selectedItems = ($input.data('selectedItems') || []).slice();
-                    const idx = selectedIds.indexOf(id);
-                    if (idx > -1) {
-                        selectedIds.splice(idx, 1);
-                    }
-                    selectedItems = selectedItems.filter(it => String(it.id) !== id);
-                    const before = getInputValue($input);
-                    $input.data('selected', selectedIds);
-                    $input.data('selectedItems', selectedItems);
-                    setInputValue($input, selectedIds);
-                    setDropdownText($input, null);
-                    // Also update active state in the dropdown list if it is open
-                    const list = getWrapper($input).find('.js-suggest-results');
-                    list.find('.dropdown-item.is-active').each(function(){
-                        const $a = $(this);
-                        const it = $a.data('item');
-                        if (it && String(it.id) === id) {
-                            applySelectionState($a, false, settings);
-                        }
-                    });
-                    if (String(before) !== String(selectedIds)) {
-                        trigger($input, 'change.bs.suggest', [selectedIds, selectedItems]);
-                    }
-                } else {
-                    // single: clear selection
-                    const valueBefore = getInputValue($input);
-                    setInputValue($input, null);
-                    setDropdownText($input, null);
-                    trigger($input, 'change.bs.suggest', [valueBefore, null]);
+            });
+
+        // Handle removal on the toggle itself, before Bootstrap 4's direct
+        // button click handler can toggle the menu and stop propagation.
+        $(btnEl).on('click', '.js-suggest-remove', function (e) {
+            // Remove a selected item directly from the button
+            e.preventDefault();
+            e.stopImmediatePropagation(); // do not toggle dropdown
+            const btn = $(e.currentTarget);
+            const id = String(btn.data('id'));
+            if (settings.multiple) {
+                let selectedIds = ($input.data('selected') || []).slice();
+                let selectedItems = ($input.data('selectedItems') || []).slice();
+                const idx = selectedIds.indexOf(id);
+                if (idx > -1) {
+                    selectedIds.splice(idx, 1);
                 }
-            })
-            .on('hidden.bs.dropdown', '.dropdown', function () {
+                selectedItems = selectedItems.filter(it => String(it.id) !== id);
+                const before = getInputValue($input);
+                $input.data('selected', selectedIds);
+                $input.data('selectedItems', selectedItems);
+                setInputValue($input, selectedIds);
+                setDropdownText($input, null);
+                // Also update active state in the dropdown list if it is open
+                const list = getWrapper($input).find('.js-suggest-results');
+                list.find('.dropdown-item.is-active').each(function(){
+                    const $a = $(this);
+                    const it = $a.data('item');
+                    if (it && String(it.id) === id) {
+                        applySelectionState($a, false, settings);
+                    }
+                });
+                if (String(before) !== String(selectedIds)) {
+                    trigger($input, 'change.bs.suggest', [selectedIds, selectedItems]);
+                }
+            } else {
+                // single: clear selection
+                const valueBefore = getInputValue($input);
+                setInputValue($input, null);
+                setDropdownText($input, null);
+                trigger($input, 'change.bs.suggest', [valueBefore, null]);
+            }
+        });
+
+        if (supportsBs5) {
+            // Bootstrap 5 delegates toggle clicks in the document capture phase.
+            // Forward remove clicks before that phase, so they cannot toggle.
+            const removeClickCapture = function (e) {
+                const remove = $(e.target).closest('.js-suggest-remove').get(0);
+                if (remove && btnEl.contains(remove)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $(remove).trigger('click');
+                }
+            };
+            window.addEventListener('click', removeClickCapture, true);
+            $input.data('removeClickCapture', removeClickCapture);
+        }
+
+        wrapper.on('hidden.bs.dropdown', '.dropdown', function () {
                 if (settings.debug) {
                     console.log('hidden.bs.dropdown', '.dropdown');
                 }
@@ -1149,11 +1190,11 @@
         function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
         const text = esc(rawText);
         // Use opacity instead of text-muted to keep good contrast on dark/active backgrounds
-        const sub = hasSub ? `<div class="small opacity-75 mt-1">${esc(item.subtext)}</div>` : '';
-        // Only Bootstrap 5 utilities, no custom CSS
+        const sub = hasSub ? `<div class="small opacity-75 mt-1" style="opacity:0.75;">${esc(item.subtext)}</div>` : '';
+        // Shared utilities plus inline fallbacks for Bootstrap 5-only styles.
         return `
-<div class="w-100 rounded-2 px-2 py-1">
-  <div class="fw-semibold">${text}</div>
+<div class="w-100 rounded rounded-2 px-2 py-1">
+  <div class="fw-semibold" style="font-weight:600;">${text}</div>
   ${sub}
 </div>`;
     }

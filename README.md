@@ -33,13 +33,13 @@ Create a Bootstrap-powered jQuery dropdown for server-side suggestions (typeahea
 - Language: JavaScript (jQuery plugin)
 - UI framework: Bootstrap
   - Recommended: Bootstrap 5.x
-  - Note: Bootstrap 4 may work, but is not actively verified here. TODO: confirm Bootstrap 4 compatibility.
+  - Compatible with Bootstrap 4 and 5; browser-tested with 4.6.2 and 5.3.3.
 - jQuery: developed and tested with 3.6.x (earlier versions not verified)
 - Optional: Bootstrap Icons (for the small remove "x" inside the widget)
 - Demo backend: PHP 8.0+ (only required for the example in `demo/`)
 
 ### Installation (CDN and self-hosted)
-No additional CSS is required; Bootstrap classes are used.
+No additional CSS is required; Bootstrap classes and inline fallbacks are used. The plugin's dropdown button includes both `data-toggle="dropdown"` (Bootstrap 4) and `data-bs-toggle="dropdown"` (Bootstrap 5). Load one Bootstrap version, including its JavaScript bundle (with Popper).
 
 CDN example (Bootstrap 5 + jQuery + optional Bootstrap Icons):
 ```html
