@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Yükleniyor..',
     clear: 'Temizle',
     close: 'Kapat',
+    showMore: 'Daha fazla göster',
     results: function (count, total) { return count !== total ? 'Gösterilen ' + count + ' / ' + total + ' sonuç' : 'Sonuçlar: ' + count; }
 };

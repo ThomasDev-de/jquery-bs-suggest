@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Φόρτωση..',
     clear: 'Εκκαθάριση',
     close: 'Κλείσιμο',
+    showMore: 'Εμφάνιση περισσότερων',
     results: function (count, total) { return count !== total ? 'Εμφάνιση ' + count + ' / ' + total + ' αποτελεσμάτων' : 'Αποτελέσματα: ' + count; }
 };

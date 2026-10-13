@@ -57,7 +57,7 @@
                 multiple: false, showHeaderActionText: true,
                 translations: {
                     search: 'Search countries', placeholder: 'Select a country', waiting: 'Enter a search term',
-                    typing: 'Typing …', loading: 'Loading countries …', clear: 'Clear', close: 'Close',
+                    typing: 'Typing …', loading: 'Loading countries …', clear: 'Clear', close: 'Close', showMore: 'Show more',
                     results: function (count, total) { return `${count} of ${total} countries`; }
                 },
                 icons: { checked: '<i class="bi bi-check-circle-fill"></i>', unchecked: '<i class="bi bi-circle"></i>' }

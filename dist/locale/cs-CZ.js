@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Načítání..',
     clear: 'Vymazat',
     close: 'Zavřít',
+    showMore: 'Zobrazit další',
     results: function (count, total) { return count !== total ? 'Zobrazeno ' + count + ' / ' + total + ' výsledků' : 'Výsledky: ' + count; }
 };

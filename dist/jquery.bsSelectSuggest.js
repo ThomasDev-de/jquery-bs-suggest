@@ -51,8 +51,11 @@
                 ${headerActionsHtml}
             </div>
             <div class="js-suggest-results" style="max-height: ${listMax}px; overflow-y: auto; overflow-x: hidden;"></div>
-            <div class="p-2 p-1 font-weight-light font-italic d-flex align-items-center">
+            <div class="p-2 p-1 font-weight-light font-italic d-flex align-items-center justify-content-between">
                 <small class="suggest-status-text">${t.waiting || 'Waiting for typing'}</small>
+                <button type="button" class="btn btn-sm p-0 text-secondary text-decoration-none js-suggest-more" style="display:none;font-size:.8rem">
+                    <i class="bi bi-chevron-down me-1 ml-1" aria-hidden="true"></i><span class="js-suggest-more-label">${t.showMore || 'Show more'}</span>
+                </button>
             </div>
         </div>
     </div>
@@ -598,6 +601,7 @@
             }
 
             const t = (settings && settings.translations) ? settings.translations : {};
+            $input.data('suggestLimit', settings.limit);
             setStatus($input, t.typing || 'typing..');
             typingTimer = setTimeout(function () {
                 const t = (settings && settings.translations) ? settings.translations : {};
@@ -609,6 +613,29 @@
                 });
             }, settings.typingInterval);
             $input.data('typingTimer', typingTimer);
+        });
+
+        wrapper.on('click', '.js-suggest-more', function (e) {
+            // Keep Bootstrap 4 and 5 from treating this as an outside selection
+            // action that closes a single-select dropdown.
+            e.preventDefault();
+            e.stopPropagation();
+            const previousCount = list.find('.dropdown-item').length;
+            const currentLimit = Number($input.data('suggestLimit')) || Number(settings.limit) || 20;
+            $input.data('suggestLimit', currentLimit + (Number(settings.limit) || 20));
+            setStatus($input, (settings.translations || {}).loading || 'Loading..');
+            getData($input).then(() => {
+                if (menu.hasClass('show')) {
+                    fitMenuToViewport();
+                    const newItem = list.find('.dropdown-item').eq(previousCount);
+                    if (newItem.length) {
+                        const listEl = list.get(0);
+                        const itemEl = newItem.get(0);
+                        const targetScrollTop = listEl.scrollTop + itemEl.getBoundingClientRect().top - listEl.getBoundingClientRect().top;
+                        list.stop(true).animate({ scrollTop: targetScrollTop }, 250);
+                    }
+                }
+            });
         });
 
         // Keep Tab navigation inside the open menu in DOM order, without trapping focus.
@@ -838,6 +865,9 @@
                     console.log('shown.bs.dropdown', '.dropdown');
                 }
 
+                // Start every new dropdown session at the configured limit.
+                $input.data('suggestLimit', settings.limit);
+
                 if (settings.loadDataOnShow) {
                     getData($input, true).then(() => {
                         if (menu.hasClass('show')) {
@@ -978,6 +1008,9 @@
             }
         }
         setStatus($input, footerText);
+        const moreButton = wrapper.find('.js-suggest-more');
+        moreButton.find('.js-suggest-more-label').text(t.showMore || 'Show more');
+        moreButton.toggle(countItems < total);
     }
 
     /**
@@ -1105,7 +1138,7 @@
         }
 
         const data = searchModus
-            ? { q: searchValue, limit: settings.limit }
+            ? { q: searchValue, limit: Number($input.data('suggestLimit')) || settings.limit }
             : { value: valueForQuery };
 
         const query = settings.queryParams(data);
@@ -1237,7 +1270,8 @@
                 close: 'Close',
                 results: function (count, total) {
                     return count !== total ? `showing ${count} / ${total} results` : `results: ${count}`;
-                }
+                },
+                showMore: 'Show more'
             },
             // Icons used by controls inside the widget
             icons: {

@@ -54,18 +54,18 @@ CDN example (Bootstrap 5 + jQuery + optional Bootstrap Icons):
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <!-- Plugin (CDN via jsDelivr GitHub tag) -->
-<script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.10/dist/jquery.bsSelectSuggest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.11/dist/jquery.bsSelectSuggest.min.js"></script>
 ```
 
 CDN for the plugin itself:
 - jsDelivr (GitHub):
   ```html
-  <script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.10/dist/jquery.bsSelectSuggest.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.11/dist/jquery.bsSelectSuggest.min.js"></script>
   ```
-  Note: If your release tag is named differently (e.g. `v1.1.10`), adjust the `@1.1.10` segment accordingly.
+  Note: If your release tag is named differently (e.g. `v1.1.11`), adjust the `@1.1.11` segment accordingly.
 - When published to npm, you can also use:
-  - jsDelivr (npm): `https://cdn.jsdelivr.net/npm/@webcito/jquery-select-suggest@1.1.10/dist/jquery.bsSelectSuggest.min.js`
-  - unpkg: `https://unpkg.com/@webcito/jquery-select-suggest@1.1.10/dist/jquery.bsSelectSuggest.min.js`
+  - jsDelivr (npm): `https://cdn.jsdelivr.net/npm/@webcito/jquery-select-suggest@1.1.11/dist/jquery.bsSelectSuggest.min.js`
+  - unpkg: `https://unpkg.com/@webcito/jquery-select-suggest@1.1.11/dist/jquery.bsSelectSuggest.min.js`
 
 Self-hosted (no CDN):
 ```html
@@ -157,7 +157,7 @@ Quick start example (full page):
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.10/dist/jquery.bsSelectSuggest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.11/dist/jquery.bsSelectSuggest.min.js"></script>
     <script>
       $(function(){
         $('#exampleInput').suggest({ limit: 10, multiple: false });
@@ -192,6 +192,7 @@ let options = {
     loading: 'Loading..',
     clear: 'Clear',
     close: 'Close',
+    showMore: 'Show more',
     results: function(count, total) {
       return count !== total ? `showing ${count} / ${total} results` : `results: ${count}`;
     }
@@ -222,6 +223,7 @@ let options = {
 }
 ```
 Notes:
+- When more matches exist than `limit`, the results footer offers a “Show more” action. Each click requests another `limit` results; opening the dropdown again resets it to the configured value. Customize its label with `translations.showMore`.
 - Locale files in `dist/locale/` provide ready-to-use translations. Load one locale before calling `.suggest()` to use it as the default UI text set. Explicit `options.translations` values always win.
 - Legacy names are still accepted and mapped internally to the new schema:
   - `emptyText`/`btnEmptyText` → `translations.placeholder`
@@ -484,7 +486,7 @@ This project is licensed under the MIT License — see `LICENSE` for details.
 
 ### Changelog
 
-See `CHANGELOG.md` for a detailed list of changes. Current version: 1.1.10 (2026-09-08).
+See `CHANGELOG.md` for a detailed list of changes. Current version: 1.1.11 (2026-10-13).
 
 
 ## Support this project

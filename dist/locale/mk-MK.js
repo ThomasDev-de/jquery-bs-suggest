@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Се вчитува..',
     clear: 'Исчисти',
     close: 'Затвори',
+    showMore: 'Прикажи повеќе',
     results: function (count, total) { return count !== total ? 'Прикажани ' + count + ' / ' + total + ' резултати' : 'Резултати: ' + count; }
 };

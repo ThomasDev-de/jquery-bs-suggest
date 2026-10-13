@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Laddar..',
     clear: 'Rensa',
     close: 'Stäng',
+    showMore: 'Visa fler',
     results: function (count, total) { return count !== total ? 'Visar ' + count + ' / ' + total + ' resultat' : 'Resultat: ' + count; }
 };

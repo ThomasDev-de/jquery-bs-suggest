@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Laster..',
     clear: 'Tøm',
     close: 'Lukk',
+    showMore: 'Vis flere',
     results: function (count, total) { return count !== total ? 'Viser ' + count + ' / ' + total + ' resultater' : 'Resultater: ' + count; }
 };

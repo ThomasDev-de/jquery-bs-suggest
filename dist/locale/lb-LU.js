@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Lueden..',
     clear: 'Läschen',
     close: 'Zoumaachen',
+    showMore: 'Méi weisen',
     results: function (count, total) { return count !== total ? 'Weist ' + count + ' / ' + total + ' Resultater' : 'Resultater: ' + count; }
 };

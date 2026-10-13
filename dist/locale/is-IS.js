@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Hleður..',
     clear: 'Hreinsa',
     close: 'Loka',
+    showMore: 'Sýna meira',
     results: function (count, total) { return count !== total ? 'Sýni ' + count + ' / ' + total + ' niðurstöður' : 'Niðurstöður: ' + count; }
 };

@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Carregant..',
     clear: 'Neteja',
     close: 'Tanca',
+    showMore: 'Mostra’n més',
     results: function (count, total) { return count !== total ? 'Mostrant ' + count + ' / ' + total + ' resultats' : 'Resultats: ' + count; }
 };

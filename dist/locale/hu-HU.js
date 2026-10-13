@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Betöltés..',
     clear: 'Törlés',
     close: 'Bezárás',
+    showMore: 'Továbbiak megjelenítése',
     results: function (count, total) { return count !== total ? 'Megjelenítve ' + count + ' / ' + total + ' találat' : 'Találatok: ' + count; }
 };

@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Duke ngarkuar..',
     clear: 'Pastro',
     close: 'Mbyll',
+    showMore: 'Shfaq më shumë',
     results: function (count, total) { return count !== total ? 'Duke shfaqur ' + count + ' / ' + total + ' rezultate' : 'Rezultate: ' + count; }
 };

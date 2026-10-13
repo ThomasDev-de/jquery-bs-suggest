@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Á luchtú..',
     clear: 'Glan',
     close: 'Dún',
+    showMore: 'Taispeáin tuilleadh',
     results: function (count, total) { return count !== total ? 'Ag taispeáint ' + count + ' / ' + total + ' toradh' : 'Torthaí: ' + count; }
 };

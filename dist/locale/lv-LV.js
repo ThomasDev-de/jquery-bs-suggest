@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Ielādē..',
     clear: 'Notīrīt',
     close: 'Aizvērt',
+    showMore: 'Rādīt vairāk',
     results: function (count, total) { return count !== total ? 'Rāda ' + count + ' / ' + total + ' rezultātus' : 'Rezultāti: ' + count; }
 };

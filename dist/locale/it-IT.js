@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Caricamento..',
     clear: 'Cancella',
     close: 'Chiudi',
+    showMore: 'Mostra altro',
     results: function (count, total) { return count !== total ? 'Mostrando ' + count + ' / ' + total + ' risultati' : 'Risultati: ' + count; }
 };

@@ -6,5 +6,6 @@ window.bsSuggestTranslations = {
     loading: 'Qed jitgħabba..',
     clear: 'Ħassar',
     close: 'Agħlaq',
+    showMore: 'Uri aktar',
     results: function (count, total) { return count !== total ? 'Qiegħed juri ' + count + ' / ' + total + ' riżultati' : 'Riżultati: ' + count; }
 };

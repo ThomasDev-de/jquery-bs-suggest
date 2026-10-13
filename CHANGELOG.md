@@ -6,6 +6,14 @@ The format is based on Keep a Changelog, and the versioning follows SemVer.
 
 #### main-dev
 
+#### [1.1.11] - 2026-10-13
+
+- Added a “Show more” control to the suggestion footer when additional results are available.
+  - Loads more results in increments of the configured `limit` and resets that limit when the dropdown is opened again.
+  - Keeps single-select dropdowns open across Bootstrap 4 and 5, and smoothly scrolls to the first newly loaded item.
+  - Added localized labels to all 39 locale files and their minified versions.
+- Restyled the footer control as a compact, muted action with a chevron.
+
 #### [1.1.10] - 2026-09-08
 
 - Fixed embedded demo navigation when the hosting page injects a `<base>` URL:
@@ -154,3 +162,4 @@ Additional changes included in 1.1.1:
 [1.1.8]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.7...v1.1.8
 [1.1.9]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.8...v1.1.9
 [1.1.10]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.9...v1.1.10
+[1.1.11]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.10...v1.1.11
