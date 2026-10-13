@@ -1076,14 +1076,13 @@
             const icons = settings.icons || {};
             const checkedIcon = icons.checked || '<i class="bi bi-check2"></i>';
             const uncheckedIcon = icons.unchecked || '<i class="bi bi-circle"></i>';
-            let trailIcon = isSelected ? checkedIcon : uncheckedIcon;
-            if (! settings.multiple) {
-                trailIcon = '';
-            }
             const ariaSel = isSelected ? 'true' : 'false';
             let tailWrapper = '';
             if (settings.multiple) {
+                const trailIcon = isSelected ? checkedIcon : uncheckedIcon;
                 tailWrapper = `<span class="mx-2 js-suggest-check">${trailIcon}</span>`;
+            } else if (isSelected) {
+                tailWrapper = `<span class="mx-2 js-suggest-check">${checkedIcon}</span>`;
             }
             // Use bg-transparent to suppress Bootstrap's default active/hover background (no extra CSS)
             return `<a class="dropdown-item bg-transparent text-reset d-flex align-items-center justify-content-between ${densityClass}" href="#" role="option" aria-selected="${ariaSel}" style="max-width:100%;white-space:normal;overflow:hidden;"><span class="flex-grow-1 ${contentClasses}" style="min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:break-word;">${html}</span>${tailWrapper}</a>`;
@@ -1204,12 +1203,19 @@
             const icons = (settings && settings.icons) || {};
             const checkedIcon = icons.checked || '<i class="bi bi-check2"></i>';
             const uncheckedIcon = icons.unchecked || '<i class="bi bi-circle"></i>';
-            const trail = $a.find('.js-suggest-check');
+            let trail = $a.find('.js-suggest-check');
+            if (!settings.multiple && isSelected && !trail.length) {
+                trail = $('<span>', { class: 'mx-2 js-suggest-check' }).appendTo($a);
+            }
             if (trail.length) {
-                if (!settings.multiple) {
+                if (settings.multiple) {
                     trail.html(isSelected ? checkedIcon : uncheckedIcon);
                 } else {
-                    trail.html('');
+                    if (isSelected) {
+                        trail.html(checkedIcon);
+                    } else {
+                        trail.remove();
+                    }
                 }
             }
         } catch (e) { /* no-op */ }

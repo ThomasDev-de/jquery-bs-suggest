@@ -6,6 +6,11 @@ The format is based on Keep a Changelog, and the versioning follows SemVer.
 
 #### main-dev
 
+#### [1.1.12] - 2026-10-13
+
+- Fixed checked and unchecked icons disappearing from multiple-selection results.
+- Single-selection results now show the checked icon on the selected item.
+
 #### [1.1.11] - 2026-10-13
 
 - Added a “Show more” control to the suggestion footer when additional results are available.
@@ -163,3 +168,4 @@ Additional changes included in 1.1.1:
 [1.1.9]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.8...v1.1.9
 [1.1.10]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.9...v1.1.10
 [1.1.11]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.10...v1.1.11
+[1.1.12]: https://github.com/ThomasDev-de/jquery-bs-suggest/compare/v1.1.11...v1.1.12

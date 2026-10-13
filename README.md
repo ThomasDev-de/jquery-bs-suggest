@@ -54,18 +54,18 @@ CDN example (Bootstrap 5 + jQuery + optional Bootstrap Icons):
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <!-- Plugin (CDN via jsDelivr GitHub tag) -->
-<script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.11/dist/jquery.bsSelectSuggest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.12/dist/jquery.bsSelectSuggest.min.js"></script>
 ```
 
 CDN for the plugin itself:
 - jsDelivr (GitHub):
   ```html
-  <script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.11/dist/jquery.bsSelectSuggest.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.12/dist/jquery.bsSelectSuggest.min.js"></script>
   ```
-  Note: If your release tag is named differently (e.g. `v1.1.11`), adjust the `@1.1.11` segment accordingly.
+  Note: If your release tag is named differently (e.g. `v1.1.12`), adjust the `@1.1.12` segment accordingly.
 - When published to npm, you can also use:
-  - jsDelivr (npm): `https://cdn.jsdelivr.net/npm/@webcito/jquery-select-suggest@1.1.11/dist/jquery.bsSelectSuggest.min.js`
-  - unpkg: `https://unpkg.com/@webcito/jquery-select-suggest@1.1.11/dist/jquery.bsSelectSuggest.min.js`
+  - jsDelivr (npm): `https://cdn.jsdelivr.net/npm/@webcito/jquery-select-suggest@1.1.12/dist/jquery.bsSelectSuggest.min.js`
+  - unpkg: `https://unpkg.com/@webcito/jquery-select-suggest@1.1.12/dist/jquery.bsSelectSuggest.min.js`
 
 Self-hosted (no CDN):
 ```html
@@ -157,7 +157,7 @@ Quick start example (full page):
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.11/dist/jquery.bsSelectSuggest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ThomasDev-de/jquery-bs-suggest@1.1.12/dist/jquery.bsSelectSuggest.min.js"></script>
     <script>
       $(function(){
         $('#exampleInput').suggest({ limit: 10, multiple: false });
@@ -252,7 +252,7 @@ Rendering model:
 
 Styling and theme compatibility:
 - The dropdown uses only Bootstrap utility classes; no custom CSS and no styling options are required. It respects light/dark themes and different button variants.
-- Selected items in the dropdown menu no longer rely on colored backgrounds; instead, a trailing icon indicates state (`icons.checked`/`icons.unchecked`).
+- Selected items in the dropdown menu no longer rely on colored backgrounds; a trailing icon marks selection. Multiple mode shows checked and unchecked icons, while single mode shows the checked icon on the selected item (`icons.checked`/`icons.unchecked`).
 
 Multiple button layout:
 - `showMultipleAsList` (boolean): Controls how selected items are laid out inside the button when `multiple: true`.
@@ -486,7 +486,7 @@ This project is licensed under the MIT License — see `LICENSE` for details.
 
 ### Changelog
 
-See `CHANGELOG.md` for a detailed list of changes. Current version: 1.1.11 (2026-10-13).
+See `CHANGELOG.md` for a detailed list of changes. Current version: 1.1.12 (2026-10-13).
 
 
 ## Support this project
